@@ -1,0 +1,1235 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  brazilian,
+  12pt,
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+\usepackage{xcolor}
+\usepackage[a4paper,left=3cm,right=2cm,top=3cm,bottom=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage{setspace}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+\ifLuaTeX
+\usepackage[bidi=basic,shorthands=off]{babel}
+\else
+\usepackage[bidi=default,shorthands=off]{babel}
+\fi
+\ifLuaTeX
+  \usepackage{selnolig} % disable illegal ligatures
+\fi
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+\usepackage[]{biblatex}
+\addbibresource{referencias.bib}
+
+
+% Impede o sumário de colar na capa
+\usepackage{tocloft}
+\setcounter{tocdepth}{3}
+\KOMAoption{captions}{tableheading}
+\usepackage{xcolor}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Índice}
+\else
+  \newcommand\contentsname{Índice}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{Lista de Figuras}
+\else
+  \newcommand\listfigurename{Lista de Figuras}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{Lista de Tabelas}
+\else
+  \newcommand\listtablename{Lista de Tabelas}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figura}
+\else
+  \newcommand\figurename{Figura}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Tabela}
+\else
+  \newcommand\tablename{Tabela}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listagem}
+\newcommand*\listoflistings{\listof{codelisting}{Lista de Listagens}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdflang={pt-BR},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\author{}
+\date{}
+\begin{document}
+
+
+\setstretch{1.5}
+\begin{titlepage}
+\centering
+
+% --- IMAGEM NO TOPO ---
+\includegraphics[width=0.3\textwidth]{figuras/logo_ufmg.jpg}
+
+{\large UNIVERSIDADE FEDERAL DE MINAS GERAIS \par}
+{\large Instituto de Ciências Exatas \par}
+{\large Departamento de Ciência da Computação e Estatística \par}
+{\large Pós-Graduação Lato Sensu em Ciência de Dados \par}
+
+\vspace{2cm}
+
+{\bfseries\Large Uma Análise Comparativa entre Inferência Frequentista e Bayesiana em Modelos de Regressão Aplicados à Aprovação de Empréstimos \par}
+
+\vspace{2cm}
+
+{\large Ana Beatriz Coelho Rodrigues \par}
+
+\vfill
+
+{\large Belo Horizonte \par}
+
+
+{\large Ago/2026 \par}
+
+\end{titlepage}
+
+\newpage
+\begin{center}
+
+Ana Beatriz Coelho Rodrigues
+
+\vspace{1cm}
+
+{\bfseries\Large Uma Análise Comparativa entre Inferência Frequentista e Bayesiana em Modelos de Regressão Aplicados à Aprovação de Empréstimos}
+
+
+\vspace{2cm}
+
+\begin{flushright}
+Monografia apresentada ao Curso de Especialização em Ciência de Dados com Ênfase em Estatística da Universidade Federal de Minas Gerais como requisito parcial para obtenção do grau de Especialista em Ciência de Dados.
+
+
+\vspace{1cm}
+
+Orientador(a): Prof.(a) Dr.(a) Fábio N. Demarqui~
+\end{flushright}
+
+\vfill
+
+Belo Horizonte  
+
+Ago/2026
+\end{center}
+\newpage
+
+\newpage
+\begin{center}
+{\bfseries\Large RESUMO}
+\end{center}
+
+\vspace{1cm}
+
+\textcolor{red}{reavaliar os resumos, quando o trabalho estiver concluído}
+
+Este trabalho tem como objetivo comparar as abordagens de inferência frequentista e bayesiana no contexto de modelos de classificação aplicados à predição da aprovação de empréstimos bancários. O foco principal do estudo está na análise das diferenças conceituais, inferenciais e preditivas entre essas duas abordagens estatísticas, utilizando um conjunto de dados reais como estudo de caso para a aplicação dos modelos.
+
+Inicialmente, são discutidos os fundamentos teóricos das abordagens frequentista e bayesiana, destacando suas principais características, pressupostos e formas de interpretação dos parâmetros. Em seguida, realiza-se uma análise exploratória dos dados com o objetivo de compreender a estrutura das variáveis e subsidiar a construção dos modelos, sem que a análise dos dados constitua o foco central do trabalho.
+
+Na etapa de modelagem, são ajustados modelos de classificação sob as perspectivas frequentista e bayesiana, permitindo a comparação entre as abordagens quanto ao desempenho preditivo, à interpretação dos coeficientes estimados e à quantificação da incerteza associada às estimativas. A avaliação dos modelos é realizada por meio de métricas adequadas de classificação, possibilitando uma análise sistemática das diferenças e semelhanças entre os métodos.
+
+Por fim, os resultados obtidos evidenciam as vantagens e limitações de cada abordagem no contexto de problemas de classificação binária, contribuindo para uma compreensão mais aprofundada das implicações práticas e metodológicas da escolha entre inferência frequentista e bayesiana em aplicações de análise de risco de crédito e ciência de dados.
+
+\vspace{1cm}
+
+\noindent\textbf{Palavras-chave:} regressão estatística; inferência frequentista; inferência bayesiana; modelos preditivos; análise de risco de crédito.
+\newpage
+
+\newpage
+\begin{center}
+{\bfseries\Large ABSTRACT}
+\end{center}
+
+\vspace{1cm}
+
+This study aims to compare frequentist and Bayesian inference approaches in the context of regression models applied to the prediction of loan approval decisions. The main focus of the research lies in analyzing the conceptual, inferential, and predictive differences between these two statistical paradigms, using a real-world dataset as a case study for model application.
+
+Initially, the theoretical foundations of frequentist and Bayesian approaches are discussed, highlighting their main characteristics, assumptions, and parameter interpretation frameworks. Subsequently, an exploratory analysis of the data is conducted in order to understand the structure of the variables and support model development, without making the data analysis itself the central focus of the study.
+
+In the modeling stage, regression models are fitted under both frequentist and Bayesian perspectives, allowing for a comparative evaluation in terms of predictive performance, coefficient interpretation, and uncertainty quantification associated with the estimates. Model performance is assessed using appropriate classification metrics, enabling a systematic comparison between the two approaches.
+
+Finally, the results highlight the strengths and limitations of each statistical approach in the context of binary classification problems, contributing to a deeper understanding of the practical and methodological implications of choosing between frequentist and Bayesian inference in credit risk analysis and data science applications.
+
+\vspace{1cm}
+
+\noindent\textbf{Keywords:} frequentist inference; Bayesian inference; regression models; predictive modeling; credit risk analysis.
+\newpage
+
+\tableofcontents
+\newpage
+
+\red{Anotações para escrita}
+
+\red{estou colocando comentários em vermelho para destacar pontos a revisar ou expandir.
+Já coloquei, em tópicos, uma possivel estrutura para o trabalho como um todo}
+
+\section{Introdução}\label{introduuxe7uxe3o}
+
+Tópicos a serem abordados:
+
+\begin{itemize}
+\tightlist
+\item
+  Contexto de risco de crédito (motivação do trabalho)
+\item
+  Importância de modelos estatísticos na decisão financeira (com
+  referencias de estudos anteriores)
+\item
+  Diferença conceitual entre abordagem frequentista e bayesiana
+\item
+  Motivação do estudo
+\item
+  Objetivo geral (resumida)
+\item
+  indicar as técnicas Estatísticas/Computacionais que serão utilizadas
+  para a resolução do problema.
+\item
+  Estrutura do trabalho (Este trabalho está assim organizado: Na Seção 2
+  apresentamos\ldots. A Seção 3 trata de\ldots{} )
+\end{itemize}
+
+\section{Referencial Teórico}\label{referencial-teuxf3rico}
+
+\red{um dos principais capítulos, já que o foco do trabalho é a comparação entre abordagens.}
+
+\subsection{Fundamentos de Probabilidade e Inferência
+Estatística}\label{fundamentos-de-probabilidade-e-inferuxeancia-estatuxedstica}
+
+\begin{itemize}
+\tightlist
+\item
+  Variáveis aleatórias e distribuições
+\item
+  Teorema de Bayes
+\item
+  Conceito de incerteza estatística
+\item
+  Inferência como problema de estimação
+\end{itemize}
+
+\subsection{Problemas de Classificação em Aprendizado
+Estatístico}\label{problemas-de-classificauxe7uxe3o-em-aprendizado-estatuxedstico}
+
+\begin{itemize}
+\tightlist
+\item
+  Classificação binária
+\item
+  Função de perda e decisão
+\item
+  Separabilidade linear e não linear
+\item
+  Overfitting e generalização
+\end{itemize}
+
+\subsection{Avaliação de Modelos de
+Classificação}\label{avaliauxe7uxe3o-de-modelos-de-classificauxe7uxe3o}
+
+\begin{itemize}
+\tightlist
+\item
+  Matriz de confusão
+\item
+  Accuracy, Precision, Recall, F1-score
+\item
+  Curva ROC e AUC
+\item
+  Trade-off entre sensibilidade e especificidade
+\end{itemize}
+
+\subsection{Regressão Logística
+Frequentista}\label{regressuxe3o-loguxedstica-frequentista}
+
+\begin{itemize}
+\tightlist
+\item
+  Formulação do modelo
+\item
+  Interpretação dos coeficientes
+\item
+  Função logística
+\item
+  Estimação por máxima verossimilhança
+\item
+  Testes de hipótese
+\item
+  Intervalos de confiança
+\end{itemize}
+
+\subsection{Inferência Bayesiana}\label{inferuxeancia-bayesiana}
+
+\begin{itemize}
+\tightlist
+\item
+  Teorema de Bayes aplicado à estatística
+\item
+  diferenças conceituais
+\item
+  Priors, likelihood e posterior
+\item
+  Interpretação probabilística dos parâmetros
+\item
+  Incerteza e distribuição posterior
+\item
+  Conceitos: prior, likelihood, posterior
+\item
+  Vantagens da abordagem bayesiana
+\item
+  Interpretação probabilística
+\end{itemize}
+
+\subsection{Regressão Logística
+Bayesiana}\label{regressuxe3o-loguxedstica-bayesiana}
+
+\begin{itemize}
+\tightlist
+\item
+  Formulação do modelo probabilístico
+\item
+  Escolha de priors
+\item
+  Inferência via MCMC / aproximações variacionais
+\item
+  Intervalos credíveis
+\item
+  Sensibilidade a priors
+\end{itemize}
+
+\subsection{Aplicações em Risco de Crédito e
+Finanças}\label{aplicauxe7uxf5es-em-risco-de-cruxe9dito-e-finanuxe7as}
+
+\begin{itemize}
+\item
+  Modelos de scoring de crédito
+\item
+  Variáveis financeiras e risco
+\item
+  Decisão de concessão de empréstimos
+\item
+  Em problemas de concessão de empréstimos, a incerteza é tão importante
+  quanto a previsão.
+\item
+  O enfoque bayesiano permite incorporar conhecimento prévio do risco.
+\item
+  O enfoque frequentista fornece base tradicional de modelos de scoring.
+\item
+  A comparação entre ambas abordagens permite avaliar robustez das
+  decisões.
+\end{itemize}
+
+\section{Metodologia}\label{metodologia}
+
+\red{Aqui entra o dataset como aplicação, não como foco teórico.}
+
+\subsection{Descrição dos Dados}\label{descriuxe7uxe3o-dos-dados}
+
+\red {encaixar a origem dos dados, o contexto de coleta, se tiver...}
+
+A base de dados utilizada neste estudo representa um conjunto de
+solicitações reais de empréstimos, contendo informações financeiras,
+patrimoniais e socioeconômicas dos solicitantes. Cada observação
+corresponde a um indivíduo, e o objetivo principal da variável resposta
+(loan\_status) é indicar a aprovação ou rejeição do crédito. A
+Tabela~\ref{tbl-descricao} apresenta uma descrição detalhada das
+variáveis presentes no conjunto de dados.
+
+\begin{longtable}[]{@{}ll@{}}
+\caption{Descrição das variáveis do
+dataset}\label{tbl-descricao}\tabularnewline
+\toprule\noalign{}
+Feature & Descrição \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Feature & Descrição \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+No\_of\_dependents & Número de dependentes do solicitante \\
+Education & Nível de escolaridade (Graduate / Not Graduate) \\
+Self\_employed & Autônomo (Yes / No) \\
+Income\_annum & Renda anual \\
+Loan\_amount & Valor do empréstimo \\
+Loan\_term & Prazo em anos \\
+Cibil\_score & Score de crédito \\
+Residential\_assets\_value & Bens residenciais \\
+Commercial\_assets\_value & Bens comerciais \\
+Luxury\_assets\_value & Bens de luxo \\
+Bank\_asset\_value & Ativos bancários \\
+Loan\_status & Variável alvo (0/1) \\
+\end{longtable}
+
+\subsection{Pré-processamento}\label{pruxe9-processamento}
+
+\subsubsection{Verificação da Estrutura de dados e tratamento de valores
+ausentes}\label{verificauxe7uxe3o-da-estrutura-de-dados-e-tratamento-de-valores-ausentes}
+
+\subsubsection{Outliers}\label{outliers}
+
+\red {ainda falta escrever}
+
+Não foi aplicado tratamento automático de outliers, uma vez que:
+
+\begin{itemize}
+\tightlist
+\item
+  Valores extremos são esperados em dados financeiros;
+\item
+  Podem representar perfis legítimos de alto patrimônio ou elevado risco
+  de crédito;
+\item
+  Sua remoção indiscriminada poderia eliminar informação relevante para
+  a tarefa de classificação.
+\end{itemize}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  A Visão Frequentista: O Problema da SensibilidadeNa inferência
+  frequentista clássica (como na Regressão Logística por Máxima
+  Verossimilhança), o modelo busca os parâmetros que tornam os dados
+  observados o mais prováveis possível.O efeito do outlier: Se você tem
+  um outlier muito extremo, a função de verossimilhança pode ser
+  ``puxada'' por esse ponto para tentar explicá-lo.A consequência: Isso
+  pode enviesar os coeficientes, fazendo com que o modelo perca precisão
+  para a maioria dos dados ``normais'' só para tentar se ajustar ao
+  ponto atípico. Para corrigir isso, o estatístico frequentista
+  geralmente precisa de técnicas de ``Regressão Robusta'' ou tratamentos
+  manuais (como o winsorizing ou a remoção do dado).
+\end{enumerate}
+
+Na abordagem Bayesiana, se trata os parâmetros como distribuições de
+probabilidade.Distribuições de Cauda Longa: Em vez de assumir que os
+erros seguem uma distribuição Normal (que cai muito rápido nas pontas e
+``sofre'' com outliers), o modelo Bayesiano permite que você use, por
+exemplo, uma Distribuição t de Student.Por que funciona? A distribuição
+\(t\) tem ``caudas pesadas''. Isso significa que ela atribui uma
+probabilidade maior à ocorrência de valores extremos do que a Normal.O
+``Pulo do Gato'': Quando o modelo encontra um outlier, a distribuição de
+cauda longa o interpreta como ``apenas um evento raro, mas possível'',
+em vez de um erro bizarro que exige mudar toda a inclinação da reta de
+regressão. Assim, o impacto desse ponto no valor central do parâmetro é
+minimizado de forma natural, sem que você precise deletar o dado.
+
+\subsubsection{Codificação de variáveis
+categóricas}\label{codificauxe7uxe3o-de-variuxe1veis-categuxf3ricas}
+
+Variáveis categóricas foram transformadas em representações numéricas
+adequadas à modelagem.
+
+\subsubsection{Padronização de variáveis
+numéricas}\label{padronizauxe7uxe3o-de-variuxe1veis-numuxe9ricas}
+
+A padronização foi adotada para:
+
+\begin{itemize}
+\tightlist
+\item
+  Facilitar a convergência dos algoritmos de estimação;
+\item
+  Permitir interpretação comparável dos coeficientes;
+\item
+  Evitar que variáveis em escalas maiores dominem o processo de ajuste
+  do modelo.
+\end{itemize}
+
+\subsection{Estratégia de Modelagem}\label{estratuxe9gia-de-modelagem}
+
+\begin{itemize}
+\tightlist
+\item
+  Separação treino/teste
+\item
+  Validação cruzada (se usar)
+\item
+  Métricas escolhidas
+\end{itemize}
+
+\subsection{Modelos Avaliados}\label{modelos-avaliados}
+
+\begin{itemize}
+\tightlist
+\item
+  Regressão logística frequentista
+\item
+  Regressão logística bayesiana (e deixa uma subseção ``Modelos
+  adicionais'', caso queira)
+\end{itemize}
+
+\section{Resultados}\label{resultados}
+
+\subsection{Análise Exploratória}\label{anuxe1lise-exploratuxf3ria}
+
+\textcolor{red}{Vale, talvez, reduzir um pouco. A ideia é justificar escolhas de modelagem.}
+
+A análise exploratória tem como finalidade compreender a estrutura dos
+dados, identificar padrões gerais, possíveis assimetrias, outliers e
+relações preliminares entre variáveis.
+
+O conjunto de dados é composto por 4269 observações e 13 variáveis,
+incluindo a variável resposta \texttt{loan\_status}, que indica se o
+empréstimo foi aprovado ou rejeitado. As variáveis preditoras incluem
+informações como renda anual, pontuação de crédito (\texttt{CIBIL}
+score), nível educacional, entre outras características dos
+solicitantes.
+
+A Tabela~\ref{tbl-variaveis} apresenta as principais estatísticas
+descritivas das variáveis numéricas do conjunto de dados, incluindo
+média, mediana, valor mínimo e máximo. Em média, os solicitantes
+apresentam aproximadamente 2 a 3 dependentes, renda anual em torno de 5
+milhões e solicitam empréstimos próximos a 15 milhões. O prazo médio dos
+empréstimos é de cerca de 11 anos, enquanto o score de crédito médio
+está próximo de 600 pontos. Esses valores sugerem uma população com
+perfil financeiro intermediário, mas com ampla variabilidade entre
+indivíduos, com desvios-padrão elevados.
+
+{
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+
+\caption{\label{tbl-variaveis}Estatísticas descritivas das variáveis
+numéricas do conjunto de dados.}
+
+\tabularnewline
+
+\toprule\noalign{}
+& mean & median & min & max & std \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+no\_of\_dependents & 2.5 & 3 & 0 & 5 & 1.7 \\
+income\_annum & 5.05912e+06 & 5.1e+06 & 200000 & 9.9e+06 &
+2.80684e+06 \\
+loan\_amount & 1.51335e+07 & 1.45e+07 & 300000 & 3.95e+07 &
+9.04336e+06 \\
+loan\_term & 10.9 & 10 & 2 & 20 & 5.71 \\
+cibil\_score & 599.94 & 600 & 300 & 900 & 172.43 \\
+residential\_assets\_value & 7.47262e+06 & 5.6e+06 & -100000 & 2.91e+07
+& 6.50364e+06 \\
+commercial\_assets\_value & 4.97316e+06 & 3.7e+06 & 0 & 1.94e+07 &
+4.38897e+06 \\
+luxury\_assets\_value & 1.51263e+07 & 1.46e+07 & 300000 & 3.92e+07 &
+9.10375e+06 \\
+bank\_asset\_value & 4.97669e+06 & 4.6e+06 & 0 & 1.47e+07 &
+3.25019e+06 \\
+
+\end{longtable}
+
+}
+
+As variáveis financeiras apresentam elevada amplitude e distribuição
+aproximadamente uniforme dentro de seus intervalos observados. Embora os
+desvios-padrão sejam elevados em termos absolutos, a análise gráfica
+feita na Figura~\ref{fig-distribuicoes} não indica forte assimetria ou
+concentração modal acentuada.Esse comportamento sugere heterogeneidade
+na amostra, mas com dispersão relativamente equilibrada ao longo do
+espaço amostral.
+
+\begin{figure}
+
+\begin{minipage}[t]{0.50\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-1.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-1}Distribuição da renda anual}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.50\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-2.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-2}Distribuição do valor do
+empréstimo}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{0.50\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-3.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-3}Distribuição do prazo}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.50\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-4.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-4}Distribuição do CIBIL score}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{0.50\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-5.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-5}Distribuição dos ativos
+residenciais}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.50\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-6.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-6}Distribuição dos ativos
+comerciais}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{0.50\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-7.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-7}Distribuição dos bens de luxo}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.50\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-8.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-8}Distribuição dos ativos
+bancários}
+
+\end{minipage}%
+
+\caption{\label{fig-distribuicoes}Distribuição das principais variáveis
+numéricas do conjunto de dados}
+
+\end{figure}%
+
+Além disso, \texttt{cibil\_score} apresenta uma distribuição
+relativamente mais concentrada em torno da mediana, o que sugere menor
+variabilidade na avaliação de crédito em comparação com as variáveis
+patrimoniais. Esse comportamento pode indicar que o score de crédito
+atua como uma variável estabilizadora no processo de decisão de
+concessão de empréstimos.
+
+Outro ponto relevante é a presença de valores mínimos negativos em
+\texttt{residential\_assets\_value}, o que pode indicar inconsistências
+de registro ou tratamentos contábeis específicos no conjunto de dados.
+Esse tipo de característica pode afetar a modelagem, exigindo atenção em
+etapas de pré-processamento, especialmente em modelos sensíveis à escala
+e à interpretação econômica das variáveis.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-target-plot-1.pdf}}
+
+}
+
+\caption{\label{fig-target-plot}Distribuição da aprovação de
+empréstimos}
+
+\end{figure}%
+
+Na Figura~\ref{fig-target-plot}, observa-se a distribuição da variável
+resposta \texttt{loan\_status}, indicando que aproximadamente 62.22\%
+dos empréstimos foram aprovados, enquanto 37.78\% foram rejeitados. Essa
+proporção sugere um desequilíbrio moderado na classe alvo, o que pode
+influenciar a escolha de métricas de avaliação e estratégias de
+modelagem.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-target-1.pdf}}
+
+}
+
+\caption{\label{fig-distribuicoes-target}Distribuição das variáveis
+numéricas por status de aprovação do empréstimo}
+
+\end{figure}%
+
+A Figura~\ref{fig-distribuicoes-target} apresenta a estimativa de
+densidade para as variáveis numéricas do conjunto de dados, segmentadas
+pelo status de aprovação do empréstimo (Rejeitado ou Aprovado).
+Observa-se que a variável \texttt{cibil\_score} é a que apresenta a
+separação mais nítida entre as classes: candidatos com scores mais
+baixos (aproximadamente abaixo de 600) concentram-se majoritariamente no
+grupo de rejeitados, enquanto scores elevados mostram uma densidade
+quase exclusiva de aprovações.
+
+Em contraste, variáveis como \texttt{income\_annum} e os diferentes
+tipos de ativos Figura~\ref{fig-distribuicoes-target} exibem
+distribuições sobrepostas e visualmente semelhantes entre as duas
+classes. Tal sobreposição indica que, isoladamente, essas variáveis
+possuem menor poder discriminatório, o que exigirá dos modelos de
+regressão a identificação de correlações mais complexas ou efeitos
+multivariados para contribuir com a predição. No que tange ao
+\texttt{loan\_term}, nota-se uma ligeira predominância de rejeições em
+prazos muito curtos, enquanto os prazos mais longos apresentam uma
+distribuição mais equilibrada entre os grupos.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-correlacao-1.pdf}}
+
+}
+
+\caption{\label{fig-correlacao}Mapa de calor da correlação entre
+variáveis numéricas}
+
+\end{figure}%
+
+A matriz de correlação (Figura~\ref{fig-correlacao}) revela associações
+relevantes entre as variáveis financeiras do conjunto de dados.
+Observa-se forte correlação entre renda anual (\texttt{income\_annum}) e
+valor do empréstimo (\texttt{loan\_amount}), bem como entre essas
+variáveis e os ativos patrimoniais, especialmente ativos de luxo e
+ativos bancários, indicando que essas medidas capturam aspectos
+relacionados da condição financeira dos solicitantes. As correlações
+entre os diferentes tipos de ativos são positivas e moderadas, sugerindo
+coerência interna do perfil patrimonial, sem redundância perfeita entre
+as variáveis.
+
+Por outro lado, o prazo do empréstimo (\texttt{loan\_term}) apresenta
+correlação praticamente nula com as demais variáveis, indicando
+independência em relação ao perfil financeiro. De forma semelhante, o
+cibil\_score exibe correlações muito fracas com renda, ativos e valor do
+empréstimo, sugerindo que essa variável representa uma dimensão distinta
+de risco de crédito, relevante para a classificação, mas não diretamente
+associada ao nível de riqueza.
+
+A presença de correlações elevadas entre algumas variáveis explicativas
+indica potencial multicolinearidade, aspecto que deve ser considerado na
+etapa de modelagem, especialmente na interpretação dos coeficientes da
+regressão logística.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-boxplots-target-1.pdf}}
+
+}
+
+\caption{\label{fig-boxplots-target}Boxplots das variáveis numéricas por
+status de aprovação do empréstimo}
+
+\end{figure}%
+
+Complementarmente à análise de densidade, a
+Figura~\ref{fig-boxplots-target} apresenta os boxplots das mesmas
+variáveis, permitindo uma inspeção detalhada da dispersão, mediana e
+presença de valores atípicos (outliers). É notável que, novamente, a
+variável cibil\_score destaca-se por apresentar uma separação clara
+entre as medianas dos grupos Rejeitado e Aprovado, com uma dispersão
+significativamente menor nos aprovados, reforçando o observado na
+Figura~\ref{fig-distribuicoes-target}. Essa característica sugere que o
+cibil\_score é um preditor robusto e com alta capacidade discriminatória
+para a classificação de risco de crédito.
+
+Para as demais variáveis numéricas (como \texttt{loan\_amount},
+\texttt{income\_annum} e os valores dos diferentes ativos) os boxplots
+confirmam a semelhança entre as distribuições dos grupos, com medianas e
+intervalos interquartílicos (IQR) altamente sobrepostos. Essa
+característica reforça a hipótese de que tais variáveis, por si sós,
+possuem baixo poder discriminatório para a classificação. A
+identificação de valores atípicos, especialmente em
+\texttt{residential\_assets\_value} e
+\texttt{commercial\_assets\_value}, é um aspecto relevante para a
+modelagem: enquanto a inferência frequentista pode exigir o tratamento
+ou a robustez de estimadores frente a esses pontos, a abordagem
+bayesiana oferece a vantagem de modelar a incerteza desses outliers
+através de distribuições de cauda longa, permitindo uma avaliação mais
+flexível do impacto desses casos nos parâmetros estimados.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-categoricas-1.pdf}}
+
+}
+
+\caption{\label{fig-categoricas}Distribuição das variáveis categóricas
+segundo o status do empréstimo}
+
+\end{figure}%
+
+A Figura~\ref{fig-categoricas} apresenta a distribuição das frequências
+absolutas para as variáveis categóricas Nível educacional, Trabalho
+autônomo e Número de dependentes, segmentadas pelo status de aprovação.
+Diferente do observado na variável cibil\_score, as variáveis
+categóricas exibem uma distribuição notavelmente homogênea entre as
+classes. Observa-se que a proporção entre empréstimos aprovados e
+rejeitados mantém-se praticamente constante, independentemente de o
+candidato ser graduado ou não, ou de possuir trabalho autônomo.
+
+No que tange ao número de dependentes, o comportamento é análogo: não há
+uma categoria específica (de 0 a 5 dependentes) que apresente uma
+vantagem ou desvantagem desproporcional na aprovação do crédito. Sob a
+ótica da modelagem estatística, essa independência aparente sugere que
+tais variáveis podem apresentar coeficientes com menor magnitude ou
+maior incerteza (p-valores elevados no contexto frequentista ou
+distribuições posteriores centradas próximas a zero no contexto
+bayesiano). Para o estudo comparativo, essas variáveis são
+particularmente interessantes, pois permitem avaliar como cada abordagem
+quantifica a relevância de preditores que, visualmente, parecem exercer
+pouca influência direta sobre a variável resposta no nível univariado.
+
+\red{Bayes: variáveis fracas -> distribuições posterior muito parecidas com a prior (se for uma prior informativa) ou muito largas (se for não informativa). 
+
+pode ser legal se a gente fizer uma análise de sensibilidade, mostrando como a escolha da prior afeta a distribuição posterior dessas variáveis fracas. (removendo o CHIBIL)
+}
+
+\subsection{Pré processamento}\label{pruxe9-processamento-1}
+
+\subsubsection{Verificação de valores
+ausentes}\label{verificauxe7uxe3o-de-valores-ausentes}
+
+A primeira etapa consistiu na verificação da presença de valores
+ausentes nas variáveis do conjunto de dados. A ausência de missing
+values elimina a necessidade de imputação, evitando a introdução de
+incerteza adicional ou viés sistemático.
+
+\subsubsection{Tratamento de inconsistências e
+outliers}\label{tratamento-de-inconsistuxeancias-e-outliers}
+
+Observa-se que aproximadamente 0.01\% dos solicitantes apresentam
+valores negativos para ativos residenciais, correspondendo a um
+contingente residual de observações atípicas. Esses valores não possuem
+interpretação econômica direta no contexto da variável analisada e podem
+estar associados a inconsistências de registro ou a particularidades não
+representativas do perfil financeiro da amostra. Considerando o caráter
+marginal dessas observações e seu potencial de introduzir ruído na
+estimação dos parâmetros, optou-se por removê-las do conjunto de dados,
+sem prejuízo à representatividade da amostra ou à validade inferencial
+dos modelos ajustados. A exclusão resultou na remoção de 28 observações.
+
+Não foi aplicado tratamento automático de outliers, uma vez que valores
+extremos são esperados em dados financeiros e podem conter informação
+relevante para a classificação do risco de crédito.
+
+\section{Codificação e padronização de
+variáveis}\label{codificauxe7uxe3o-e-padronizauxe7uxe3o-de-variuxe1veis}
+
+\red{como vamos tratar o preprocessamento dessa base, chear se há valores nulos, Outliers (precisamos tratar?)  Codificação de variáveis categóricas (com one hot encoding) e padronização (usaria o standard)}
+
+O pré-processamento adotado priorizou a preservação da estrutura
+original dos dados, com intervenções mínimas e justificadas, assegurando
+robustez estatística e interpretabilidade na etapa de modelagem.
+
+\subsection{Modelagem e Avaliação}\label{modelagem-e-avaliauxe7uxe3o}
+
+\subsubsection{Modelo Frequentista}\label{modelo-frequentista}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(janitor)}
+
+\NormalTok{loan }\OtherTok{\textless{}{-}}\NormalTok{ loan }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{clean\_names}\NormalTok{()}
+
+\NormalTok{loan}\SpecialCharTok{$}\NormalTok{loan\_status }\OtherTok{\textless{}{-}} \FunctionTok{as.factor}\NormalTok{(loan}\SpecialCharTok{$}\NormalTok{loan\_status)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{modelo\_logit }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(}
+\NormalTok{  loan\_status }\SpecialCharTok{\textasciitilde{}}\NormalTok{ no\_of\_dependents }\SpecialCharTok{+}
+\NormalTok{    education }\SpecialCharTok{+}
+\NormalTok{    self\_employed }\SpecialCharTok{+}
+\NormalTok{    income\_annum }\SpecialCharTok{+}
+\NormalTok{    loan\_amount }\SpecialCharTok{+}
+\NormalTok{    loan\_term }\SpecialCharTok{+}
+\NormalTok{    cibil\_score }\SpecialCharTok{+}
+\NormalTok{    residential\_assets\_value }\SpecialCharTok{+}
+\NormalTok{    commercial\_assets\_value }\SpecialCharTok{+}
+\NormalTok{    luxury\_assets\_value }\SpecialCharTok{+}
+\NormalTok{    bank\_asset\_value,}
+  \AttributeTok{data =}\NormalTok{ loan,}
+  \AttributeTok{family =} \FunctionTok{binomial}\NormalTok{(}\AttributeTok{link =} \StringTok{"logit"}\NormalTok{)}
+\NormalTok{)}
+
+\FunctionTok{summary}\NormalTok{(modelo\_logit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+glm(formula = loan_status ~ no_of_dependents + education + self_employed + 
+    income_annum + loan_amount + loan_term + cibil_score + residential_assets_value + 
+    commercial_assets_value + luxury_assets_value + bank_asset_value, 
+    family = binomial(link = "logit"), data = loan)
+
+Coefficients:
+                           Estimate Std. Error z value Pr(>|z|)    
+(Intercept)               1.149e+01  4.369e-01  26.307  < 2e-16 ***
+no_of_dependents.L        6.806e-02  1.475e-01   0.461    0.644    
+no_of_dependents.Q       -1.103e-01  1.462e-01  -0.755    0.451    
+no_of_dependents.C        1.841e-01  1.474e-01   1.249    0.212    
+no_of_dependents^4       -2.408e-01  1.471e-01  -1.637    0.102    
+no_of_dependents^5        7.704e-02  1.447e-01   0.533    0.594    
+educationNot Graduate     1.298e-01  1.197e-01   1.084    0.278    
+self_employedYes         -7.197e-02  1.195e-01  -0.602    0.547    
+income_annum              6.352e-07  9.207e-08   6.900 5.22e-12 ***
+loan_amount              -1.486e-07  1.838e-08  -8.088 6.06e-16 ***
+loan_term                 1.568e-01  1.167e-02  13.439  < 2e-16 ***
+cibil_score              -2.529e-02  8.637e-04 -29.284  < 2e-16 ***
+residential_assets_value -4.018e-09  1.203e-08  -0.334    0.738    
+commercial_assets_value  -1.931e-08  1.746e-08  -1.106    0.269    
+luxury_assets_value      -3.100e-08  1.764e-08  -1.757    0.079 .  
+bank_asset_value         -5.271e-08  3.378e-08  -1.561    0.119    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 5622.1  on 4240  degrees of freedom
+Residual deviance: 1836.0  on 4225  degrees of freedom
+AIC: 1868
+
+Number of Fisher Scoring iterations: 7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{exp}\NormalTok{(}\FunctionTok{coef}\NormalTok{(modelo\_logit))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+             (Intercept)       no_of_dependents.L       no_of_dependents.Q 
+            9.804874e+04             1.070431e+00             8.955602e-01 
+      no_of_dependents.C       no_of_dependents^4       no_of_dependents^5 
+            1.202082e+00             7.859807e-01             1.080088e+00 
+   educationNot Graduate         self_employedYes             income_annum 
+            1.138591e+00             9.305589e-01             1.000001e+00 
+             loan_amount                loan_term              cibil_score 
+            9.999999e-01             1.169820e+00             9.750240e-01 
+residential_assets_value  commercial_assets_value      luxury_assets_value 
+            1.000000e+00             1.000000e+00             1.000000e+00 
+        bank_asset_value 
+            9.999999e-01 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{exp}\NormalTok{(}\FunctionTok{confint}\NormalTok{(modelo\_logit))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Waiting for profiling to be done...
+\end{verbatim}
+
+\begin{verbatim}
+                                2.5 %       97.5 %
+(Intercept)              4.260687e+04 2.364075e+05
+no_of_dependents.L       8.016263e-01 1.429585e+00
+no_of_dependents.Q       6.721711e-01 1.192543e+00
+no_of_dependents.C       9.006445e-01 1.605536e+00
+no_of_dependents^4       5.886913e-01 1.048249e+00
+no_of_dependents^5       8.134262e-01 1.434644e+00
+educationNot Graduate    9.006042e-01 1.440347e+00
+self_employedYes         7.360746e-01 1.176137e+00
+income_annum             1.000000e+00 1.000001e+00
+loan_amount              9.999998e-01 9.999999e-01
+loan_term                1.143737e+00 1.197306e+00
+cibil_score              9.733229e-01 9.766258e-01
+residential_assets_value 1.000000e+00 1.000000e+00
+commercial_assets_value  9.999999e-01 1.000000e+00
+luxury_assets_value      9.999999e-01 1.000000e+00
+bank_asset_value         9.999999e-01 1.000000e+00
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{prob }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(modelo\_logit, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
+
+\NormalTok{pred }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(prob }\SpecialCharTok{\textgreater{}} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+
+\FunctionTok{table}\NormalTok{(}\AttributeTok{Predito =}\NormalTok{ pred, }\AttributeTok{Real =}\NormalTok{ loan}\SpecialCharTok{$}\NormalTok{loan\_status)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+       Real
+Predito Rejeitado Aprovado
+      0      2471      179
+      1       169     1422
+\end{verbatim}
+
+\subsection{Desempenho Preditivo}\label{desempenho-preditivo}
+
+\begin{itemize}
+\tightlist
+\item
+  Tabela comparativa
+\item
+  Curvas ROC
+\item
+  Métricas
+\end{itemize}
+
+\subsection{Interpretação dos
+Modelos}\label{interpretauxe7uxe3o-dos-modelos}
+
+\begin{itemize}
+\tightlist
+\item
+  Coeficientes frequentistas
+\item
+  Distribuições posteriores bayesianas
+\item
+  Comparação de incerteza
+\end{itemize}
+
+\section{Discussão}\label{discussuxe3o}
+
+\begin{itemize}
+\tightlist
+\item
+  Diferenças conceituais observadas
+\item
+  Robustez dos resultados
+\item
+  Interpretabilidade
+\item
+  Incerteza
+\item
+  Aplicabilidade prática
+\end{itemize}
+
+teste de referencia \textcite{autor2020}
+
+\section{Conclusão}\label{conclusuxe3o}
+
+\begin{itemize}
+\tightlist
+\item
+  Síntese dos resultados
+\item
+  Quando usar frequentista vs bayesiano
+\item
+  Limitações
+\end{itemize}
+
+Breve explicação do problema, com principais resultados e propostas
+futuras
+
+
+\printbibliography[title=Referências]
+
+
+
+\end{document}

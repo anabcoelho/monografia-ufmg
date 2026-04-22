@@ -164,6 +164,7 @@
 % Impede o sumário de colar na capa
 \usepackage{tocloft}
 \setcounter{tocdepth}{3}
+\usepackage{placeins}
 \KOMAoption{captions}{tableheading}
 \usepackage{xcolor}
 \newcommand{\red}[1]{\textcolor{red}{#1}}
@@ -329,10 +330,33 @@ Finally, the results highlight the strengths and limitations of each statistical
 \tableofcontents
 \newpage
 
-\red{Anotações para escrita}
+\red{Controle de escrita}
 
-\red{estou colocando comentários em vermelho para destacar pontos a revisar ou expandir.
-Já coloquei, em tópicos, uma possivel estrutura para o trabalho como um todo}
+\red{estou colocando comentários em vermelho para destacar pontos a revisar ou expandir}
+
+Controle de Status (uso interno)
+
+\begin{itemize}
+\tightlist
+\item
+  {[}TBD{]} -\textgreater{} revisar ainda os tópicos, organizar melhor a
+  estrutura, definir quais análises e gráficos serão feitos, etc.
+\item
+  {[}TO DO{]} -\textgreater{} já tenho uma ideia geral do que quero
+  escrever, já em tópicos, mas ainda não comecei a escrever o texto
+\item
+  {[}WIP{]} -\textgreater{} Em desenvolvimento
+\item
+  {[}DRAFT{]} -\textgreater{} Versão preliminar
+\item
+  {[}CHECK{]} --\textgreater{} verificação pendente (conceito, dados,
+  código, referências)
+\item
+  {[}AJUSTAR{]} --\textgreater{} ajuste fino de redação, figura ou
+  formatação (revisão textual)
+\item
+  {[}FINAL{]} Versão definitiva
+\end{itemize}
 
 \section{Introdução}\label{introduuxe7uxe3o}
 
@@ -631,22 +655,27 @@ A padronização foi adotada para:
 
 \section{Resultados}\label{resultados}
 
-\subsection{Análise Exploratória}\label{anuxe1lise-exploratuxf3ria}
-
-\textcolor{red}{Vale, talvez, reduzir um pouco. A ideia é justificar escolhas de modelagem.}
+\subsection{{[}OK{]} Análise
+Exploratória}\label{ok-anuxe1lise-exploratuxf3ria}
 
 A análise exploratória tem como finalidade compreender a estrutura dos
 dados, identificar padrões gerais, possíveis assimetrias, outliers e
-relações preliminares entre variáveis.
+relações preliminares entre variáveis. Essa etapa é fundamental para
+orientar as decisões de modelagem, especialmente no que tange à escolha
+de variáveis, tratamento de outliers e seleção de técnicas de modelagem
+adequadas ao perfil dos dados.
 
 O conjunto de dados é composto por 4269 observações e 13 variáveis,
 incluindo a variável resposta \texttt{loan\_status}, que indica se o
 empréstimo foi aprovado ou rejeitado. As variáveis preditoras incluem
-informações como renda anual, pontuação de crédito (\texttt{CIBIL}
-score), nível educacional, entre outras características dos
-solicitantes.
+informações como renda anual, pontuação de crédito
+(\texttt{cibil\_score}), nível educacional, entre outras características
+dos solicitantes.
 
-A Tabela~\ref{tbl-variaveis} apresenta as principais estatísticas
+\subsubsection{Estatísticas
+univariadas}\label{estatuxedsticas-univariadas}
+
+A Tabela~\ref{tbl-variaveis-num} apresenta as principais estatísticas
 descritivas das variáveis numéricas do conjunto de dados, incluindo
 média, mediana, valor mínimo e máximo. Em média, os solicitantes
 apresentam aproximadamente 2 a 3 dependentes, renda anual em torno de 5
@@ -660,7 +689,7 @@ indivíduos, com desvios-padrão elevados.
 
 \begin{longtable}[]{@{}lrrrrr@{}}
 
-\caption{\label{tbl-variaveis}Estatísticas descritivas das variáveis
+\caption{\label{tbl-variaveis-num}Estatísticas descritivas das variáveis
 numéricas do conjunto de dados.}
 
 \tabularnewline
@@ -691,6 +720,43 @@ bank\_asset\_value & 4.97669e+06 & 4.6e+06 & 0 & 1.47e+07 &
 
 }
 
+A Tabela~\ref{tbl-categoricas} apresenta a distribuição das variáveis
+categóricas do conjunto de dados. Observa-se que as categorias
+analisadas exibem distribuições globalmente equilibradas, sem
+predominância acentuada de um único grupo, o que contribui para a
+estabilidade estatística e reduz potenciais vieses na etapa de
+modelagem.
+
+{
+
+\begin{longtable}[]{@{}llrr@{}}
+
+\caption{\label{tbl-categoricas}Distribuição das variáveis categóricas
+do conjunto de dados.}
+
+\tabularnewline
+
+\toprule\noalign{}
+variavel & categoria & n & percentual (\%) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+no\_of\_dependents & 0 & 712 & 16.68 \\
+no\_of\_dependents & 1 & 697 & 16.33 \\
+no\_of\_dependents & 2 & 708 & 16.58 \\
+no\_of\_dependents & 3 & 727 & 17.03 \\
+no\_of\_dependents & 4 & 752 & 17.62 \\
+no\_of\_dependents & 5 & 673 & 15.76 \\
+education & Graduate & 2144 & 50.22 \\
+education & Not Graduate & 2125 & 49.78 \\
+self\_employed & No & 2119 & 49.64 \\
+self\_employed & Yes & 2150 & 50.36 \\
+
+\end{longtable}
+
+}
+
 As variáveis financeiras apresentam elevada amplitude e distribuição
 aproximadamente uniforme dentro de seus intervalos observados. Embora os
 desvios-padrão sejam elevados em termos absolutos, a análise gráfica
@@ -698,6 +764,20 @@ feita na Figura~\ref{fig-distribuicoes} não indica forte assimetria ou
 concentração modal acentuada.Esse comportamento sugere heterogeneidade
 na amostra, mas com dispersão relativamente equilibrada ao longo do
 espaço amostral.
+
+Além disso, \texttt{cibil\_score} apresenta uma distribuição
+relativamente mais concentrada em torno da mediana, o que sugere menor
+variabilidade na avaliação de crédito em comparação com as variáveis
+patrimoniais. Esse comportamento pode indicar que o score de crédito
+atua como uma variável estabilizadora no processo de decisão de
+concessão de empréstimos.
+
+Outro ponto relevante é a presença de valores mínimos negativos em
+\texttt{residential\_assets\_value}, o que pode indicar inconsistências
+de registro ou tratamentos contábeis específicos no conjunto de dados.
+Esse tipo de característica pode afetar a modelagem, exigindo atenção em
+etapas de pré-processamento, especialmente em modelos sensíveis à escala
+e à interpretação econômica das variáveis.
 
 \begin{figure}
 
@@ -806,32 +886,8 @@ numéricas do conjunto de dados}
 
 \end{figure}%
 
-Além disso, \texttt{cibil\_score} apresenta uma distribuição
-relativamente mais concentrada em torno da mediana, o que sugere menor
-variabilidade na avaliação de crédito em comparação com as variáveis
-patrimoniais. Esse comportamento pode indicar que o score de crédito
-atua como uma variável estabilizadora no processo de decisão de
-concessão de empréstimos.
-
-Outro ponto relevante é a presença de valores mínimos negativos em
-\texttt{residential\_assets\_value}, o que pode indicar inconsistências
-de registro ou tratamentos contábeis específicos no conjunto de dados.
-Esse tipo de característica pode afetar a modelagem, exigindo atenção em
-etapas de pré-processamento, especialmente em modelos sensíveis à escala
-e à interpretação econômica das variáveis.
-
-\begin{figure}
-
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-target-plot-1.pdf}}
-
-}
-
-\caption{\label{fig-target-plot}Distribuição da aprovação de
-empréstimos}
-
-\end{figure}%
+\subsubsection{Análise da variável resposta e relações com as variáveis
+preditoras}\label{anuxe1lise-da-variuxe1vel-resposta-e-relauxe7uxf5es-com-as-variuxe1veis-preditoras}
 
 Na Figura~\ref{fig-target-plot}, observa-se a distribuição da variável
 resposta \texttt{loan\_status}, indicando que aproximadamente 62.22\%
@@ -844,12 +900,12 @@ modelagem.
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-target-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-target-plot-1.pdf}}
 
 }
 
-\caption{\label{fig-distribuicoes-target}Distribuição das variáveis
-numéricas por status de aprovação do empréstimo}
+\caption{\label{fig-target-plot}Distribuição da aprovação de
+empréstimos}
 
 \end{figure}%
 
@@ -877,14 +933,45 @@ distribuição mais equilibrada entre os grupos.
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-correlacao-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-target-1.pdf}}
 
 }
 
-\caption{\label{fig-correlacao}Mapa de calor da correlação entre
-variáveis numéricas}
+\caption{\label{fig-distribuicoes-target}Distribuição das variáveis
+numéricas por status de aprovação do empréstimo}
 
 \end{figure}%
+
+A Figura~\ref{fig-categoricas} apresenta a distribuição das frequências
+absolutas para as variáveis categóricas Nível educacional, Trabalho
+autônomo e Número de dependentes, segmentadas pelo status de aprovação.
+Diferente do observado na variável cibil\_score, as variáveis
+categóricas exibem uma distribuição notavelmente homogênea entre as
+classes. Observa-se que a proporção entre empréstimos aprovados e
+rejeitados mantém-se praticamente constante, independentemente de o
+candidato ser graduado ou não, ou de possuir trabalho autônomo. No que
+tange ao número de dependentes, o comportamento é análogo: não há uma
+categoria específica (de 0 a 5 dependentes) que apresente uma vantagem
+ou desvantagem desproporcional na aprovação do crédito. Sob a ótica da
+modelagem estatística, essa independência aparente sugere que tais
+variáveis podem apresentar coeficientes com menor magnitude ou maior
+incerteza .
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-categoricas-1.pdf}}
+
+}
+
+\caption{\label{fig-categoricas}Distribuição das variáveis categóricas
+segundo o status do empréstimo}
+
+\end{figure}%
+
+\subsubsection{Análise de correlação entre variáveis
+numéricas}\label{anuxe1lise-de-correlauxe7uxe3o-entre-variuxe1veis-numuxe9ricas}
 
 A matriz de correlação (Figura~\ref{fig-correlacao}) revela associações
 relevantes entre as variáveis financeiras do conjunto de dados.
@@ -910,18 +997,21 @@ indica potencial multicolinearidade, aspecto que deve ser considerado na
 etapa de modelagem, especialmente na interpretação dos coeficientes da
 regressão logística.
 
-\begin{figure}
+\begin{figure}[htbp]
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-boxplots-target-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-correlacao-1.pdf}}
 
 }
 
-\caption{\label{fig-boxplots-target}Boxplots das variáveis numéricas por
-status de aprovação do empréstimo}
+\caption{\label{fig-correlacao}Mapa de calor da correlação entre
+variáveis numéricas}
 
 \end{figure}%
+
+\subsubsection{Análise de outliers e
+dispersão}\label{anuxe1lise-de-outliers-e-dispersuxe3o}
 
 Complementarmente à análise de densidade, a
 Figura~\ref{fig-boxplots-target} apresenta os boxplots das mesmas
@@ -953,42 +1043,16 @@ flexível do impacto desses casos nos parâmetros estimados.
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-categoricas-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-boxplots-target-1.pdf}}
 
 }
 
-\caption{\label{fig-categoricas}Distribuição das variáveis categóricas
-segundo o status do empréstimo}
+\caption{\label{fig-boxplots-target}Boxplots das variáveis numéricas por
+status de aprovação do empréstimo}
 
 \end{figure}%
 
-A Figura~\ref{fig-categoricas} apresenta a distribuição das frequências
-absolutas para as variáveis categóricas Nível educacional, Trabalho
-autônomo e Número de dependentes, segmentadas pelo status de aprovação.
-Diferente do observado na variável cibil\_score, as variáveis
-categóricas exibem uma distribuição notavelmente homogênea entre as
-classes. Observa-se que a proporção entre empréstimos aprovados e
-rejeitados mantém-se praticamente constante, independentemente de o
-candidato ser graduado ou não, ou de possuir trabalho autônomo.
-
-No que tange ao número de dependentes, o comportamento é análogo: não há
-uma categoria específica (de 0 a 5 dependentes) que apresente uma
-vantagem ou desvantagem desproporcional na aprovação do crédito. Sob a
-ótica da modelagem estatística, essa independência aparente sugere que
-tais variáveis podem apresentar coeficientes com menor magnitude ou
-maior incerteza (p-valores elevados no contexto frequentista ou
-distribuições posteriores centradas próximas a zero no contexto
-bayesiano). Para o estudo comparativo, essas variáveis são
-particularmente interessantes, pois permitem avaliar como cada abordagem
-quantifica a relevância de preditores que, visualmente, parecem exercer
-pouca influência direta sobre a variável resposta no nível univariado.
-
-\red{Bayes: variáveis fracas -> distribuições posterior muito parecidas com a prior (se for uma prior informativa) ou muito largas (se for não informativa). 
-
-pode ser legal se a gente fizer uma análise de sensibilidade, mostrando como a escolha da prior afeta a distribuição posterior dessas variáveis fracas. (removendo o CHIBIL)
-}
-
-\subsection{Pré processamento}\label{pruxe9-processamento-1}
+\subsection{{[}WIP{]} Pré processamento}\label{wip-pruxe9-processamento}
 
 \subsubsection{Verificação de valores
 ausentes}\label{verificauxe7uxe3o-de-valores-ausentes}
@@ -1016,14 +1080,29 @@ Não foi aplicado tratamento automático de outliers, uma vez que valores
 extremos são esperados em dados financeiros e podem conter informação
 relevante para a classificação do risco de crédito.
 
-\section{Codificação e padronização de
+\subsubsection{Codificação e padronização de
 variáveis}\label{codificauxe7uxe3o-e-padronizauxe7uxe3o-de-variuxe1veis}
 
-\red{como vamos tratar o preprocessamento dessa base, chear se há valores nulos, Outliers (precisamos tratar?)  Codificação de variáveis categóricas (com one hot encoding) e padronização (usaria o standard)}
+Com o objetivo de tornar os dados adequados à aplicação de modelos de
+regressão logística, foi realizado um processo de codificação das
+variáveis categóricas e padronização das variáveis numéricas. As
+variáveis categóricas consideradas no estudo incluem: o nível
+educacional (Graduate / Not Graduate) e a condição de trabalho autônomo
+(Yes/No). Essas variáveis foram tratadas por meio de one-hot encoding,
+convertendo cada categoria em variáveis indicadoras binárias. Para
+evitar problemas de multicolinearidade perfeita, uma categoria de
+referência foi removida em cada conjunto de dummies.
 
-O pré-processamento adotado priorizou a preservação da estrutura
-original dos dados, com intervenções mínimas e justificadas, assegurando
-robustez estatística e interpretabilidade na etapa de modelagem.
+As variáveis numéricas foram padronizadas utilizando o método standard.
+Essa etapa garante que todas as variáveis estejam na mesma escala,
+facilitando a convergência dos algoritmos de estimação e permitindo uma
+interpretação mais comparável dos coeficientes estimados.
+
+Ressalta-se que a padronização não altera a informação contida nos
+dados, mas apenas sua escala, sendo especialmente relevante em modelos
+que utilizam métodos de otimização numérica e em abordagens bayesianas,
+nas quais a escolha de distribuições a priori é sensível à magnitude dos
+parâmetros.
 
 \subsection{Modelagem e Avaliação}\label{modelagem-e-avaliauxe7uxe3o}
 

@@ -1,9 +1,0 @@
----
-title: "Teste Bibliografia"
-format: pdf
-bibliography: referencias.bib
----
-
-Este é um teste de citação segundo @autor2020.
-
-# Referências

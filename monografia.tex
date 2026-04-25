@@ -358,9 +358,7 @@ Controle de Status (uso interno)
   {[}FINAL{]} Versão definitiva
 \end{itemize}
 
-\section{Introdução}\label{introduuxe7uxe3o}
-
-Tópicos a serem abordados:
+\section{{[}TBD{]} Introdução}\label{tbd-introduuxe7uxe3o}
 
 \begin{itemize}
 \tightlist
@@ -383,15 +381,18 @@ Tópicos a serem abordados:
   apresentamos\ldots. A Seção 3 trata de\ldots{} )
 \end{itemize}
 
-\section{Referencial Teórico}\label{referencial-teuxf3rico}
+\section{{[}TO DO{]} Referencial
+Teórico}\label{to-do-referencial-teuxf3rico}
 
 \red{um dos principais capítulos, já que o foco do trabalho é a comparação entre abordagens.}
 
-\subsection{Fundamentos de Probabilidade e Inferência
-Estatística}\label{fundamentos-de-probabilidade-e-inferuxeancia-estatuxedstica}
+\subsection{{[}TO DO{]} Fundamentos de Probabilidade e Inferência
+Estatística}\label{to-do-fundamentos-de-probabilidade-e-inferuxeancia-estatuxedstica}
 
 \begin{itemize}
 \tightlist
+\item
+  Probabilidade como frequencia vs probabilidade como grau de crença
 \item
   Variáveis aleatórias e distribuições
 \item
@@ -402,8 +403,8 @@ Estatística}\label{fundamentos-de-probabilidade-e-inferuxeancia-estatuxedstica}
   Inferência como problema de estimação
 \end{itemize}
 
-\subsection{Problemas de Classificação em Aprendizado
-Estatístico}\label{problemas-de-classificauxe7uxe3o-em-aprendizado-estatuxedstico}
+\subsection{{[}TO DO{]} Problemas de Classificação em Aprendizado
+Estatístico}\label{to-do-problemas-de-classificauxe7uxe3o-em-aprendizado-estatuxedstico}
 
 \begin{itemize}
 \tightlist
@@ -414,44 +415,67 @@ Estatístico}\label{problemas-de-classificauxe7uxe3o-em-aprendizado-estatuxedsti
 \item
   Separabilidade linear e não linear
 \item
-  Overfitting e generalização
+  Overfitting e generalização (preparando terreno para problemas de
+  crédito, onde a separação perfeita é improvável e o trade-off entre
+  viés e variância é crucial)
+\item
+  Probabilidades preditas vs.~classes previstas
+\item
+  Threshold de decisão e custo de erro
 \end{itemize}
 
-\subsection{Avaliação de Modelos de
-Classificação}\label{avaliauxe7uxe3o-de-modelos-de-classificauxe7uxe3o}
+\subsection{{[}TO DO{]} Avaliação de Modelos de
+Classificação}\label{to-do-avaliauxe7uxe3o-de-modelos-de-classificauxe7uxe3o}
 
 \begin{itemize}
 \tightlist
+\item
+  Desbalanceamento de classes (muito comum em dados de crédito, mas não
+  no dataset atual)
 \item
   Matriz de confusão
 \item
   Accuracy, Precision, Recall, F1-score
 \item
+  Curvas Precision--Recall
+\item
   Curva ROC e AUC
 \item
   Trade-off entre sensibilidade e especificidade
+\item
+  Custo assimétrico de erros (FP vs FN)
 \end{itemize}
 
-\subsection{Regressão Logística
-Frequentista}\label{regressuxe3o-loguxedstica-frequentista}
+\subsection{{[}TO DO{]} Regressão Logística
+Frequentista}\label{to-do-regressuxe3o-loguxedstica-frequentista}
 
 \begin{itemize}
 \tightlist
 \item
   Formulação do modelo
 \item
+  Assumptions do modelo (e.g., independência, linearidade no logit,
+  ausência de multicolinearidade)
+\item
+  Parametrização e interpretação
+\item
   Interpretação dos coeficientes
 \item
   Função logística
 \item
-  Estimação por máxima verossimilhança
+  Estimação por máxima verossimilhança (e a função de verossimilhança)
 \item
   Testes de hipótese
 \item
   Intervalos de confiança
+\item
+  Odds e odds ratio
+\item
+  Limitações da abordagem frequentista
 \end{itemize}
 
-\subsection{Inferência Bayesiana}\label{inferuxeancia-bayesiana}
+\subsection{{[}TO DO{]} Inferência
+Bayesiana}\label{to-do-inferuxeancia-bayesiana}
 
 \begin{itemize}
 \tightlist
@@ -460,46 +484,46 @@ Frequentista}\label{regressuxe3o-loguxedstica-frequentista}
 \item
   diferenças conceituais
 \item
-  Priors, likelihood e posterior
+  parametros como variáveis aleatórias
 \item
-  Interpretação probabilística dos parâmetros
+  Priors, likelihood e posterior
 \item
   Incerteza e distribuição posterior
 \item
-  Conceitos: prior, likelihood, posterior
-\item
   Vantagens da abordagem bayesiana
 \item
+  Atualização sequencial da evidência
+\item
   Interpretação probabilística
+\item
+  controle de sobreajuste (\ldots)
+  \red{Encaixar o que mais fizer sentido aqui.}
 \end{itemize}
 
-\subsection{Regressão Logística
-Bayesiana}\label{regressuxe3o-loguxedstica-bayesiana}
+\subsection{{[}TO DO{]} Regressão Logística
+Bayesiana}\label{to-do-regressuxe3o-loguxedstica-bayesiana}
+
+(sempre traçando paralelos com a versão frequentista) - Formulação do
+modelo probabilístico - Escolha de priors - Inferência via MCMC /
+aproximações variacionais - Diagnóstico de convergência (R-hat,
+traceplots) - Intervalos credíveis - Sensibilidade a priors - Robustez
+em pequenas amostras - Interpretação dos coeficientes sob posterior -
+Comparação direta de MLE e MAP MAP- Maximum-a-Posteriori MLE- maximum
+likelyhood estimation (\ldots)
+\red{Encaixar o que mais fizer sentido aqui.}
+
+\subsection{{[}TO DO{]} Aplicações em Risco de Crédito e
+Finanças}\label{to-do-aplicauxe7uxf5es-em-risco-de-cruxe9dito-e-finanuxe7as}
+
+\red{Não estender muito, acho que 1 página já deve ser suficiente, o foco é a comparação}
+
+(Contextualização) - Modelos de scoring de crédito - Variáveis
+financeiras e risco - Decisão de concessão de empréstimos - Uso das
+probabilidades preditas para gestão de risco - Transparência e
+interpretabilidade
 
 \begin{itemize}
 \tightlist
-\item
-  Formulação do modelo probabilístico
-\item
-  Escolha de priors
-\item
-  Inferência via MCMC / aproximações variacionais
-\item
-  Intervalos credíveis
-\item
-  Sensibilidade a priors
-\end{itemize}
-
-\subsection{Aplicações em Risco de Crédito e
-Finanças}\label{aplicauxe7uxf5es-em-risco-de-cruxe9dito-e-finanuxe7as}
-
-\begin{itemize}
-\item
-  Modelos de scoring de crédito
-\item
-  Variáveis financeiras e risco
-\item
-  Decisão de concessão de empréstimos
 \item
   Em problemas de concessão de empréstimos, a incerteza é tão importante
   quanto a previsão.
@@ -512,11 +536,12 @@ Finanças}\label{aplicauxe7uxf5es-em-risco-de-cruxe9dito-e-finanuxe7as}
   decisões.
 \end{itemize}
 
-\section{Metodologia}\label{metodologia}
+\section{{[}WIP{]} Metodologia}\label{wip-metodologia}
 
 \red{Aqui entra o dataset como aplicação, não como foco teórico.}
 
-\subsection{Descrição dos Dados}\label{descriuxe7uxe3o-dos-dados}
+\subsection{{[}DRAFT{]} Descrição dos
+Dados}\label{draft-descriuxe7uxe3o-dos-dados}
 
 \red {encaixar a origem dos dados, o contexto de coleta, se tiver...}
 
@@ -555,69 +580,47 @@ Bank\_asset\_value & Ativos bancários \\
 Loan\_status & Variável alvo (0/1) \\
 \end{longtable}
 
-\subsection{Pré-processamento}\label{pruxe9-processamento}
+\subsection{{[}TBD{]} Pré-processamento}\label{tbd-pruxe9-processamento}
 
-\subsubsection{Verificação da Estrutura de dados e tratamento de valores
-ausentes}\label{verificauxe7uxe3o-da-estrutura-de-dados-e-tratamento-de-valores-ausentes}
+\subsubsection{{[}TO DO{]} Verificação da Estrutura de dados e
+tratamento de valores
+ausentes}\label{to-do-verificauxe7uxe3o-da-estrutura-de-dados-e-tratamento-de-valores-ausentes}
 
-\subsubsection{Outliers}\label{outliers}
+\subsubsection{{[}TO DO{]} Outliers}\label{to-do-outliers}
 
 \red {ainda falta escrever}
 
-Não foi aplicado tratamento automático de outliers, uma vez que:
+Não foi aplicado tratamento automático de outliers. Essa decisão foi
+motivada pelas seguintes considerações:
 
-\begin{itemize}
-\tightlist
-\item
-  Valores extremos são esperados em dados financeiros;
-\item
-  Podem representar perfis legítimos de alto patrimônio ou elevado risco
-  de crédito;
-\item
-  Sua remoção indiscriminada poderia eliminar informação relevante para
-  a tarefa de classificação.
-\end{itemize}
+Valores extremos são esperados em dados financeiros; Podem representar
+perfis legítimos de alto patrimônio ou elevado risco de crédito; A
+remoção indiscriminada poderia eliminar informação relevante para a
+tarefa de classificação.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  A Visão Frequentista: O Problema da SensibilidadeNa inferência
-  frequentista clássica (como na Regressão Logística por Máxima
-  Verossimilhança), o modelo busca os parâmetros que tornam os dados
-  observados o mais prováveis possível.O efeito do outlier: Se você tem
-  um outlier muito extremo, a função de verossimilhança pode ser
-  ``puxada'' por esse ponto para tentar explicá-lo.A consequência: Isso
-  pode enviesar os coeficientes, fazendo com que o modelo perca precisão
-  para a maioria dos dados ``normais'' só para tentar se ajustar ao
-  ponto atípico. Para corrigir isso, o estatístico frequentista
-  geralmente precisa de técnicas de ``Regressão Robusta'' ou tratamentos
-  manuais (como o winsorizing ou a remoção do dado).
-\end{enumerate}
+Do ponto de vista frequentista, modelos estimados por máxima
+verossimilhança podem ser sensíveis a observações extremas, uma vez que
+tais pontos influenciam diretamente o ajuste dos coeficientes. Técnicas
+adicionais, como regressão robusta ou winsorização, são comumente
+empregadas para mitigar esse efeito.
 
-Na abordagem Bayesiana, se trata os parâmetros como distribuições de
-probabilidade.Distribuições de Cauda Longa: Em vez de assumir que os
-erros seguem uma distribuição Normal (que cai muito rápido nas pontas e
-``sofre'' com outliers), o modelo Bayesiano permite que você use, por
-exemplo, uma Distribuição t de Student.Por que funciona? A distribuição
-\(t\) tem ``caudas pesadas''. Isso significa que ela atribui uma
-probabilidade maior à ocorrência de valores extremos do que a Normal.O
-``Pulo do Gato'': Quando o modelo encontra um outlier, a distribuição de
-cauda longa o interpreta como ``apenas um evento raro, mas possível'',
-em vez de um erro bizarro que exige mudar toda a inclinação da reta de
-regressão. Assim, o impacto desse ponto no valor central do parâmetro é
-minimizado de forma natural, sem que você precise deletar o dado.
+Na abordagem bayesiana, a incerteza dos parâmetros é explicitamente
+modelada por distribuições a posteriori. A utilização de distribuições
+com caudas mais pesadas, como a distribuição t de Student, permite
+acomodar valores extremos de forma natural, reduzindo seu impacto sobre
+as estimativas centrais sem a necessidade de remoção explícita dos
+dados.
 
-\subsubsection{Codificação de variáveis
-categóricas}\label{codificauxe7uxe3o-de-variuxe1veis-categuxf3ricas}
+\subsubsection{{[}TO DO{]} Codificação de variáveis
+categóricas}\label{to-do-codificauxe7uxe3o-de-variuxe1veis-categuxf3ricas}
 
 Variáveis categóricas foram transformadas em representações numéricas
 adequadas à modelagem.
 
-\subsubsection{Padronização de variáveis
-numéricas}\label{padronizauxe7uxe3o-de-variuxe1veis-numuxe9ricas}
+\subsubsection{{[}TO DO{]} Padronização de variáveis
+numéricas}\label{to-do-padronizauxe7uxe3o-de-variuxe1veis-numuxe9ricas}
 
-A padronização foi adotada para:
+As variáveis numéricas foram padronizadas com o objetivo de:
 
 \begin{itemize}
 \tightlist
@@ -626,11 +629,39 @@ A padronização foi adotada para:
 \item
   Permitir interpretação comparável dos coeficientes;
 \item
-  Evitar que variáveis em escalas maiores dominem o processo de ajuste
-  do modelo.
+  Evitar que variáveis em escalas distintas dominem o processo de
+  ajuste.
 \end{itemize}
 
-\subsection{Estratégia de Modelagem}\label{estratuxe9gia-de-modelagem}
+\subsubsection{{[}TO DO{]} Divisão entre treino e
+teste}\label{to-do-divisuxe3o-entre-treino-e-teste}
+
+O conjunto de dados foi particionado em subconjuntos de treino (75\%) e
+teste (25\%) por meio de amostragem aleatória estratificada em relação à
+variável resposta Y=loan\_status. Essa estratégia assegura que as
+distribuições marginais das classes sejam preservadas em ambos os
+subconjuntos, como: \[
+\mathbb{P}(Y = 1 \mid \text{treino})
+\;\approx\;
+\mathbb{P}(Y = 1 \mid \text{teste})
+\;\approx\;
+\mathbb{P}(Y = 1).
+\]
+
+A preservação das proporções de classe é fundamental em problemas de
+classificação binária, pois evita distorções na estimação dos parâmetros
+e na avaliação das funções de decisão, especialmente em cenários com
+possíveis assimetrias entre as classes.
+
+Os modelos foram estimados exclusivamente com observações do conjunto de
+treino, enquanto o conjunto de teste foi utilizado apenas para a
+avaliação do desempenho preditivo fora da amostra. Essa separação
+garante que as métricas de desempenho estimadas correspondam a uma
+aproximação não viesada do erro de generalização, reduzindo o risco de
+sobreajuste (overfitting) e vazamento de informação.
+
+\subsection{{[}TO DO{]} Estratégia de
+Modelagem}\label{to-do-estratuxe9gia-de-modelagem}
 
 \begin{itemize}
 \tightlist
@@ -642,7 +673,8 @@ A padronização foi adotada para:
   Métricas escolhidas
 \end{itemize}
 
-\subsection{Modelos Avaliados}\label{modelos-avaliados}
+\subsection{{[}TO DO{]} Modelos
+Avaliados}\label{to-do-modelos-avaliados}
 
 \begin{itemize}
 \tightlist
@@ -653,10 +685,10 @@ A padronização foi adotada para:
   adicionais'', caso queira)
 \end{itemize}
 
-\section{Resultados}\label{resultados}
+\section{{[}WIP{]} Resultados}\label{wip-resultados}
 
-\subsection{{[}OK{]} Análise
-Exploratória}\label{ok-anuxe1lise-exploratuxf3ria}
+\subsection{{[}DRAFT{]} Análise
+Exploratória}\label{draft-anuxe1lise-exploratuxf3ria}
 
 A análise exploratória tem como finalidade compreender a estrutura dos
 dados, identificar padrões gerais, possíveis assimetrias, outliers e
@@ -997,6 +1029,36 @@ indica potencial multicolinearidade, aspecto que deve ser considerado na
 etapa de modelagem, especialmente na interpretação dos coeficientes da
 regressão logística.
 
+\begin{verbatim}
+                         income_annum loan_amount loan_term cibil_score
+income_annum                    1.000       0.927     0.011      -0.023
+loan_amount                     0.927       1.000     0.008      -0.017
+loan_term                       0.011       0.008     1.000       0.008
+cibil_score                    -0.023      -0.017     0.008       1.000
+residential_assets_value        0.637       0.595     0.008      -0.020
+commercial_assets_value         0.640       0.603    -0.005      -0.004
+luxury_assets_value             0.929       0.861     0.012      -0.029
+bank_asset_value                0.851       0.788     0.017      -0.015
+                         residential_assets_value commercial_assets_value
+income_annum                                0.637                   0.640
+loan_amount                                 0.595                   0.603
+loan_term                                   0.008                  -0.005
+cibil_score                                -0.020                  -0.004
+residential_assets_value                    1.000                   0.415
+commercial_assets_value                     0.415                   1.000
+luxury_assets_value                         0.591                   0.591
+bank_asset_value                            0.527                   0.549
+                         luxury_assets_value bank_asset_value
+income_annum                           0.929            0.851
+loan_amount                            0.861            0.788
+loan_term                              0.012            0.017
+cibil_score                           -0.029           -0.015
+residential_assets_value               0.591            0.527
+commercial_assets_value                0.591            0.549
+luxury_assets_value                    1.000            0.789
+bank_asset_value                       0.789            1.000
+\end{verbatim}
+
 \begin{figure}[htbp]
 
 \centering{
@@ -1054,16 +1116,16 @@ status de aprovação do empréstimo}
 
 \subsection{{[}WIP{]} Pré processamento}\label{wip-pruxe9-processamento}
 
-\subsubsection{Verificação de valores
-ausentes}\label{verificauxe7uxe3o-de-valores-ausentes}
+\subsubsection{{[}DRAFT{]} Verificação de valores
+ausentes}\label{draft-verificauxe7uxe3o-de-valores-ausentes}
 
 A primeira etapa consistiu na verificação da presença de valores
 ausentes nas variáveis do conjunto de dados. A ausência de missing
 values elimina a necessidade de imputação, evitando a introdução de
 incerteza adicional ou viés sistemático.
 
-\subsubsection{Tratamento de inconsistências e
-outliers}\label{tratamento-de-inconsistuxeancias-e-outliers}
+\subsubsection{{[}DRAFT{]} Tratamento de inconsistências e
+outliers}\label{draft-tratamento-de-inconsistuxeancias-e-outliers}
 
 Observa-se que aproximadamente 0.01\% dos solicitantes apresentam
 valores negativos para ativos residenciais, correspondendo a um
@@ -1080,8 +1142,23 @@ Não foi aplicado tratamento automático de outliers, uma vez que valores
 extremos são esperados em dados financeiros e podem conter informação
 relevante para a classificação do risco de crédito.
 
-\subsubsection{Codificação e padronização de
-variáveis}\label{codificauxe7uxe3o-e-padronizauxe7uxe3o-de-variuxe1veis}
+\subsubsection{{[}DRAFT{]} Seleção de variáveis e análise de
+correlação}\label{draft-seleuxe7uxe3o-de-variuxe1veis-e-anuxe1lise-de-correlauxe7uxe3o}
+
+A Figura~\ref{fig-correlacao} foi utilizada para investigar possíveis
+relações de dependência linear entre as variáveis numéricas. Observou-se
+a presença de correlações elevadas entre variáveis associadas à escala
+de renda e patrimônio, como renda anual, valor do empréstimo e ativos
+financeiros, comportamento esperado em bases de dados financeiras.
+
+Apesar dessas correlações, optou-se por não remover variáveis nesta
+etapa, uma vez que correlação elevada não implica, necessariamente,
+multicolinearidade prejudicial à estimação, e tais variáveis podem
+conter informação complementar relevante para a classificação do risco
+de crédito.
+
+\subsubsection{{[}DRAFT{]} Codificação e padronização de
+variáveis}\label{draft-codificauxe7uxe3o-e-padronizauxe7uxe3o-de-variuxe1veis}
 
 Com o objetivo de tornar os dados adequados à aplicação de modelos de
 regressão logística, foi realizado um processo de codificação das
@@ -1104,37 +1181,31 @@ que utilizam métodos de otimização numérica e em abordagens bayesianas,
 nas quais a escolha de distribuições a priori é sensível à magnitude dos
 parâmetros.
 
-\subsection{Modelagem e Avaliação}\label{modelagem-e-avaliauxe7uxe3o}
+\subsubsection{{[}DRAFT{]} Separação
+treino/teste}\label{draft-separauxe7uxe3o-treinoteste}
 
-\subsubsection{Modelo Frequentista}\label{modelo-frequentista}
+O conjunto de dados foi dividido aleatoriamente em subconjuntos de
+treino (75\%) e teste (25\%), utilizando amostragem estratificada em
+relação à variável resposta (loan\_status). Essa estratégia assegura que
+a proporção de observações pertencentes a cada classe seja preservada em
+ambos os subconjuntos.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(dplyr)}
-\FunctionTok{library}\NormalTok{(janitor)}
+O ajuste do modelo foi realizado exclusivamente com o conjunto de
+treino, enquanto o conjunto de teste foi reservado para a avaliação do
+desempenho preditivo fora da amostra, assegurando a separação adequada
+entre as etapas de estimação e validação.
 
-\NormalTok{loan }\OtherTok{\textless{}{-}}\NormalTok{ loan }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{clean\_names}\NormalTok{()}
+\subsection{{[}WIP{]} Modelagem e
+Avaliação}\label{wip-modelagem-e-avaliauxe7uxe3o}
 
-\NormalTok{loan}\SpecialCharTok{$}\NormalTok{loan\_status }\OtherTok{\textless{}{-}} \FunctionTok{as.factor}\NormalTok{(loan}\SpecialCharTok{$}\NormalTok{loan\_status)}
-\end{Highlighting}
-\end{Shaded}
+\subsubsection{{[}TBD{]} Modelo
+Frequentista}\label{tbd-modelo-frequentista}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{modelo\_logit }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(}
-\NormalTok{  loan\_status }\SpecialCharTok{\textasciitilde{}}\NormalTok{ no\_of\_dependents }\SpecialCharTok{+}
-\NormalTok{    education }\SpecialCharTok{+}
-\NormalTok{    self\_employed }\SpecialCharTok{+}
-\NormalTok{    income\_annum }\SpecialCharTok{+}
-\NormalTok{    loan\_amount }\SpecialCharTok{+}
-\NormalTok{    loan\_term }\SpecialCharTok{+}
-\NormalTok{    cibil\_score }\SpecialCharTok{+}
-\NormalTok{    residential\_assets\_value }\SpecialCharTok{+}
-\NormalTok{    commercial\_assets\_value }\SpecialCharTok{+}
-\NormalTok{    luxury\_assets\_value }\SpecialCharTok{+}
-\NormalTok{    bank\_asset\_value,}
-  \AttributeTok{data =}\NormalTok{ loan,}
+\NormalTok{  loan\_status }\SpecialCharTok{\textasciitilde{}}\NormalTok{ .,}
+  \AttributeTok{data =}\NormalTok{ treino,}
   \AttributeTok{family =} \FunctionTok{binomial}\NormalTok{(}\AttributeTok{link =} \StringTok{"logit"}\NormalTok{)}
 \NormalTok{)}
 
@@ -1145,37 +1216,31 @@ parâmetros.
 \begin{verbatim}
 
 Call:
-glm(formula = loan_status ~ no_of_dependents + education + self_employed + 
-    income_annum + loan_amount + loan_term + cibil_score + residential_assets_value + 
-    commercial_assets_value + luxury_assets_value + bank_asset_value, 
-    family = binomial(link = "logit"), data = loan)
+glm(formula = loan_status ~ ., family = binomial(link = "logit"), 
+    data = treino)
 
 Coefficients:
-                           Estimate Std. Error z value Pr(>|z|)    
-(Intercept)               1.149e+01  4.369e-01  26.307  < 2e-16 ***
-no_of_dependents.L        6.806e-02  1.475e-01   0.461    0.644    
-no_of_dependents.Q       -1.103e-01  1.462e-01  -0.755    0.451    
-no_of_dependents.C        1.841e-01  1.474e-01   1.249    0.212    
-no_of_dependents^4       -2.408e-01  1.471e-01  -1.637    0.102    
-no_of_dependents^5        7.704e-02  1.447e-01   0.533    0.594    
-educationNot Graduate     1.298e-01  1.197e-01   1.084    0.278    
-self_employedYes         -7.197e-02  1.195e-01  -0.602    0.547    
-income_annum              6.352e-07  9.207e-08   6.900 5.22e-12 ***
-loan_amount              -1.486e-07  1.838e-08  -8.088 6.06e-16 ***
-loan_term                 1.568e-01  1.167e-02  13.439  < 2e-16 ***
-cibil_score              -2.529e-02  8.637e-04 -29.284  < 2e-16 ***
-residential_assets_value -4.018e-09  1.203e-08  -0.334    0.738    
-commercial_assets_value  -1.931e-08  1.746e-08  -1.106    0.269    
-luxury_assets_value      -3.100e-08  1.764e-08  -1.757    0.079 .  
-bank_asset_value         -5.271e-08  3.378e-08  -1.561    0.119    
+                         Estimate Std. Error z value Pr(>|z|)    
+(Intercept)              -1.82901    0.13732 -13.319  < 2e-16 ***
+no_of_dependents          0.07698    0.06896   1.116    0.264    
+income_annum              1.72713    0.29252   5.904 3.54e-09 ***
+loan_amount              -1.44130    0.19212  -7.502 6.27e-14 ***
+loan_term                 0.89979    0.07540  11.934  < 2e-16 ***
+cibil_score              -4.27739    0.16860 -25.369  < 2e-16 ***
+residential_assets_value -0.01233    0.09019  -0.137    0.891    
+commercial_assets_value  -0.04204    0.08831  -0.476    0.634    
+luxury_assets_value      -0.18698    0.18309  -1.021    0.307    
+bank_asset_value         -0.18645    0.12697  -1.468    0.142    
+`education_Not Graduate`  0.06477    0.13790   0.470    0.639    
+self_employed_Yes        -0.09346    0.13788  -0.678    0.498    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 (Dispersion parameter for binomial family taken to be 1)
 
-    Null deviance: 5622.1  on 4240  degrees of freedom
-Residual deviance: 1836.0  on 4225  degrees of freedom
-AIC: 1868
+    Null deviance: 4185.9  on 3180  degrees of freedom
+Residual deviance: 1384.1  on 3169  degrees of freedom
+AIC: 1408.1
 
 Number of Fisher Scoring iterations: 7
 \end{verbatim}
@@ -1187,18 +1252,14 @@ Number of Fisher Scoring iterations: 7
 \end{Shaded}
 
 \begin{verbatim}
-             (Intercept)       no_of_dependents.L       no_of_dependents.Q 
-            9.804874e+04             1.070431e+00             8.955602e-01 
-      no_of_dependents.C       no_of_dependents^4       no_of_dependents^5 
-            1.202082e+00             7.859807e-01             1.080088e+00 
-   educationNot Graduate         self_employedYes             income_annum 
-            1.138591e+00             9.305589e-01             1.000001e+00 
+             (Intercept)         no_of_dependents             income_annum 
+              0.16057175               1.08002394               5.62447745 
              loan_amount                loan_term              cibil_score 
-            9.999999e-01             1.169820e+00             9.750240e-01 
+              0.23661967               2.45908372               0.01387883 
 residential_assets_value  commercial_assets_value      luxury_assets_value 
-            1.000000e+00             1.000000e+00             1.000000e+00 
-        bank_asset_value 
-            9.999999e-01 
+              0.98774658               0.95882766               0.82945863 
+        bank_asset_value `education_Not Graduate`        self_employed_Yes 
+              0.82989993               1.06691274               0.91077487 
 \end{verbatim}
 
 \begin{Shaded}
@@ -1212,46 +1273,254 @@ Waiting for profiling to be done...
 \end{verbatim}
 
 \begin{verbatim}
-                                2.5 %       97.5 %
-(Intercept)              4.260687e+04 2.364075e+05
-no_of_dependents.L       8.016263e-01 1.429585e+00
-no_of_dependents.Q       6.721711e-01 1.192543e+00
-no_of_dependents.C       9.006445e-01 1.605536e+00
-no_of_dependents^4       5.886913e-01 1.048249e+00
-no_of_dependents^5       8.134262e-01 1.434644e+00
-educationNot Graduate    9.006042e-01 1.440347e+00
-self_employedYes         7.360746e-01 1.176137e+00
-income_annum             1.000000e+00 1.000001e+00
-loan_amount              9.999998e-01 9.999999e-01
-loan_term                1.143737e+00 1.197306e+00
-cibil_score              9.733229e-01 9.766258e-01
-residential_assets_value 1.000000e+00 1.000000e+00
-commercial_assets_value  9.999999e-01 1.000000e+00
-luxury_assets_value      9.999999e-01 1.000000e+00
-bank_asset_value         9.999999e-01 1.000000e+00
+                               2.5 %      97.5 %
+(Intercept)              0.122018483  0.20910668
+no_of_dependents         0.943574730  1.23666686
+income_annum             3.184593766 10.03410852
+loan_amount              0.161710828  0.34357645
+loan_term                2.126336692  2.85808482
+cibil_score              0.009853959  0.01909253
+residential_assets_value 0.827500113  1.17873366
+commercial_assets_value  0.806438316  1.14029212
+luxury_assets_value      0.579134971  1.18766548
+bank_asset_value         0.646627846  1.06403124
+`education_Not Graduate` 0.814289400  1.39863874
+self_employed_Yes        0.694800768  1.19331435
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{prob }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(modelo\_logit, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
+\CommentTok{\# Probabilidades}
+\NormalTok{prob\_treino }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(modelo\_logit, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
+\NormalTok{prob\_teste  }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(modelo\_logit, }\AttributeTok{newdata =}\NormalTok{ teste, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
 
-\NormalTok{pred }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(prob }\SpecialCharTok{\textgreater{}} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{pred\_treino }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(prob\_treino }\SpecialCharTok{\textgreater{}=} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{pred\_teste  }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(prob\_teste  }\SpecialCharTok{\textgreater{}=} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\CommentTok{\# Converter para factor com níveis alinhados}
+\NormalTok{pred\_treino\_fac }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(pred\_treino, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\NormalTok{pred\_teste\_fac  }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(pred\_teste,  }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
 
-\FunctionTok{table}\NormalTok{(}\AttributeTok{Predito =}\NormalTok{ pred, }\AttributeTok{Real =}\NormalTok{ loan}\SpecialCharTok{$}\NormalTok{loan\_status)}
+\NormalTok{y\_treino\_fac }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(treino}\SpecialCharTok{$}\NormalTok{loan\_status, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\NormalTok{y\_teste\_fac  }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(teste}\SpecialCharTok{$}\NormalTok{loan\_status,  }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{conf\_treino }\OtherTok{\textless{}{-}} \FunctionTok{confusionMatrix}\NormalTok{(}
+  \AttributeTok{data      =}\NormalTok{ pred\_treino\_fac,}
+  \AttributeTok{reference =}\NormalTok{ y\_treino\_fac,}
+  \AttributeTok{positive  =} \StringTok{"1"}
+\NormalTok{)}
+
+\NormalTok{conf\_treino}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-       Real
-Predito Rejeitado Aprovado
-      0      2471      179
-      1       169     1422
+Confusion Matrix and Statistics
+
+          Reference
+Prediction    0    1
+         0 1884  146
+         1  126 1025
+                                         
+               Accuracy : 0.9145         
+                 95% CI : (0.9042, 0.924)
+    No Information Rate : 0.6319         
+    P-Value [Acc > NIR] : <2e-16         
+                                         
+                  Kappa : 0.8155         
+                                         
+ Mcnemar's Test P-Value : 0.2493         
+                                         
+            Sensitivity : 0.8753         
+            Specificity : 0.9373         
+         Pos Pred Value : 0.8905         
+         Neg Pred Value : 0.9281         
+             Prevalence : 0.3681         
+         Detection Rate : 0.3222         
+   Detection Prevalence : 0.3618         
+      Balanced Accuracy : 0.9063         
+                                         
+       'Positive' Class : 1              
+                                         
 \end{verbatim}
 
-\subsection{Desempenho Preditivo}\label{desempenho-preditivo}
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{conf\_teste }\OtherTok{\textless{}{-}} \FunctionTok{confusionMatrix}\NormalTok{(}
+  \AttributeTok{data      =}\NormalTok{ pred\_teste\_fac,}
+  \AttributeTok{reference =}\NormalTok{ y\_teste\_fac,}
+  \AttributeTok{positive  =} \StringTok{"1"}
+\NormalTok{)}
+
+\NormalTok{conf\_teste}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   0   1
+         0 592  47
+         1  38 383
+                                          
+               Accuracy : 0.9198          
+                 95% CI : (0.9018, 0.9354)
+    No Information Rate : 0.5943          
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.8331          
+                                          
+ Mcnemar's Test P-Value : 0.3855          
+                                          
+            Sensitivity : 0.8907          
+            Specificity : 0.9397          
+         Pos Pred Value : 0.9097          
+         Neg Pred Value : 0.9264          
+             Prevalence : 0.4057          
+         Detection Rate : 0.3613          
+   Detection Prevalence : 0.3972          
+      Balanced Accuracy : 0.9152          
+                                          
+       'Positive' Class : 1               
+                                          
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{y\_treino\_num }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{as.character}\NormalTok{(treino}\SpecialCharTok{$}\NormalTok{loan\_status))}
+\NormalTok{y\_teste\_num  }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{as.character}\NormalTok{(teste}\SpecialCharTok{$}\NormalTok{loan\_status))}
+\NormalTok{roc\_treino }\OtherTok{\textless{}{-}} \FunctionTok{roc}\NormalTok{(}
+  \AttributeTok{response =}\NormalTok{ y\_treino\_num,}
+  \AttributeTok{predictor =}\NormalTok{ prob\_treino,}
+  \AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+  \AttributeTok{direction =} \StringTok{"\textless{}"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{roc\_teste }\OtherTok{\textless{}{-}} \FunctionTok{roc}\NormalTok{(}
+  \AttributeTok{response =}\NormalTok{ y\_teste\_num,}
+  \AttributeTok{predictor =}\NormalTok{ prob\_teste,}
+  \AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+  \AttributeTok{direction =} \StringTok{"\textless{}"}
+\NormalTok{)}
+
+\NormalTok{auc\_treino }\OtherTok{\textless{}{-}} \FunctionTok{auc}\NormalTok{(roc\_treino)}
+\NormalTok{auc\_teste  }\OtherTok{\textless{}{-}} \FunctionTok{auc}\NormalTok{(roc\_teste)}
+
+\FunctionTok{plot}\NormalTok{(}
+\NormalTok{  roc\_treino,}
+  \AttributeTok{col =} \StringTok{"blue"}\NormalTok{,}
+  \AttributeTok{lwd =} \DecValTok{2}\NormalTok{,}
+  \AttributeTok{main =} \StringTok{"Curvas ROC — Treino vs Teste"}
+\NormalTok{)}
+
+\FunctionTok{plot}\NormalTok{(}
+\NormalTok{  roc\_teste,}
+  \AttributeTok{col =} \StringTok{"red"}\NormalTok{,}
+  \AttributeTok{lwd =} \DecValTok{2}\NormalTok{,}
+  \AttributeTok{add =} \ConstantTok{TRUE}
+\NormalTok{)}
+
+\FunctionTok{legend}\NormalTok{(}
+  \StringTok{"bottomright"}\NormalTok{,}
+  \AttributeTok{legend =} \FunctionTok{c}\NormalTok{(}
+    \FunctionTok{paste0}\NormalTok{(}\StringTok{"Treino (AUC = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(auc\_treino, }\DecValTok{3}\NormalTok{), }\StringTok{")"}\NormalTok{),}
+    \FunctionTok{paste0}\NormalTok{(}\StringTok{"Teste (AUC = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(auc\_teste, }\DecValTok{3}\NormalTok{), }\StringTok{")"}\NormalTok{)}
+\NormalTok{  ),}
+  \AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"blue"}\NormalTok{, }\StringTok{"red"}\NormalTok{),}
+  \AttributeTok{lwd =} \DecValTok{2}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/unnamed-chunk-8-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Treino}
+\NormalTok{pr\_treino }\OtherTok{\textless{}{-}} \FunctionTok{pr.curve}\NormalTok{(}
+  \AttributeTok{scores.class0 =}\NormalTok{ prob\_treino[treino}\SpecialCharTok{$}\NormalTok{loan\_status }\SpecialCharTok{==} \DecValTok{1}\NormalTok{],}
+  \AttributeTok{scores.class1 =}\NormalTok{ prob\_treino[treino}\SpecialCharTok{$}\NormalTok{loan\_status }\SpecialCharTok{==} \DecValTok{0}\NormalTok{],}
+  \AttributeTok{curve =} \ConstantTok{TRUE}
+\NormalTok{)}
+
+\CommentTok{\# Teste}
+\NormalTok{pr\_teste }\OtherTok{\textless{}{-}} \FunctionTok{pr.curve}\NormalTok{(}
+  \AttributeTok{scores.class0 =}\NormalTok{ prob\_teste[teste}\SpecialCharTok{$}\NormalTok{loan\_status }\SpecialCharTok{==} \DecValTok{1}\NormalTok{],}
+  \AttributeTok{scores.class1 =}\NormalTok{ prob\_teste[teste}\SpecialCharTok{$}\NormalTok{loan\_status }\SpecialCharTok{==} \DecValTok{0}\NormalTok{],}
+  \AttributeTok{curve =} \ConstantTok{TRUE}
+\NormalTok{)}
+
+\FunctionTok{plot}\NormalTok{(}
+\NormalTok{  pr\_treino}\SpecialCharTok{$}\NormalTok{curve,}
+  \AttributeTok{type =} \StringTok{"l"}\NormalTok{,}
+  \AttributeTok{col =} \StringTok{"blue"}\NormalTok{,}
+  \AttributeTok{lwd =} \DecValTok{2}\NormalTok{,}
+  \AttributeTok{xlab =} \StringTok{"Recall"}\NormalTok{,}
+  \AttributeTok{ylab =} \StringTok{"Precision"}\NormalTok{,}
+  \AttributeTok{main =} \StringTok{"Precision–Recall Curve — Treino vs Teste"}
+\NormalTok{)}
+
+\FunctionTok{lines}\NormalTok{(}
+\NormalTok{  pr\_teste}\SpecialCharTok{$}\NormalTok{curve,}
+  \AttributeTok{col =} \StringTok{"red"}\NormalTok{,}
+  \AttributeTok{lwd =} \DecValTok{2}
+\NormalTok{)}
+
+\FunctionTok{legend}\NormalTok{(}
+  \StringTok{"bottomleft"}\NormalTok{,}
+  \AttributeTok{legend =} \FunctionTok{c}\NormalTok{(}
+    \FunctionTok{paste0}\NormalTok{(}\StringTok{"Treino (AUC{-}PR = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(pr\_treino}\SpecialCharTok{$}\NormalTok{auc.integral, }\DecValTok{3}\NormalTok{), }\StringTok{")"}\NormalTok{),}
+    \FunctionTok{paste0}\NormalTok{(}\StringTok{"Teste (AUC{-}PR = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(pr\_teste}\SpecialCharTok{$}\NormalTok{auc.integral, }\DecValTok{3}\NormalTok{), }\StringTok{")"}\NormalTok{)}
+\NormalTok{  ),}
+  \AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"blue"}\NormalTok{, }\StringTok{"red"}\NormalTok{),}
+  \AttributeTok{lwd =} \DecValTok{2}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/unnamed-chunk-9-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{metricas }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{Conjunto =} \FunctionTok{c}\NormalTok{(}\StringTok{"Treino"}\NormalTok{, }\StringTok{"Teste"}\NormalTok{),}
+  \AttributeTok{Accuracy =} \FunctionTok{c}\NormalTok{(conf\_treino}\SpecialCharTok{$}\NormalTok{overall[}\StringTok{"Accuracy"}\NormalTok{],}
+\NormalTok{               conf\_teste}\SpecialCharTok{$}\NormalTok{overall[}\StringTok{"Accuracy"}\NormalTok{]),}
+  \AttributeTok{Sensitivity =} \FunctionTok{c}\NormalTok{(conf\_treino}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Sensitivity"}\NormalTok{],}
+\NormalTok{                  conf\_teste}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Sensitivity"}\NormalTok{]),}
+  \AttributeTok{Specificity =} \FunctionTok{c}\NormalTok{(conf\_treino}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Specificity"}\NormalTok{],}
+\NormalTok{                  conf\_teste}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Specificity"}\NormalTok{]),}
+  \AttributeTok{AUC =} \FunctionTok{c}\NormalTok{(auc\_treino, auc\_teste),}
+  \AttributeTok{AUC\_PR =} \FunctionTok{c}\NormalTok{(pr\_treino}\SpecialCharTok{$}\NormalTok{auc.integral, pr\_teste}\SpecialCharTok{$}\NormalTok{auc.integral)}
+\NormalTok{)}
+
+\NormalTok{metricas}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  Conjunto  Accuracy Sensitivity Specificity       AUC    AUC_PR
+1   Treino 0.9144923   0.8753202   0.9373134 0.9692150 0.9404202
+2    Teste 0.9198113   0.8906977   0.9396825 0.9703433 0.9511620
+\end{verbatim}
 
 \begin{itemize}
 \tightlist
+\item
+  Análise de Sensibilidade à Multicolinearidade (já que temos features
+  com correlação elevada) \#\#\# {[}TBD{]} Modelo Bayesiano
+\item
+  Análise de Sensibilidade à Multicolinearidade (já que temos features
+  com correlação elevada) -\textgreater avaliação do impacto \#\#
+  {[}TBD{]} Desempenho Preditivo
 \item
   Tabela comparativa
 \item
@@ -1260,8 +1529,8 @@ Predito Rejeitado Aprovado
   Métricas
 \end{itemize}
 
-\subsection{Interpretação dos
-Modelos}\label{interpretauxe7uxe3o-dos-modelos}
+\subsection{{[}TBD{]} Interpretação dos
+Modelos}\label{tbd-interpretauxe7uxe3o-dos-modelos}
 
 \begin{itemize}
 \tightlist
@@ -1273,7 +1542,7 @@ Modelos}\label{interpretauxe7uxe3o-dos-modelos}
   Comparação de incerteza
 \end{itemize}
 
-\section{Discussão}\label{discussuxe3o}
+\section{{[}TBD{]} Discussão}\label{tbd-discussuxe3o}
 
 \begin{itemize}
 \tightlist
@@ -1291,7 +1560,7 @@ Modelos}\label{interpretauxe7uxe3o-dos-modelos}
 
 teste de referencia \textcite{autor2020}
 
-\section{Conclusão}\label{conclusuxe3o}
+\section{{[}TBD{]} Conclusão}\label{tbd-conclusuxe3o}
 
 \begin{itemize}
 \tightlist

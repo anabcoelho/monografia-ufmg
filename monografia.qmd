@@ -49,7 +49,10 @@ pkgs <- c(
   "patchwork",
   'ggcorrplot',
   'fastDummies',
-  'dplyr'
+  'dplyr',
+  'pROC',
+  'caret', 
+  'PRROC'
 )
 
 instalar <- pkgs[!pkgs %in% installed.packages()[, "Package"]]
@@ -70,12 +73,15 @@ library(patchwork)
 library(ggcorrplot)
 library(dplyr)
 library(fastDummies)
+library(PRROC)
+library(pROC)
+library(caret)
 
 
 py_config()
 reticulate::py_install(c("pandas", "tabulate", "ipython"))
 
-
+set.seed(123)
 ```
 ```{python py-setup, include=FALSE}
 #organizar pacotes e imports aqui
@@ -228,53 +234,81 @@ Controle de Status (uso interno)
 # [TO DO] Referencial Teórico
 \red{um dos principais capítulos, já que o foco do trabalho é a comparação entre abordagens.}
 
-## Fundamentos de Probabilidade e Inferência Estatística
+## [TO DO] Fundamentos de Probabilidade e Inferência Estatística
+- Probabilidade como frequencia vs probabilidade como grau de crença
 - Variáveis aleatórias e distribuições
 - Teorema de Bayes
 - Conceito de incerteza estatística
 - Inferência como problema de estimação
 
-## Problemas de Classificação em Aprendizado Estatístico
+## [TO DO] Problemas de Classificação em Aprendizado Estatístico
 - Classificação binária
 - Função de perda e decisão
 - Separabilidade linear e não linear
 - Overfitting e generalização
+(preparando terreno para problemas de crédito, onde a separação perfeita é improvável e o trade-off entre viés e variância é crucial)
+- Probabilidades preditas vs. classes previstas
+- Threshold de decisão e custo de erro
 
-## Avaliação de Modelos de Classificação
+## [TO DO] Avaliação de Modelos de Classificação
+- Desbalanceamento de classes (muito comum em dados de crédito, mas não no dataset atual)
 - Matriz de confusão
 - Accuracy, Precision, Recall, F1-score
+- Curvas Precision–Recall
 - Curva ROC e AUC
 - Trade-off entre sensibilidade e especificidade
+- Custo assimétrico de erros (FP vs FN)
 
-## Regressão Logística Frequentista
+## [TO DO] Regressão Logística Frequentista
 - Formulação do modelo
+- Assumptions do modelo (e.g., independência, linearidade no logit, ausência de multicolinearidade)
+- Parametrização e interpretação
 - Interpretação dos coeficientes
 - Função logística
-- Estimação por máxima verossimilhança
+- Estimação por máxima verossimilhança (e a função de verossimilhança)
 - Testes de hipótese
 - Intervalos de confiança
+- Odds e odds ratio
+- Limitações da abordagem frequentista
 
-## Inferência Bayesiana
+## [TO DO] Inferência Bayesiana
+
 - Teorema de Bayes aplicado à estatística
 - diferenças conceituais
+- parametros como variáveis aleatórias
 - Priors, likelihood e posterior
-- Interpretação probabilística dos parâmetros
 - Incerteza e distribuição posterior
-- Conceitos: prior, likelihood, posterior
 - Vantagens da abordagem bayesiana
+- Atualização sequencial da evidência
 - Interpretação probabilística
+- controle de sobreajuste
+(...)
+\red{Encaixar o que mais fizer sentido aqui.}
 
-## Regressão Logística Bayesiana
+## [TO DO] Regressão Logística Bayesiana
+(sempre traçando paralelos com a versão frequentista)
 - Formulação do modelo probabilístico
 - Escolha de priors
 - Inferência via MCMC / aproximações variacionais
+- Diagnóstico de convergência (R-hat, traceplots)
 - Intervalos credíveis
 - Sensibilidade a priors
+- Robustez em pequenas amostras
+- Interpretação dos coeficientes sob posterior
+- Comparação direta de MLE e MAP
+MAP- Maximum-a-Posteriori
+MLE- maximum likelyhood estimation
+(...)
+\red{Encaixar o que mais fizer sentido aqui.}
 
-## Aplicações em Risco de Crédito e Finanças
+## [TO DO] Aplicações em Risco de Crédito e Finanças
+\red{Não estender muito, acho que 1 página já deve ser suficiente, o foco é a comparação}
+(Contextualização)
 - Modelos de scoring de crédito
 - Variáveis financeiras e risco
 - Decisão de concessão de empréstimos
+- Uso das probabilidades preditas para gestão de risco
+- Transparência e interpretabilidade
 
 * Em problemas de concessão de empréstimos, a incerteza é tão importante quanto a previsão.
 * O enfoque bayesiano permite incorporar conhecimento prévio do risco.
@@ -311,36 +345,51 @@ A base de dados utilizada neste estudo representa um conjunto de solicitações 
 
 
 ## [TBD] Pré-processamento
-### Verificação da Estrutura de dados e tratamento de valores ausentes
+### [TO DO] Verificação da Estrutura de dados e tratamento de valores ausentes
 
-### Outliers
+### [TO DO] Outliers
 \red {ainda falta escrever}
-Não foi aplicado tratamento automático de outliers, uma vez que:
+Não foi aplicado tratamento automático de outliers. Essa decisão foi motivada pelas seguintes considerações:
 
-- Valores extremos são esperados em dados financeiros;
-- Podem representar perfis legítimos de alto patrimônio ou elevado risco de crédito;
-- Sua remoção indiscriminada poderia eliminar informação relevante para a tarefa de classificação.
+Valores extremos são esperados em dados financeiros;
+Podem representar perfis legítimos de alto patrimônio ou elevado risco de crédito;
+A remoção indiscriminada poderia eliminar informação relevante para a tarefa de classificação.
 
-1. A Visão Frequentista: O Problema da SensibilidadeNa inferência frequentista clássica (como na Regressão Logística por Máxima Verossimilhança), o modelo busca os parâmetros que tornam os dados observados o mais prováveis possível.O efeito do outlier: Se você tem um outlier muito extremo, a função de verossimilhança pode ser "puxada" por esse ponto para tentar explicá-lo.A consequência: Isso pode enviesar os coeficientes, fazendo com que o modelo perca precisão para a maioria dos dados "normais" só para tentar se ajustar ao ponto atípico. Para corrigir isso, o estatístico frequentista geralmente precisa de técnicas de "Regressão Robusta" ou tratamentos manuais (como o winsorizing ou a remoção do dado).
+Do ponto de vista frequentista, modelos estimados por máxima verossimilhança podem ser sensíveis a observações extremas, uma vez que tais pontos influenciam diretamente o ajuste dos coeficientes. Técnicas adicionais, como regressão robusta ou winsorização, são comumente empregadas para mitigar esse efeito.
 
-Na abordagem Bayesiana, se trata os parâmetros como distribuições de probabilidade.Distribuições de Cauda Longa: Em vez de assumir que os erros seguem uma distribuição Normal (que cai muito rápido nas pontas e "sofre" com outliers), o modelo Bayesiano permite que você use, por exemplo, uma Distribuição t de Student.Por que funciona? A distribuição $t$ tem "caudas pesadas". Isso significa que ela atribui uma probabilidade maior à ocorrência de valores extremos do que a Normal.O "Pulo do Gato": Quando o modelo encontra um outlier, a distribuição de cauda longa o interpreta como "apenas um evento raro, mas possível", em vez de um erro bizarro que exige mudar toda a inclinação da reta de regressão. Assim, o impacto desse ponto no valor central do parâmetro é minimizado de forma natural, sem que você precise deletar o dado.
+Na abordagem bayesiana, a incerteza dos parâmetros é explicitamente modelada por distribuições a posteriori. A utilização de distribuições com caudas mais pesadas, como a distribuição t de Student, permite acomodar valores extremos de forma natural, reduzindo seu impacto sobre as estimativas centrais sem a necessidade de remoção explícita dos dados.
 
-### Codificação de variáveis categóricas
+### [TO DO] Codificação de variáveis categóricas
 Variáveis categóricas foram transformadas em representações numéricas adequadas à modelagem.
 
-### Padronização de variáveis numéricas
-A padronização foi adotada para:
+### [TO DO] Padronização de variáveis numéricas
+As variáveis numéricas foram padronizadas com o objetivo de:
 
 - Facilitar a convergência dos algoritmos de estimação;
 - Permitir interpretação comparável dos coeficientes;
-- Evitar que variáveis em escalas maiores dominem o processo de ajuste do modelo.
+- Evitar que variáveis em escalas distintas dominem o processo de ajuste.
 
-## [TBD] Estratégia de Modelagem
+### [TO DO] Divisão entre treino e teste
+O conjunto de dados foi particionado em subconjuntos de treino (75%) e teste (25%) por meio de amostragem aleatória estratificada em relação à variável resposta Y=loan_status. Essa estratégia assegura que as distribuições marginais das classes sejam preservadas em ambos os subconjuntos, como:
+$$
+\mathbb{P}(Y = 1 \mid \text{treino})
+\;\approx\;
+\mathbb{P}(Y = 1 \mid \text{teste})
+\;\approx\;
+\mathbb{P}(Y = 1).
+$$
+
+A preservação das proporções de classe é fundamental em problemas de classificação binária, pois evita distorções na estimação dos parâmetros e na avaliação das funções de decisão, especialmente em cenários com possíveis assimetrias entre as classes.
+
+Os modelos foram estimados exclusivamente com observações do conjunto de treino, enquanto o conjunto de teste foi utilizado apenas para a avaliação do desempenho preditivo fora da amostra. Essa separação garante que as métricas de desempenho estimadas correspondam a uma aproximação não viesada do erro de generalização, reduzindo o risco de sobreajuste (overfitting) e vazamento de informação.
+
+
+## [TO DO] Estratégia de Modelagem
 - Separação treino/teste
 - Validação cruzada (se usar)
 - Métricas escolhidas
 
-## [TBD] Modelos Avaliados
+## [TO DO] Modelos Avaliados
 - Regressão logística frequentista
 - Regressão logística bayesiana
 (e deixa uma subseção “Modelos adicionais”, caso queira) 
@@ -370,7 +419,7 @@ Tabela de estatística de variáveis numéricas e categoricas
 
 A @tbl-variaveis-num apresenta as principais estatísticas descritivas das variáveis numéricas do conjunto de dados, incluindo média, mediana, valor mínimo e máximo. Em média, os solicitantes apresentam aproximadamente 2 a 3 dependentes, renda anual em torno de 5 milhões e solicitam empréstimos próximos a 15 milhões. O prazo médio dos empréstimos é de cerca de 11 anos, enquanto o score de crédito médio está próximo de 600 pontos. Esses valores sugerem uma população com perfil financeiro intermediário, mas com ampla variabilidade entre indivíduos, com desvios-padrão elevados.
 
-```{python, echo=FALSE}
+```{python py-describe-dataset, echo=FALSE}
 #| label: tbl-variaveis-num
 #| tbl-cap: "Estatísticas descritivas das variáveis numéricas do conjunto de dados."
 loan.columns = loan.columns.str.strip()
@@ -466,7 +515,7 @@ Outro ponto relevante é a presença de valores mínimos negativos em `residenti
 #| layout-ncol: 2
 #| out-width: "100%"
 #| 
-library(patchwork)
+
 loan <- janitor::clean_names(loan)
 vars <- c(
   "income_annum",
@@ -503,7 +552,7 @@ Análise da target
 Bayes: variáveis fracas → distribuições posteriores muito semelhantes.
 distribuições posterior muito parecidas com a prior (se for uma prior informativa) ou muito largas (se for não informativa).pode ser legal se a gente fizer uma análise de sensibilidade, mostrando como a escolha da prior afeta a distribuição posterior dessas variáveis fracas. (removendo o CHIBIL)
 -->
-```{r}
+```{r target-percentual}
 #| include: false
 
 target_tab <- loan |>
@@ -734,6 +783,7 @@ ggcorrplot(
     ),
     axis.text.y = element_text(size = 8)
   )
+  cor_matrix
 ```
 
 
@@ -839,14 +889,17 @@ A exclusão resultou na remoção de `r n_removed` observações.
 
 Não foi aplicado tratamento automático de outliers, uma vez que valores extremos são esperados em dados financeiros e podem conter informação relevante para a classificação do risco de crédito.
 
+### [DRAFT] Seleção de variáveis e análise de correlação
+
+A @fig-correlacao foi utilizada para investigar possíveis relações de dependência linear entre as variáveis numéricas. Observou-se a presença de correlações elevadas entre variáveis associadas à escala de renda e patrimônio, como renda anual, valor do empréstimo e ativos financeiros, comportamento esperado em bases de dados financeiras.
+
+Apesar dessas correlações, optou-se por não remover variáveis nesta etapa, uma vez que correlação elevada não implica, necessariamente, multicolinearidade prejudicial à estimação, e tais variáveis podem conter informação complementar relevante para a classificação do risco de crédito.
+
 ### [DRAFT] Codificação e padronização de variáveis
+
 
 ```{r, include=FALSE}
 names(loan)
-```
-
-```{r, include=FALSE}
-
 vars_categoricas <- c(
   "education",
   "self_employed"
@@ -884,7 +937,8 @@ loan_encoded[vars_numericas] <- lapply(
 )
 
 loan_encoded[vars_numericas] <- scale(loan_encoded[vars_numericas])
-
+table(loan_encoded$loan_status)
+str(loan_encoded$loan_status)
 ```
 
 Com o objetivo de tornar os dados adequados à aplicação de modelos de regressão logística, foi realizado um processo de codificação das variáveis categóricas e padronização das variáveis numéricas. As variáveis categóricas consideradas no estudo incluem: o nível educacional (Graduate / Not Graduate) e a condição de trabalho autônomo (Yes/No). Essas variáveis foram tratadas por meio de one-hot encoding, convertendo cada categoria em variáveis indicadoras binárias. Para evitar problemas de multicolinearidade perfeita, uma categoria de referência foi removida em cada conjunto de dummies.
@@ -893,34 +947,43 @@ As variáveis numéricas foram padronizadas utilizando o método standard. Essa 
 
 Ressalta-se que a padronização não altera a informação contida nos dados, mas apenas sua escala, sendo especialmente relevante em modelos que utilizam métodos de otimização numérica e em abordagens bayesianas, nas quais a escolha de distribuições a priori é sensível à magnitude dos parâmetros.
 
+### [DRAFT] Separação treino/teste
+```{r treino-teste}
+#| include: false
+
+loan_encoded <- loan_encoded |>
+  dplyr::select(-loan_id)
+
+loan_encoded$loan_status <- ifelse(
+  loan_encoded$loan_status %in% c("Aprovado", 1, "1"),
+  1, 0
+)
+loan_encoded$loan_status <- as.numeric(loan_encoded$loan_status)
+
+
+idx <- createDataPartition(
+  loan_encoded$loan_status,
+  p = 0.75,
+  list = FALSE
+)
+
+treino <- loan_encoded[idx, ]
+teste  <- loan_encoded[-idx, ]
+prop.table(table(treino$loan_status))
+prop.table(table(teste$loan_status))
+```
+O conjunto de dados foi dividido aleatoriamente em subconjuntos de treino (75%) e teste (25%), utilizando amostragem estratificada em relação à variável resposta (loan_status). Essa estratégia assegura que a proporção de observações pertencentes a cada classe seja preservada em ambos os subconjuntos.
+
+O ajuste do modelo foi realizado exclusivamente com o conjunto de treino, enquanto o conjunto de teste foi reservado para a avaliação do desempenho preditivo fora da amostra, assegurando a separação adequada entre as etapas de estimação e validação.
+
 ## [WIP] Modelagem e Avaliação
 
 ### [TBD] Modelo Frequentista
-```{r }
-library(dplyr)
-library(janitor)
-
-loan <- loan %>%
-  clean_names()
-
-loan$loan_status <- as.factor(loan$loan_status)
-```
-
 
 ```{r }
 modelo_logit <- glm(
-  loan_status ~ no_of_dependents +
-    education +
-    self_employed +
-    income_annum +
-    loan_amount +
-    loan_term +
-    cibil_score +
-    residential_assets_value +
-    commercial_assets_value +
-    luxury_assets_value +
-    bank_asset_value,
-  data = loan,
+  loan_status ~ .,
+  data = treino,
   family = binomial(link = "logit")
 )
 
@@ -930,14 +993,156 @@ exp(coef(modelo_logit))
 
 exp(confint(modelo_logit))
 
-prob <- predict(modelo_logit, type = "response")
-
-pred <- ifelse(prob > 0.5, 1, 0)
-
-table(Predito = pred, Real = loan$loan_status)
 ```
-### [TBD] Modelo Bayesiano
 
+```{r }
+# Probabilidades
+prob_treino <- predict(modelo_logit, type = "response")
+prob_teste  <- predict(modelo_logit, newdata = teste, type = "response")
+
+pred_treino <- ifelse(prob_treino >= 0.5, 1, 0)
+pred_teste  <- ifelse(prob_teste  >= 0.5, 1, 0)
+# Converter para factor com níveis alinhados
+pred_treino_fac <- factor(pred_treino, levels = c(0, 1))
+pred_teste_fac  <- factor(pred_teste,  levels = c(0, 1))
+
+y_treino_fac <- factor(treino$loan_status, levels = c(0, 1))
+y_teste_fac  <- factor(teste$loan_status,  levels = c(0, 1))
+```
+
+```{r }
+
+conf_treino <- confusionMatrix(
+  data      = pred_treino_fac,
+  reference = y_treino_fac,
+  positive  = "1"
+)
+
+conf_treino
+
+conf_teste <- confusionMatrix(
+  data      = pred_teste_fac,
+  reference = y_teste_fac,
+  positive  = "1"
+)
+
+conf_teste
+
+
+```
+
+```{r }
+y_treino_num <- as.numeric(as.character(treino$loan_status))
+y_teste_num  <- as.numeric(as.character(teste$loan_status))
+roc_treino <- roc(
+  response = y_treino_num,
+  predictor = prob_treino,
+  levels = c(0, 1),
+  direction = "<"
+)
+```
+
+```{r }
+
+
+
+
+roc_teste <- roc(
+  response = y_teste_num,
+  predictor = prob_teste,
+  levels = c(0, 1),
+  direction = "<"
+)
+
+auc_treino <- auc(roc_treino)
+auc_teste  <- auc(roc_teste)
+
+plot(
+  roc_treino,
+  col = "blue",
+  lwd = 2,
+  main = "Curvas ROC — Treino vs Teste"
+)
+
+plot(
+  roc_teste,
+  col = "red",
+  lwd = 2,
+  add = TRUE
+)
+
+legend(
+  "bottomright",
+  legend = c(
+    paste0("Treino (AUC = ", round(auc_treino, 3), ")"),
+    paste0("Teste (AUC = ", round(auc_teste, 3), ")")
+  ),
+  col = c("blue", "red"),
+  lwd = 2
+)
+```
+
+```{r }
+# Treino
+pr_treino <- pr.curve(
+  scores.class0 = prob_treino[treino$loan_status == 1],
+  scores.class1 = prob_treino[treino$loan_status == 0],
+  curve = TRUE
+)
+
+# Teste
+pr_teste <- pr.curve(
+  scores.class0 = prob_teste[teste$loan_status == 1],
+  scores.class1 = prob_teste[teste$loan_status == 0],
+  curve = TRUE
+)
+
+plot(
+  pr_treino$curve,
+  type = "l",
+  col = "blue",
+  lwd = 2,
+  xlab = "Recall",
+  ylab = "Precision",
+  main = "Precision–Recall Curve — Treino vs Teste"
+)
+
+lines(
+  pr_teste$curve,
+  col = "red",
+  lwd = 2
+)
+
+legend(
+  "bottomleft",
+  legend = c(
+    paste0("Treino (AUC-PR = ", round(pr_treino$auc.integral, 3), ")"),
+    paste0("Teste (AUC-PR = ", round(pr_teste$auc.integral, 3), ")")
+  ),
+  col = c("blue", "red"),
+  lwd = 2
+)
+
+
+```
+```{r}
+metricas <- data.frame(
+  Conjunto = c("Treino", "Teste"),
+  Accuracy = c(conf_treino$overall["Accuracy"],
+               conf_teste$overall["Accuracy"]),
+  Sensitivity = c(conf_treino$byClass["Sensitivity"],
+                  conf_teste$byClass["Sensitivity"]),
+  Specificity = c(conf_treino$byClass["Specificity"],
+                  conf_teste$byClass["Specificity"]),
+  AUC = c(auc_treino, auc_teste),
+  AUC_PR = c(pr_treino$auc.integral, pr_teste$auc.integral)
+)
+
+metricas
+```
+- Análise de Sensibilidade à Multicolinearidade (já que temos features com correlação elevada)
+### [TBD] Modelo Bayesiano
+- Análise de Sensibilidade à Multicolinearidade (já que temos features com correlação elevada) ->avaliação do impacto
 ## [TBD] Desempenho Preditivo
 - Tabela comparativa
 - Curvas ROC

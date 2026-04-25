@@ -209,3 +209,5 @@ __marimo__/
 #secrets
 .kaggle/
 data/dados/
+/.vdoc*
+monografia_files/

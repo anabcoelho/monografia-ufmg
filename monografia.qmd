@@ -315,8 +315,6 @@ MLE- maximum likelyhood estimation
 * O enfoque frequentista fornece base tradicional de modelos de scoring.
 * A comparação entre ambas abordagens permite avaliar robustez das decisões.
 
-
-
 # [WIP] Metodologia
 \red{Aqui entra o dataset como aplicação, não como foco teórico.}
 

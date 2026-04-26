@@ -69,46 +69,6 @@
 \fi
 \makeatother
 
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{241,243,245}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
-\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \usepackage{longtable,booktabs,array}
 \newcounter{none} % for unnumbered tables
@@ -138,6 +98,39 @@
 \makeatother
 
 
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \ifLuaTeX
 \usepackage[bidi=basic,shorthands=off]{babel}
@@ -157,14 +150,27 @@
 
 
  
-\usepackage[]{biblatex}
-\addbibresource{referencias.bib}
 
 
 % Impede o sumário de colar na capa
 \usepackage{tocloft}
 \setcounter{tocdepth}{3}
 \usepackage{placeins}
+\usepackage{pdflscape}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \KOMAoption{captions}{tableheading}
 \usepackage{xcolor}
 \newcommand{\red}[1]{\textcolor{red}{#1}}
@@ -330,33 +336,33 @@ Finally, the results highlight the strengths and limitations of each statistical
 \tableofcontents
 \newpage
 
-\red{Controle de escrita}
-
-\red{estou colocando comentários em vermelho para destacar pontos a revisar ou expandir}
-
-Controle de Status (uso interno)
+\textbf{Legenda de status do documento}
 
 \begin{itemize}
 \tightlist
 \item
-  {[}TBD{]} -\textgreater{} revisar ainda os tópicos, organizar melhor a
-  estrutura, definir quais análises e gráficos serão feitos, etc.
+  \textbf{{[}TBD{]}} → tópico ainda indefinido; estrutura ou escopo em
+  discussão
 \item
-  {[}TO DO{]} -\textgreater{} já tenho uma ideia geral do que quero
-  escrever, já em tópicos, mas ainda não comecei a escrever o texto
+  \textbf{{[}TO DO{]}} → tópico planejado, ainda não iniciado
 \item
-  {[}WIP{]} -\textgreater{} Em desenvolvimento
+  \textbf{{[}WIP{]}} → em desenvolvimento
 \item
-  {[}DRAFT{]} -\textgreater{} Versão preliminar
+  \textbf{{[}DRAFT{]}} → versão preliminar do texto
 \item
-  {[}CHECK{]} --\textgreater{} verificação pendente (conceito, dados,
-  código, referências)
+  \textbf{{[}CHECK{]}} → verificação pendente (conceitos, dados, código
+  ou referências)
 \item
-  {[}AJUSTAR{]} --\textgreater{} ajuste fino de redação, figura ou
-  formatação (revisão textual)
+  \textbf{{[}REVISÃO{]}} → versão completa, pronta para avaliação
 \item
-  {[}FINAL{]} Versão definitiva
+  \textbf{{[}AJUSTAR{]}} → ajustes finos de redação, figuras ou
+  formatação (após revisão)
+\item
+  \textbf{{[}FINAL{]}} → versão definitiva (após revisão e ajustes
+  finais)
 \end{itemize}
+
+\red{estou colocando comentários em vermelho para destacar pontos a revisar ou expandir}
 
 \section{{[}TBD{]} Introdução}\label{tbd-introduuxe7uxe3o}
 
@@ -503,27 +509,50 @@ Bayesiana}\label{to-do-inferuxeancia-bayesiana}
 \subsection{{[}TO DO{]} Regressão Logística
 Bayesiana}\label{to-do-regressuxe3o-loguxedstica-bayesiana}
 
-(sempre traçando paralelos com a versão frequentista) - Formulação do
-modelo probabilístico - Escolha de priors - Inferência via MCMC /
-aproximações variacionais - Diagnóstico de convergência (R-hat,
-traceplots) - Intervalos credíveis - Sensibilidade a priors - Robustez
-em pequenas amostras - Interpretação dos coeficientes sob posterior -
-Comparação direta de MLE e MAP MAP- Maximum-a-Posteriori MLE- maximum
-likelyhood estimation (\ldots)
-\red{Encaixar o que mais fizer sentido aqui.}
+\red{(sempre traçando paralelos com a versão frequentista)}
+
+\begin{itemize}
+\tightlist
+\item
+  Formulação do modelo probabilístico
+\item
+  Escolha de priors
+\item
+  Inferência via MCMC / aproximações variacionais
+\item
+  Diagnóstico de convergência (R-hat, traceplots)
+\item
+  Intervalos credíveis
+\item
+  Sensibilidade a priors
+\item
+  Robustez em pequenas amostras
+\item
+  Interpretação dos coeficientes sob posterior
+\item
+  Comparação direta de MLE e MAP MAP- Maximum-a-Posteriori MLE- maximum
+  likelyhood estimation (\ldots)
+  \red{Encaixar o que mais fizer sentido aqui.}
+\end{itemize}
 
 \subsection{{[}TO DO{]} Aplicações em Risco de Crédito e
 Finanças}\label{to-do-aplicauxe7uxf5es-em-risco-de-cruxe9dito-e-finanuxe7as}
 
 \red{Não estender muito, acho que 1 página já deve ser suficiente, o foco é a comparação}
 
-(Contextualização) - Modelos de scoring de crédito - Variáveis
-financeiras e risco - Decisão de concessão de empréstimos - Uso das
-probabilidades preditas para gestão de risco - Transparência e
-interpretabilidade
+(Contextualização)
 
 \begin{itemize}
-\tightlist
+\item
+  Modelos de scoring de crédito
+\item
+  Variáveis financeiras e risco
+\item
+  Decisão de concessão de empréstimos
+\item
+  Uso das probabilidades preditas para gestão de risco
+\item
+  Transparência e interpretabilidade
 \item
   Em problemas de concessão de empréstimos, a incerteza é tão importante
   quanto a previsão.
@@ -540,18 +569,14 @@ interpretabilidade
 
 \red{Aqui entra o dataset como aplicação, não como foco teórico.}
 
-\subsection{{[}DRAFT{]} Descrição dos
-Dados}\label{draft-descriuxe7uxe3o-dos-dados}
+\subsection{{[}REVISÃO{]} Descrição dos
+Dados}\label{revisuxe3o-descriuxe7uxe3o-dos-dados}
 
-\red {encaixar a origem dos dados, o contexto de coleta, se tiver...}
-
-A base de dados utilizada neste estudo representa um conjunto de
-solicitações reais de empréstimos, contendo informações financeiras,
-patrimoniais e socioeconômicas dos solicitantes. Cada observação
-corresponde a um indivíduo, e o objetivo principal da variável resposta
-(loan\_status) é indicar a aprovação ou rejeição do crédito. A
-Tabela~\ref{tbl-descricao} apresenta uma descrição detalhada das
-variáveis presentes no conjunto de dados.
+Os modelos desenvolvidos neste trabalho utilizam o Loan Approval
+Dataset, uma base de dados pública disponibilizada na plataforma Kaggle
+(Grewal (2026)). A variável alvo é binária, indicando o status de
+aprovação do empréstimo. A Tabela~\ref{tbl-descricao} apresenta uma
+descrição detalhada das variáveis presentes no conjunto de dados.
 
 \begin{longtable}[]{@{}ll@{}}
 \caption{Descrição das variáveis do
@@ -577,76 +602,164 @@ Residential\_assets\_value & Bens residenciais \\
 Commercial\_assets\_value & Bens comerciais \\
 Luxury\_assets\_value & Bens de luxo \\
 Bank\_asset\_value & Ativos bancários \\
-Loan\_status & Variável alvo (0/1) \\
+Loan\_status & Variável alvo (Approved/Rejected) \\
 \end{longtable}
+
+Por se tratar de um dataset estruturado especificamente para fins de
+aprendizado de máquina e análise estatística, ele oferece um cenário
+controlado, permitindo focar na sensibilidade dos modelos aos preditores
+e na quantificação da incerteza sem as inconsistências típicas de bases
+de dados administrativas brutas.
 
 \subsection{{[}TBD{]} Pré-processamento}\label{tbd-pruxe9-processamento}
 
-\subsubsection{{[}TO DO{]} Verificação da Estrutura de dados e
+\subsubsection{{[}REVISÃO{]} Verificação da Estrutura de dados e
 tratamento de valores
-ausentes}\label{to-do-verificauxe7uxe3o-da-estrutura-de-dados-e-tratamento-de-valores-ausentes}
+ausentes}\label{revisuxe3o-verificauxe7uxe3o-da-estrutura-de-dados-e-tratamento-de-valores-ausentes}
 
-\subsubsection{{[}TO DO{]} Outliers}\label{to-do-outliers}
+Inicialmente, foi realizada a inspeção da estrutura do banco de dados,
+com o objetivo de confirmar a consistência dos tipos das variáveis e a
+adequação do formato dos dados às técnicas de modelagem adotadas. Essa
+análise compreendeu a identificação das classes das variáveis, a
+distinção entre atributos numéricos e categóricos e a validação da
+variável resposta quanto à sua natureza e domínio.
 
-\red {ainda falta escrever}
+A variável dependente, correspondente ao status do empréstimo, foi
+confirmada como binária, atendendo às premissas dos modelos de regressão
+logística. As variáveis explicativas foram classificadas conforme sua
+natureza (contínua ou categórica), possibilitando a aplicação apropriada
+de procedimentos de codificação e padronização quando necessário.
 
-Não foi aplicado tratamento automático de outliers. Essa decisão foi
-motivada pelas seguintes considerações:
+Por fim, a presença de valores ausentes foi avaliada por meio da função
+is.na(), com sumarização via colSums(is.na()). Não foram identificadas
+observações faltantes no conjunto de dados, eliminando a necessidade de
+técnicas de imputação e evitando a introdução de incerteza adicional ou
+viés sistemático no processo de estimação.
 
-Valores extremos são esperados em dados financeiros; Podem representar
-perfis legítimos de alto patrimônio ou elevado risco de crédito; A
-remoção indiscriminada poderia eliminar informação relevante para a
-tarefa de classificação.
+\subsubsection{{[}REVISÃO{]} Outliers}\label{revisuxe3o-outliers}
 
-Do ponto de vista frequentista, modelos estimados por máxima
-verossimilhança podem ser sensíveis a observações extremas, uma vez que
-tais pontos influenciam diretamente o ajuste dos coeficientes. Técnicas
-adicionais, como regressão robusta ou winsorização, são comumente
-empregadas para mitigar esse efeito.
+A identificação de valores atípicos (\texttt{outliers}) nas variáveis
+numéricas foi realizada por meio do critério do intervalo interquartil
+(\texttt{Interquartile\ Range}, IQR), amplamente utilizado em
+estatística descritiva por sua robustez em relação a distribuições
+assimétricas e à presença de valores extremos.
 
-Na abordagem bayesiana, a incerteza dos parâmetros é explicitamente
-modelada por distribuições a posteriori. A utilização de distribuições
-com caudas mais pesadas, como a distribuição t de Student, permite
-acomodar valores extremos de forma natural, reduzindo seu impacto sobre
-as estimativas centrais sem a necessidade de remoção explícita dos
-dados.
+Para cada variável contínua, foram calculados o primeiro quartil \(Q_1\)
+e o terceiro quartil \(Q_3\), definindo-se o intervalo interquartil como
+\begin{equation}
+\mathrm{IQR} = Q_3 - Q_1
+\label{eq:iqr}
+\end{equation}
 
-\subsubsection{{[}TO DO{]} Codificação de variáveis
-categóricas}\label{to-do-codificauxe7uxe3o-de-variuxe1veis-categuxf3ricas}
+Os limites inferior e superior para identificação de outliers são
+definidos como
 
-Variáveis categóricas foram transformadas em representações numéricas
-adequadas à modelagem.
+\begin{equation}
+L = Q_1 - 1.5 \cdot \mathrm{IQR}
+\label{eq:lower_bound}
+\end{equation}
+
+\begin{equation}
+U = Q_3 + 1.5 \cdot \mathrm{IQR}
+\label{eq:upper_bound}
+\end{equation}
+
+Esse procedimento foi empregado exclusivamente com finalidade
+exploratória, visando caracterizar a distribuição das variáveis e
+avaliar a presença de valores extremos potencialmente influentes. Não
+foi realizada a exclusão automática de observações, de modo a preservar
+a integridade do conjunto de dados e permitir que os modelos
+estatísticos capturassem adequadamente a heterogeneidade inerente aos
+dados financeiros.
+
+O fator 1.5 no critério do IQR foi proposto por Tukey (1977) como um
+compromisso empírico entre robustez e sensibilidade, sendo amplamente
+adotado na literatura por sua boa performance em distribuições
+assimétricas e com caudas longas, como é típico em dados financeiros.
+
+No contexto de análise de risco de crédito, a presença de valores
+extremos pode refletir perfis legítimos de alto patrimônio ou elevado
+risco, sendo crucial que os modelos estatísticos sejam capazes de
+acomodar essa variabilidade sem que a remoção indiscriminada de outliers
+elimine informação relevante para a tarefa de classificação.
+
+\subsubsection{{[}REVISÃO{]} Codificação de variáveis
+categóricas}\label{revisuxe3o-codificauxe7uxe3o-de-variuxe1veis-categuxf3ricas}
+
+Para viabilizar a inclusão de variáveis qualitativas nos modelos de
+regressão, foi aplicada a técnica de One-Hot Encoding. Este procedimento
+consiste na transformação de variáveis categóricas nominais em um
+conjunto de variáveis indicadoras (binárias), onde o valor 1 representa
+a presença da categoria e 0 a sua ausência.
+
+Para a implementação, utilizou-se a função \texttt{dummy\_cols} do
+pacote \texttt{fastDummies}, parametrizada com o argumento
+\texttt{remove\_first\_dummy\ =\ TRUE}. Esta etapa é metodologicamente
+crítica para mitigar a armadilha da variável dummy (multicolinearidade
+perfeita), que ocorre quando as variáveis indicadoras são linearmente
+dependentes, impossibilitando a estimação única dos parâmetros por
+métodos de máxima verossimilhança ou por algoritmos de amostragem
+bayesiana. Com a remoção da primeira categoria, o modelo estabelece uma
+base de comparação necessária para a interpretação dos coeficientes
+estimados.
 
 \subsubsection{{[}TO DO{]} Padronização de variáveis
 numéricas}\label{to-do-padronizauxe7uxe3o-de-variuxe1veis-numuxe9ricas}
 
-As variáveis numéricas foram padronizadas com o objetivo de:
+Para assegurar a estabilidade numérica dos algoritmos de estimação e
+permitir a comparabilidade entre os coeficientes do modelo, as variáveis
+quantitativas foram submetidas ao processo de padronização
+(Standardization). Inicialmente, realizou-se a coerção dos dados para o
+tipo numérico e, em seguida, aplicou-se a transformação de escala
+centralizada na média com unidade de desvio padrão. A fórmula utilizada
+para a padronização de cada variável \(X\) é dada por
+\begin{equation}
+z_i = \frac{x_i - \mu}{\sigma}
+\label{eq:standardization}
+\end{equation}
+onde \(x_i\) representa o valor original da variável, \(\mu\) é a média
+amostral e \(\sigma\) é o desvio padrão amostral. Essa transformação
+resulta em variáveis com média zero e desvio padrão um. Com todas as
+variáveis na mesma escala, os coeficientes estimados tornam-se
+comparáveis entre si, permitindo identificar quais preditores exercem
+maior impacto relativo sobre a probabilidade de aprovação do empréstimo.
+
+Na inferência frequentista, evita que variáveis com grandes magnitudes
+(como Renda Anual) dominem a função de verossimilhança em detrimento de
+variáveis com escalas menores. Na inferência bayesiana, facilita a
+amostragem das distribuições posteriores pelos algoritmos de Cadeias de
+Markov via Monte Carlo (MCMC), tornando a busca no espaço de parâmetros
+mais eficiente.
+
+\subsubsection{{[}TO DO{]} Estratégia de
+Modelagem}\label{to-do-estratuxe9gia-de-modelagem}
 
 \begin{itemize}
 \tightlist
 \item
-  Facilitar a convergência dos algoritmos de estimação;
+  Separação treino/teste
 \item
-  Permitir interpretação comparável dos coeficientes;
+  Validação cruzada (se usar)
 \item
-  Evitar que variáveis em escalas distintas dominem o processo de
-  ajuste.
+  Métricas escolhidas
 \end{itemize}
 
-\subsubsection{{[}TO DO{]} Divisão entre treino e
-teste}\label{to-do-divisuxe3o-entre-treino-e-teste}
+\paragraph{{[}REVISÃO{]} Divisão entre treino e
+teste}\label{revisuxe3o-divisuxe3o-entre-treino-e-teste}
 
 O conjunto de dados foi particionado em subconjuntos de treino (75\%) e
 teste (25\%) por meio de amostragem aleatória estratificada em relação à
 variável resposta Y=loan\_status. Essa estratégia assegura que as
 distribuições marginais das classes sejam preservadas em ambos os
-subconjuntos, como: \[
+subconjuntos, como:
+\begin{equation}
 \mathbb{P}(Y = 1 \mid \text{treino})
 \;\approx\;
 \mathbb{P}(Y = 1 \mid \text{teste})
 \;\approx\;
 \mathbb{P}(Y = 1).
-\]
+\label{eq:eq-treino-teste}
+\end{equation}
 
 A preservação das proporções de classe é fundamental em problemas de
 classificação binária, pois evita distorções na estimação dos parâmetros
@@ -660,18 +773,31 @@ garante que as métricas de desempenho estimadas correspondam a uma
 aproximação não viesada do erro de generalização, reduzindo o risco de
 sobreajuste (overfitting) e vazamento de informação.
 
-\subsection{{[}TO DO{]} Estratégia de
-Modelagem}\label{to-do-estratuxe9gia-de-modelagem}
+\paragraph{Métricas de avaliação}\label{muxe9tricas-de-avaliauxe7uxe3o}
+
+\subparagraph{Ajuste do modelo}\label{ajuste-do-modelo}
 
 \begin{itemize}
 \tightlist
 \item
-  Separação treino/teste
+  Deviance
 \item
-  Validação cruzada (se usar)
+  AIC
 \item
-  Métricas escolhidas
+  BIC
+\item
+  Teste da razão de verossimilhança
 \end{itemize}
+
+\subparagraph{Avaliação preditiva}\label{avaliauxe7uxe3o-preditiva}
+
+A avaliação dos modelos de classificação foi realizada por meio de
+métricas adequadas para problemas de classificação binária, considerando
+a distribuição das classes e a importância relativa dos erros de
+classificação. As métricas selecionadas incluem: - ROC-AUC (Área sob a
+curva ROC) - Curva Precision-Recall e AUC-PR - Curva Sensibilidade
+(Recall) e Especificidade - Matriz de confusão - Accuracy, Precision,
+Recall e F1-score
 
 \subsection{{[}TO DO{]} Modelos
 Avaliados}\label{to-do-modelos-avaliados}
@@ -687,8 +813,8 @@ Avaliados}\label{to-do-modelos-avaliados}
 
 \section{{[}WIP{]} Resultados}\label{wip-resultados}
 
-\subsection{{[}DRAFT{]} Análise
-Exploratória}\label{draft-anuxe1lise-exploratuxf3ria}
+\subsection{{[}REVISÃO{]} Análise
+Exploratória}\label{revisuxe3o-anuxe1lise-exploratuxf3ria}
 
 A análise exploratória tem como finalidade compreender a estrutura dos
 dados, identificar padrões gerais, possíveis assimetrias, outliers e
@@ -1029,36 +1155,6 @@ indica potencial multicolinearidade, aspecto que deve ser considerado na
 etapa de modelagem, especialmente na interpretação dos coeficientes da
 regressão logística.
 
-\begin{verbatim}
-                         income_annum loan_amount loan_term cibil_score
-income_annum                    1.000       0.927     0.011      -0.023
-loan_amount                     0.927       1.000     0.008      -0.017
-loan_term                       0.011       0.008     1.000       0.008
-cibil_score                    -0.023      -0.017     0.008       1.000
-residential_assets_value        0.637       0.595     0.008      -0.020
-commercial_assets_value         0.640       0.603    -0.005      -0.004
-luxury_assets_value             0.929       0.861     0.012      -0.029
-bank_asset_value                0.851       0.788     0.017      -0.015
-                         residential_assets_value commercial_assets_value
-income_annum                                0.637                   0.640
-loan_amount                                 0.595                   0.603
-loan_term                                   0.008                  -0.005
-cibil_score                                -0.020                  -0.004
-residential_assets_value                    1.000                   0.415
-commercial_assets_value                     0.415                   1.000
-luxury_assets_value                         0.591                   0.591
-bank_asset_value                            0.527                   0.549
-                         luxury_assets_value bank_asset_value
-income_annum                           0.929            0.851
-loan_amount                            0.861            0.788
-loan_term                              0.012            0.017
-cibil_score                           -0.029           -0.015
-residential_assets_value               0.591            0.527
-commercial_assets_value                0.591            0.549
-luxury_assets_value                    1.000            0.789
-bank_asset_value                       0.789            1.000
-\end{verbatim}
-
 \begin{figure}[htbp]
 
 \centering{
@@ -1089,10 +1185,9 @@ para a classificação de risco de crédito.
 Para as demais variáveis numéricas (como \texttt{loan\_amount},
 \texttt{income\_annum} e os valores dos diferentes ativos) os boxplots
 confirmam a semelhança entre as distribuições dos grupos, com medianas e
-intervalos interquartílicos (IQR) altamente sobrepostos. Essa
-característica reforça a hipótese de que tais variáveis, por si sós,
-possuem baixo poder discriminatório para a classificação. A
-identificação de valores atípicos, especialmente em
+IQRs altamente sobrepostos. Essa característica reforça a hipótese de
+que tais variáveis, por si sós, possuem baixo poder discriminatório para
+a classificação. A identificação de valores atípicos, especialmente em
 \texttt{residential\_assets\_value} e
 \texttt{commercial\_assets\_value}, é um aspecto relevante para a
 modelagem: enquanto a inferência frequentista pode exigir o tratamento
@@ -1100,6 +1195,19 @@ ou a robustez de estimadores frente a esses pontos, a abordagem
 bayesiana oferece a vantagem de modelar a incerteza desses outliers
 através de distribuições de cauda longa, permitindo uma avaliação mais
 flexível do impacto desses casos nos parâmetros estimados.
+
+A presença de valores atípicos, particularmente em variáveis
+relacionadas a ativos patrimoniais, é corroborada quantitativamente pela
+Tabela~\ref{tbl-outliers}, que apresenta o número e o percentual de
+observações classificadas como outliers segundo o critério do intervalo
+interquartil. Esses valores extremos refletem a heterogeneidade típica
+de dados financeiros e possuem implicações diretas para a modelagem
+estatística. Enquanto abordagens frequentistas podem demandar
+procedimentos de tratamento ou estimadores robustos para mitigar a
+influência desses pontos, modelos bayesianos permitem incorporar
+explicitamente essa incerteza por meio de distribuições com caudas mais
+pesadas, oferecendo maior flexibilidade na avaliação do impacto dos
+outliers sobre os parâmetros estimados.
 
 \begin{figure}
 
@@ -1114,18 +1222,51 @@ status de aprovação do empréstimo}
 
 \end{figure}%
 
-\subsection{{[}WIP{]} Pré processamento}\label{wip-pruxe9-processamento}
+{
 
-\subsubsection{{[}DRAFT{]} Verificação de valores
-ausentes}\label{draft-verificauxe7uxe3o-de-valores-ausentes}
+\begin{longtable}[]{@{}lrr@{}}
 
-A primeira etapa consistiu na verificação da presença de valores
-ausentes nas variáveis do conjunto de dados. A ausência de missing
-values elimina a necessidade de imputação, evitando a introdução de
-incerteza adicional ou viés sistemático.
+\caption{\label{tbl-outliers}Número e percentual de outliers
+identificados pelo critério do IQR}
 
-\subsubsection{{[}DRAFT{]} Tratamento de inconsistências e
-outliers}\label{draft-tratamento-de-inconsistuxeancias-e-outliers}
+\tabularnewline
+
+\toprule\noalign{}
+Feature & Outliers & Percentual \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+bank\_asset\_value & 5 & 0.0011712 \\
+cibil\_score & 0 & 0.0000000 \\
+commercial\_assets\_value & 37 & 0.0086671 \\
+income\_annum & 0 & 0.0000000 \\
+loan\_amount & 0 & 0.0000000 \\
+loan\_term & 0 & 0.0000000 \\
+luxury\_assets\_value & 0 & 0.0000000 \\
+residential\_assets\_value & 52 & 0.0121808 \\
+
+\end{longtable}
+
+}
+
+\subsection{{[}REVISÃO{]} Pré
+processamento}\label{revisuxe3o-pruxe9-processamento}
+
+\subsubsection{{[}REVISÃO{]} Verificação de valores ausentes e
+duplicatas}\label{revisuxe3o-verificauxe7uxe3o-de-valores-ausentes-e-duplicatas}
+
+Inicialmente, foi realizada a verificação da presença de valores
+ausentes e observações duplicadas no conjunto de dados. Não foram
+identificados missing values em nenhuma das variáveis, o que dispensou a
+aplicação de técnicas de imputação e evitou a introdução de incerteza
+adicional ou viés sistemático no processo de modelagem. Adicionalmente,
+não foram detectadas observações duplicadas, assegurando que cada
+registro corresponda a uma unidade amostral distinta e contribuindo para
+a validade das estimativas inferenciais.
+
+\subsubsection{{[}REVISÃO{]} Tratamento de inconsistências e
+outliers}\label{revisuxe3o-tratamento-de-inconsistuxeancias-e-outliers}
 
 Observa-se que aproximadamente 0.01\% dos solicitantes apresentam
 valores negativos para ativos residenciais, correspondendo a um
@@ -1142,8 +1283,8 @@ Não foi aplicado tratamento automático de outliers, uma vez que valores
 extremos são esperados em dados financeiros e podem conter informação
 relevante para a classificação do risco de crédito.
 
-\subsubsection{{[}DRAFT{]} Seleção de variáveis e análise de
-correlação}\label{draft-seleuxe7uxe3o-de-variuxe1veis-e-anuxe1lise-de-correlauxe7uxe3o}
+\subsubsection{{[}REVISÃO{]} Seleção de variáveis e análise de
+correlação}\label{revisuxe3o-seleuxe7uxe3o-de-variuxe1veis-e-anuxe1lise-de-correlauxe7uxe3o}
 
 A Figura~\ref{fig-correlacao} foi utilizada para investigar possíveis
 relações de dependência linear entre as variáveis numéricas. Observou-se
@@ -1157,8 +1298,8 @@ multicolinearidade prejudicial à estimação, e tais variáveis podem
 conter informação complementar relevante para a classificação do risco
 de crédito.
 
-\subsubsection{{[}DRAFT{]} Codificação e padronização de
-variáveis}\label{draft-codificauxe7uxe3o-e-padronizauxe7uxe3o-de-variuxe1veis}
+\subsubsection{{[}REVISÃO{]} Codificação e padronização de
+variáveis}\label{revisuxe3o-codificauxe7uxe3o-e-padronizauxe7uxe3o-de-variuxe1veis}
 
 Com o objetivo de tornar os dados adequados à aplicação de modelos de
 regressão logística, foi realizado um processo de codificação das
@@ -1181,8 +1322,8 @@ que utilizam métodos de otimização numérica e em abordagens bayesianas,
 nas quais a escolha de distribuições a priori é sensível à magnitude dos
 parâmetros.
 
-\subsubsection{{[}DRAFT{]} Separação
-treino/teste}\label{draft-separauxe7uxe3o-treinoteste}
+\subsubsection{{[}REVISÃO{]} Separação
+treino/teste}\label{revisuxe3o-separauxe7uxe3o-treinoteste}
 
 O conjunto de dados foi dividido aleatoriamente em subconjuntos de
 treino (75\%) e teste (25\%), utilizando amostragem estratificada em
@@ -1198,20 +1339,8 @@ entre as etapas de estimação e validação.
 \subsection{{[}WIP{]} Modelagem e
 Avaliação}\label{wip-modelagem-e-avaliauxe7uxe3o}
 
-\subsubsection{{[}TBD{]} Modelo
-Frequentista}\label{tbd-modelo-frequentista}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{modelo\_logit }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(}
-\NormalTok{  loan\_status }\SpecialCharTok{\textasciitilde{}}\NormalTok{ .,}
-  \AttributeTok{data =}\NormalTok{ treino,}
-  \AttributeTok{family =} \FunctionTok{binomial}\NormalTok{(}\AttributeTok{link =} \StringTok{"logit"}\NormalTok{)}
-\NormalTok{)}
-
-\FunctionTok{summary}\NormalTok{(modelo\_logit)}
-\end{Highlighting}
-\end{Shaded}
+\subsubsection{{[}WIP{]} Modelo
+Frequentista}\label{wip-modelo-frequentista}
 
 \begin{verbatim}
 
@@ -1245,282 +1374,333 @@ AIC: 1408.1
 Number of Fisher Scoring iterations: 7
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{exp}\NormalTok{(}\FunctionTok{coef}\NormalTok{(modelo\_logit))}
-\end{Highlighting}
-\end{Shaded}
+\paragraph{Avaliação do ajuste e propriedades estatísticas do
+modelo}\label{avaliauxe7uxe3o-do-ajuste-e-propriedades-estatuxedsticas-do-modelo}
+
+\begin{table}
+
+\caption{\label{tbl-logit-freq-1}Estimativas do modelo de regressão
+logística: coeficientes, odds ratios e intervalos de confiança de 95\%.}
+
+\centering{
+
+\caption{\label{tab:tbl-logit-freq-1}Estimativas do modelo de regressão logística.}
+\centering
+\begin{tabular}[t]{lrrrrrrr}
+\toprule
+Variável & Beta & StdErr & z & p-valor & OR & IC 95\% - & IC 95\% +\\
+\midrule
+(Intercept) & -1.83 & 0.14 & -13.32 & 0.00 & 0.16 & 0.12 & 0.21\\
+no\_of\_dependents & 0.08 & 0.07 & 1.12 & 0.26 & 1.08 & 0.94 & 1.24\\
+income\_annum & 1.73 & 0.29 & 5.90 & 0.00 & 5.62 & 3.18 & 10.03\\
+loan\_amount & -1.44 & 0.19 & -7.50 & 0.00 & 0.24 & 0.16 & 0.34\\
+loan\_term & 0.90 & 0.07 & 11.93 & 0.00 & 2.46 & 2.13 & 2.86\\
+\addlinespace
+cibil\_score & -4.28 & 0.17 & -25.37 & 0.00 & 0.01 & 0.01 & 0.02\\
+residential\_assets\_value & -0.01 & 0.09 & -0.14 & 0.89 & 0.99 & 0.83 & 1.18\\
+commercial\_assets\_value & -0.04 & 0.09 & -0.48 & 0.63 & 0.96 & 0.81 & 1.14\\
+luxury\_assets\_value & -0.19 & 0.18 & -1.02 & 0.31 & 0.83 & 0.58 & 1.19\\
+bank\_asset\_value & -0.19 & 0.13 & -1.47 & 0.14 & 0.83 & 0.65 & 1.06\\
+\addlinespace
+`education\_Not Graduate` & 0.06 & 0.14 & 0.47 & 0.64 & 1.07 & 0.81 & 1.40\\
+self\_employed\_Yes & -0.09 & 0.14 & -0.68 & 0.50 & 0.91 & 0.70 & 1.19\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{table}%
+
+O modelo de regressão logística foi estimado por máxima verossimilhança,
+tendo como variável resposta o status do empréstimo e como variáveis
+explicativas os atributos socioeconômicos e financeiros do solicitante.
+A Tabela~\ref{tbl-logit-freq-1} apresenta as estimativas dos
+coeficientes, erros-padrão, estatísticas z e respectivos valores-p.
+
+O modelo apresentou redução substancial da deviance, passando de 4185.9
+no modelo nulo para 1384.1 no modelo ajustado, com critério de
+informação de Akaike (AIC) igual a 1408.1, indicando que a inclusão das
+variáveis explicativas contribui significativamente para a explicação da
+variável resposta. Adicionalmente, foi calculado o Critério de
+Informação Bayesiano (BIC), cujo valor foi de 1480.9.
+
+O BIC impõe uma penalização mais severa à complexidade do modelo do que
+o AIC, sendo particularmente informativo em amostras de maior dimensão.
+O valor obtido sugere que a especificação adotada mantém um equilíbrio
+adequado entre qualidade de ajuste e parcimônia, reforçando a robustez
+do modelo sob um critério mais conservador.
+
+Entre as variáveis analisadas, income\_annum, loan\_amount, loan\_term e
+cibil\_score mostraram-se estatisticamente significativas ao nível de
+1\%. O coeficiente associado à renda anual (income\_annum) é positivo,
+indicando que maiores níveis de renda aumentam a probabilidade de
+aprovação do empréstimo, mantendo-se as demais variáveis constantes. Em
+contrapartida, o valor solicitado (loan\_amount) apresenta coeficiente
+negativo, sugerindo que empréstimos de maior montante estão associados a
+uma menor probabilidade de aprovação, refletindo maior percepção de
+risco por parte da instituição financeira.
+
+O prazo do empréstimo (loan\_term) possui coeficiente positivo e
+estatisticamente significativo, indicando que prazos mais longos tendem
+a aumentar a chance de aprovação, possivelmente por reduzirem o valor
+das parcelas e, consequentemente, o risco de inadimplência. A variável
+cibil\_score destaca-se como o preditor mais relevante do modelo,
+apresentando coeficiente negativo de grande magnitude e elevada
+significância estatística. Esse resultado sugere forte associação entre
+o score de crédito e a decisão de concessão, reforçando seu papel
+central na avaliação de risco.
+
+As demais variáveis, incluindo número de dependentes, valores de ativos
+(residenciais, comerciais, de luxo e bancários), nível educacional e
+status de trabalho autônomo, não apresentaram significância estatística
+aos níveis usuais. Esse resultado sugere que, uma vez controladas as
+variáveis centrais de renda, score de crédito, valor do empréstimo e
+prazo, tais características adicionam informação marginal limitada para
+a classificação do risco de crédito neste conjunto de dados.
+
+O intercepto negativo e estatisticamente significativo reflete a
+probabilidade basal de aprovação quando todas as variáveis explicativas
+estão em seus valores de referência, reforçando a necessidade da
+presença de características financeiras favoráveis para aumentar a
+chance de concessão do crédito.
+
+Como as variáveis quantitativas foram padronizadas, os coeficientes
+estimados e seus respectivos Odds Ratios devem ser interpretados como o
+efeito associado a um aumento de um desvio padrão na variável
+explicativa, mantendo-se as demais constantes. Essa transformação
+permite a comparabilidade direta da magnitude dos efeitos entre
+variáveis originalmente medidas em escalas distintas. Portanto, um
+aumento de um desvio padrão na renda anual está associado a um aumento
+de 5.624 vezes na odds de aprovação do empréstimo, enquanto um aumento
+de um desvio padrão no valor do empréstimo reduz as odds em 0.237 vezes,
+e assim por diante para as demais variáveis.
+
+O teste da razão de verossimilhança confirmou que o modelo ajustado
+apresenta desempenho estatisticamente superior ao modelo sem covariáveis
+(\(\chi^2 = 2801.8, \; df = 11, \; p < 0{,}001\)), evidenciando que o
+conjunto de variáveis explicativas contribui de forma significativa para
+a modelagem da probabilidade de aprovação do empréstimo.
+
+\paragraph{Desempenho preditivo}\label{desempenho-preditivo}
+
+\subparagraph{Avaliação do classificador a partir das probabilidades
+estimadas}\label{avaliauxe7uxe3o-do-classificador-a-partir-das-probabilidades-estimadas}
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-ROC-freq-1.pdf}}
+
+}
+
+\caption{\label{fig-ROC-freq}Curvas ROC para os conjuntos de treino e
+teste}
+
+\end{figure}%
+
+A capacidade discriminatória do modelo foi avaliada por meio da Área sob
+a Curva ROC (AUC), métrica amplamente utilizada em problemas de
+classificação binária por ser independente da escolha de um limiar de
+decisão e por avaliar diretamente a qualidade das probabilidades
+estimadas.
+
+A AUC pode ser interpretada como a probabilidade de que o modelo atribua
+uma probabilidade maior a uma observação pertencente à classe positiva
+do que a uma observação da classe negativa, escolhidas aleatoriamente.
+Valores de AUC próximos de 1 indicam excelente poder discriminatório,
+enquanto valores próximos de 0,5 sugerem desempenho equivalente ao
+acaso.
+
+Os resultados indicam AUC = 0.97 no conjunto de treino e AUC = 0.97 no
+conjunto de teste. A proximidade entre esses valores sugere que o modelo
+apresenta excelente capacidade de discriminação, mantendo desempenho
+consistente fora da amostra utilizada para estimação dos parâmetros.
+
+Além disso, a ausência de queda relevante da AUC do treino para o teste
+indica baixo indício de sobreajuste (overfitting), reforçando a robustez
+do modelo no que diz respeito à ordenação correta das probabilidades
+preditas. Esse comportamento é particularmente relevante no contexto da
+análise de risco de crédito, em que a correta hierarquização dos
+indivíduos segundo o risco é mais importante do que decisões baseadas em
+um único ponto de corte.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-PR-freq-1.pdf}}
+
+}
+
+\caption{\label{fig-PR-freq}Curvas Precision-Recall para os conjuntos de
+treino e teste}
+
+\end{figure}%
+
+Complementarmente à análise por meio da curva ROC, avaliou-se o
+desempenho do modelo utilizando a curva Precision--Recall (PR), a qual é
+particularmente informativa em contextos de classes desbalanceadas ou
+quando o interesse principal está na qualidade das previsões da classe
+positiva.
+
+Enquanto a curva ROC avalia a relação entre sensibilidade e
+especificidade, a curva Precision--Recall enfatiza o compromisso entre
+precisão (precision) --- a proporção de observações corretamente
+classificadas como positivas entre todas as classificadas como positivas
+--- e revocação (recall ou sensibilidade) --- a proporção de positivos
+corretamente identificados. Dessa forma, a AUC--PR fornece uma medida
+mais direta da utilidade prática das probabilidades estimadas quando o
+custo de falsos positivos é relevante, como no contexto de concessão de
+crédito.
+
+A área sob a curva Precision--Recall foi calculada separadamente para os
+conjuntos de treino e teste, resultando em AUC--PR = 0.94 no conjunto de
+treino e AUC--PR = 0.951 no conjunto de teste. Esses valores elevados
+indicam que o modelo apresenta alta capacidade de manter níveis
+simultaneamente elevados de precisão e revocação, mesmo quando se exige
+maior rigor na identificação da classe positiva.
+
+De forma consistente com os resultados observados na curva ROC, a
+similaridade entre as AUC--PR dos conjuntos de treino e teste sugere boa
+capacidade de generalização e estabilidade do modelo fora da amostra de
+estimação. Ademais, o desempenho superior na métrica Precision--Recall
+reforça a adequação do modelo para aplicações em risco de crédito, nas
+quais decisões baseadas em probabilidades bem calibradas são preferíveis
+à simples classificação binária.
 
 \begin{verbatim}
-             (Intercept)         no_of_dependents             income_annum 
-              0.16057175               1.08002394               5.62447745 
-             loan_amount                loan_term              cibil_score 
-              0.23661967               2.45908372               0.01387883 
-residential_assets_value  commercial_assets_value      luxury_assets_value 
-              0.98774658               0.95882766               0.82945863 
-        bank_asset_value `education_Not Graduate`        self_employed_Yes 
-              0.82989993               1.06691274               0.91077487 
+Setting levels: control = 0, case = 1
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{exp}\NormalTok{(}\FunctionTok{confint}\NormalTok{(modelo\_logit))}
-\end{Highlighting}
-\end{Shaded}
+\begin{figure}
 
-\begin{verbatim}
-Waiting for profiling to be done...
-\end{verbatim}
+\centering{
 
-\begin{verbatim}
-                               2.5 %      97.5 %
-(Intercept)              0.122018483  0.20910668
-no_of_dependents         0.943574730  1.23666686
-income_annum             3.184593766 10.03410852
-loan_amount              0.161710828  0.34357645
-loan_term                2.126336692  2.85808482
-cibil_score              0.009853959  0.01909253
-residential_assets_value 0.827500113  1.17873366
-commercial_assets_value  0.806438316  1.14029212
-luxury_assets_value      0.579134971  1.18766548
-bank_asset_value         0.646627846  1.06403124
-`education_Not Graduate` 0.814289400  1.39863874
-self_employed_Yes        0.694800768  1.19331435
-\end{verbatim}
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-SE-freq-1.pdf}}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# Probabilidades}
-\NormalTok{prob\_treino }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(modelo\_logit, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
-\NormalTok{prob\_teste  }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(modelo\_logit, }\AttributeTok{newdata =}\NormalTok{ teste, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
+}
 
-\NormalTok{pred\_treino }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(prob\_treino }\SpecialCharTok{\textgreater{}=} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
-\NormalTok{pred\_teste  }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(prob\_teste  }\SpecialCharTok{\textgreater{}=} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
-\CommentTok{\# Converter para factor com níveis alinhados}
-\NormalTok{pred\_treino\_fac }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(pred\_treino, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
-\NormalTok{pred\_teste\_fac  }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(pred\_teste,  }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\caption{\label{fig-SE-freq}Curvas Sensibilidade-Especificidade em
+função do limiar de decisão}
 
-\NormalTok{y\_treino\_fac }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(treino}\SpecialCharTok{$}\NormalTok{loan\_status, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
-\NormalTok{y\_teste\_fac  }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(teste}\SpecialCharTok{$}\NormalTok{loan\_status,  }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
-\end{Highlighting}
-\end{Shaded}
+\end{figure}%
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{conf\_treino }\OtherTok{\textless{}{-}} \FunctionTok{confusionMatrix}\NormalTok{(}
-  \AttributeTok{data      =}\NormalTok{ pred\_treino\_fac,}
-  \AttributeTok{reference =}\NormalTok{ y\_treino\_fac,}
-  \AttributeTok{positive  =} \StringTok{"1"}
-\NormalTok{)}
+A escolha do limiar de corte da probabilidade foi baseada na análise
+conjunta da sensibilidade e da especificidade do classificador, coomo
+podemos ver na Figura~\ref{fig-SE-freq}. Para isso, foram avaliados os
+valores dessas métricas ao longo de todo o intervalo de limiares
+possíveis, construindo-se curvas de sensibilidade e especificidade em
+função do limiar de decisão.
 
-\NormalTok{conf\_treino}
-\end{Highlighting}
-\end{Shaded}
+O ponto de corte ótimo foi definido a partir da maximização do índice de
+Youden (Youden (1950)), que busca simultaneamente maximizar a taxa de
+verdadeiros positivos e a taxa de verdadeiros negativos. Esse critério
+fornece um equilíbrio entre erros de classificação dos dois tipos,
+evitando a adoção arbitrária do valor padrão de 0,5.
 
-\begin{verbatim}
-Confusion Matrix and Statistics
+O limiar selecionado (0.275) foi então utilizado para a construção da
+matriz de confusão e para o cálculo das métricas de desempenho no
+conjunto de teste.
 
-          Reference
-Prediction    0    1
-         0 1884  146
-         1  126 1025
-                                         
-               Accuracy : 0.9145         
-                 95% CI : (0.9042, 0.924)
-    No Information Rate : 0.6319         
-    P-Value [Acc > NIR] : <2e-16         
-                                         
-                  Kappa : 0.8155         
-                                         
- Mcnemar's Test P-Value : 0.2493         
-                                         
-            Sensitivity : 0.8753         
-            Specificity : 0.9373         
-         Pos Pred Value : 0.8905         
-         Neg Pred Value : 0.9281         
-             Prevalence : 0.3681         
-         Detection Rate : 0.3222         
-   Detection Prevalence : 0.3618         
-      Balanced Accuracy : 0.9063         
-                                         
-       'Positive' Class : 1              
-                                         
-\end{verbatim}
+\subparagraph{Avaliação do desempenho classificatório sob limiar de
+decisão}\label{avaliauxe7uxe3o-do-desempenho-classificatuxf3rio-sob-limiar-de-decisuxe3o}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{conf\_teste }\OtherTok{\textless{}{-}} \FunctionTok{confusionMatrix}\NormalTok{(}
-  \AttributeTok{data      =}\NormalTok{ pred\_teste\_fac,}
-  \AttributeTok{reference =}\NormalTok{ y\_teste\_fac,}
-  \AttributeTok{positive  =} \StringTok{"1"}
-\NormalTok{)}
+{
 
-\NormalTok{conf\_teste}
-\end{Highlighting}
-\end{Shaded}
+\begin{longtable}[]{@{}lrr@{}}
 
-\begin{verbatim}
-Confusion Matrix and Statistics
+\caption{\label{tbl-confusao-treino-freq}Matriz de confusão do modelo de
+regressão logística (conjunto de treino)}
 
-          Reference
-Prediction   0   1
-         0 592  47
-         1  38 383
-                                          
-               Accuracy : 0.9198          
-                 95% CI : (0.9018, 0.9354)
-    No Information Rate : 0.5943          
-    P-Value [Acc > NIR] : <2e-16          
-                                          
-                  Kappa : 0.8331          
-                                          
- Mcnemar's Test P-Value : 0.3855          
-                                          
-            Sensitivity : 0.8907          
-            Specificity : 0.9397          
-         Pos Pred Value : 0.9097          
-         Neg Pred Value : 0.9264          
-             Prevalence : 0.4057          
-         Detection Rate : 0.3613          
-   Detection Prevalence : 0.3972          
-      Balanced Accuracy : 0.9152          
-                                          
-       'Positive' Class : 1               
-                                          
-\end{verbatim}
+\tabularnewline
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{y\_treino\_num }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{as.character}\NormalTok{(treino}\SpecialCharTok{$}\NormalTok{loan\_status))}
-\NormalTok{y\_teste\_num  }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{as.character}\NormalTok{(teste}\SpecialCharTok{$}\NormalTok{loan\_status))}
-\NormalTok{roc\_treino }\OtherTok{\textless{}{-}} \FunctionTok{roc}\NormalTok{(}
-  \AttributeTok{response =}\NormalTok{ y\_treino\_num,}
-  \AttributeTok{predictor =}\NormalTok{ prob\_treino,}
-  \AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
-  \AttributeTok{direction =} \StringTok{"\textless{}"}
-\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\toprule\noalign{}
+& 0 & 1 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0 & 1756 & 35 \\
+1 & 254 & 1136 \\
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{roc\_teste }\OtherTok{\textless{}{-}} \FunctionTok{roc}\NormalTok{(}
-  \AttributeTok{response =}\NormalTok{ y\_teste\_num,}
-  \AttributeTok{predictor =}\NormalTok{ prob\_teste,}
-  \AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
-  \AttributeTok{direction =} \StringTok{"\textless{}"}
-\NormalTok{)}
+\end{longtable}
 
-\NormalTok{auc\_treino }\OtherTok{\textless{}{-}} \FunctionTok{auc}\NormalTok{(roc\_treino)}
-\NormalTok{auc\_teste  }\OtherTok{\textless{}{-}} \FunctionTok{auc}\NormalTok{(roc\_teste)}
+}
 
-\FunctionTok{plot}\NormalTok{(}
-\NormalTok{  roc\_treino,}
-  \AttributeTok{col =} \StringTok{"blue"}\NormalTok{,}
-  \AttributeTok{lwd =} \DecValTok{2}\NormalTok{,}
-  \AttributeTok{main =} \StringTok{"Curvas ROC — Treino vs Teste"}
-\NormalTok{)}
+{
 
-\FunctionTok{plot}\NormalTok{(}
-\NormalTok{  roc\_teste,}
-  \AttributeTok{col =} \StringTok{"red"}\NormalTok{,}
-  \AttributeTok{lwd =} \DecValTok{2}\NormalTok{,}
-  \AttributeTok{add =} \ConstantTok{TRUE}
-\NormalTok{)}
+\begin{longtable}[]{@{}lrr@{}}
 
-\FunctionTok{legend}\NormalTok{(}
-  \StringTok{"bottomright"}\NormalTok{,}
-  \AttributeTok{legend =} \FunctionTok{c}\NormalTok{(}
-    \FunctionTok{paste0}\NormalTok{(}\StringTok{"Treino (AUC = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(auc\_treino, }\DecValTok{3}\NormalTok{), }\StringTok{")"}\NormalTok{),}
-    \FunctionTok{paste0}\NormalTok{(}\StringTok{"Teste (AUC = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(auc\_teste, }\DecValTok{3}\NormalTok{), }\StringTok{")"}\NormalTok{)}
-\NormalTok{  ),}
-  \AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"blue"}\NormalTok{, }\StringTok{"red"}\NormalTok{),}
-  \AttributeTok{lwd =} \DecValTok{2}
-\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\caption{\label{tbl-confusao-teste-freq}Matriz de confusão do modelo de
+regressão logística (conjunto de teste)}
 
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/unnamed-chunk-8-1.pdf}}
+\tabularnewline
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# Treino}
-\NormalTok{pr\_treino }\OtherTok{\textless{}{-}} \FunctionTok{pr.curve}\NormalTok{(}
-  \AttributeTok{scores.class0 =}\NormalTok{ prob\_treino[treino}\SpecialCharTok{$}\NormalTok{loan\_status }\SpecialCharTok{==} \DecValTok{1}\NormalTok{],}
-  \AttributeTok{scores.class1 =}\NormalTok{ prob\_treino[treino}\SpecialCharTok{$}\NormalTok{loan\_status }\SpecialCharTok{==} \DecValTok{0}\NormalTok{],}
-  \AttributeTok{curve =} \ConstantTok{TRUE}
-\NormalTok{)}
+\toprule\noalign{}
+& 0 & 1 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0 & 555 & 15 \\
+1 & 75 & 415 \\
 
-\CommentTok{\# Teste}
-\NormalTok{pr\_teste }\OtherTok{\textless{}{-}} \FunctionTok{pr.curve}\NormalTok{(}
-  \AttributeTok{scores.class0 =}\NormalTok{ prob\_teste[teste}\SpecialCharTok{$}\NormalTok{loan\_status }\SpecialCharTok{==} \DecValTok{1}\NormalTok{],}
-  \AttributeTok{scores.class1 =}\NormalTok{ prob\_teste[teste}\SpecialCharTok{$}\NormalTok{loan\_status }\SpecialCharTok{==} \DecValTok{0}\NormalTok{],}
-  \AttributeTok{curve =} \ConstantTok{TRUE}
-\NormalTok{)}
+\end{longtable}
 
-\FunctionTok{plot}\NormalTok{(}
-\NormalTok{  pr\_treino}\SpecialCharTok{$}\NormalTok{curve,}
-  \AttributeTok{type =} \StringTok{"l"}\NormalTok{,}
-  \AttributeTok{col =} \StringTok{"blue"}\NormalTok{,}
-  \AttributeTok{lwd =} \DecValTok{2}\NormalTok{,}
-  \AttributeTok{xlab =} \StringTok{"Recall"}\NormalTok{,}
-  \AttributeTok{ylab =} \StringTok{"Precision"}\NormalTok{,}
-  \AttributeTok{main =} \StringTok{"Precision–Recall Curve — Treino vs Teste"}
-\NormalTok{)}
+}
 
-\FunctionTok{lines}\NormalTok{(}
-\NormalTok{  pr\_teste}\SpecialCharTok{$}\NormalTok{curve,}
-  \AttributeTok{col =} \StringTok{"red"}\NormalTok{,}
-  \AttributeTok{lwd =} \DecValTok{2}
-\NormalTok{)}
+\begin{table}
+\caption{Métricas de desempenho do modelo de regressão logística para os
+conjuntos de treino e teste}\tabularnewline
 
-\FunctionTok{legend}\NormalTok{(}
-  \StringTok{"bottomleft"}\NormalTok{,}
-  \AttributeTok{legend =} \FunctionTok{c}\NormalTok{(}
-    \FunctionTok{paste0}\NormalTok{(}\StringTok{"Treino (AUC{-}PR = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(pr\_treino}\SpecialCharTok{$}\NormalTok{auc.integral, }\DecValTok{3}\NormalTok{), }\StringTok{")"}\NormalTok{),}
-    \FunctionTok{paste0}\NormalTok{(}\StringTok{"Teste (AUC{-}PR = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(pr\_teste}\SpecialCharTok{$}\NormalTok{auc.integral, }\DecValTok{3}\NormalTok{), }\StringTok{")"}\NormalTok{)}
-\NormalTok{  ),}
-  \AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"blue"}\NormalTok{, }\StringTok{"red"}\NormalTok{),}
-  \AttributeTok{lwd =} \DecValTok{2}
-\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\centering
+\begin{tabular}{lrrrrrrr}
+\toprule
+Conjunto & Accuracy & Precision & Recall & Specificity & F1 & AUC\_ROC & AUC\_PR\\
+\midrule
+Treino & 0.91 & 0.82 & 0.97 & 0.87 & 0.89 & 0.97 & 0.94\\
+Teste & 0.92 & 0.85 & 0.97 & 0.88 & 0.90 & 0.97 & 0.95\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/unnamed-chunk-9-1.pdf}}
+Após a definição do limiar de decisão, as previsões probabilísticas
+foram convertidas em classes, permitindo a construção das matrizes de
+confusão para os conjuntos de treino e teste (Tabelas
+Tabela~\ref{tbl-confusao-treino-freq} e
+Tabela~\ref{tbl-confusao-teste-freq}).
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{metricas }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
-  \AttributeTok{Conjunto =} \FunctionTok{c}\NormalTok{(}\StringTok{"Treino"}\NormalTok{, }\StringTok{"Teste"}\NormalTok{),}
-  \AttributeTok{Accuracy =} \FunctionTok{c}\NormalTok{(conf\_treino}\SpecialCharTok{$}\NormalTok{overall[}\StringTok{"Accuracy"}\NormalTok{],}
-\NormalTok{               conf\_teste}\SpecialCharTok{$}\NormalTok{overall[}\StringTok{"Accuracy"}\NormalTok{]),}
-  \AttributeTok{Sensitivity =} \FunctionTok{c}\NormalTok{(conf\_treino}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Sensitivity"}\NormalTok{],}
-\NormalTok{                  conf\_teste}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Sensitivity"}\NormalTok{]),}
-  \AttributeTok{Specificity =} \FunctionTok{c}\NormalTok{(conf\_treino}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Specificity"}\NormalTok{],}
-\NormalTok{                  conf\_teste}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Specificity"}\NormalTok{]),}
-  \AttributeTok{AUC =} \FunctionTok{c}\NormalTok{(auc\_treino, auc\_teste),}
-  \AttributeTok{AUC\_PR =} \FunctionTok{c}\NormalTok{(pr\_treino}\SpecialCharTok{$}\NormalTok{auc.integral, pr\_teste}\SpecialCharTok{$}\NormalTok{auc.integral)}
-\NormalTok{)}
+A partir dessas matrizes, foram calculadas métricas clássicas de
+desempenho, incluindo acurácia, precisão, sensibilidade, especificidade
+e F1-score, cujos valores estão sumarizados na
+(\textbf{metricas-freq?}).
 
-\NormalTok{metricas}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-  Conjunto  Accuracy Sensitivity Specificity       AUC    AUC_PR
-1   Treino 0.9144923   0.8753202   0.9373134 0.9692150 0.9404202
-2    Teste 0.9198113   0.8906977   0.9396825 0.9703433 0.9511620
-\end{verbatim}
+Adicionalmente, métricas independentes do limiar de decisão, como
+AUC-ROC e AUC-PR, foram reportadas para avaliar a qualidade global das
+probabilidades estimadas.
 
 \begin{itemize}
 \tightlist
 \item
   Análise de Sensibilidade à Multicolinearidade (já que temos features
-  com correlação elevada) \#\#\# {[}TBD{]} Modelo Bayesiano
+  com correlação elevada)
+\end{itemize}
+
+\subsubsection{{[}TBD{]} Modelo Bayesiano}\label{tbd-modelo-bayesiano}
+
+\begin{itemize}
+\tightlist
 \item
   Análise de Sensibilidade à Multicolinearidade (já que temos features
-  com correlação elevada) -\textgreater avaliação do impacto \#\#
-  {[}TBD{]} Desempenho Preditivo
+  com correlação elevada) -\textgreater avaliação do impacto
+\end{itemize}
+
+\subsection{{[}TBD{]} Desempenho
+Preditivo}\label{tbd-desempenho-preditivo}
+
+\begin{itemize}
+\tightlist
 \item
   Tabela comparativa
 \item
@@ -1558,8 +1738,6 @@ Modelos}\label{tbd-interpretauxe7uxe3o-dos-modelos}
   Aplicabilidade prática
 \end{itemize}
 
-teste de referencia \textcite{autor2020}
-
 \section{{[}TBD{]} Conclusão}\label{tbd-conclusuxe3o}
 
 \begin{itemize}
@@ -1575,8 +1753,28 @@ teste de referencia \textcite{autor2020}
 Breve explicação do problema, com principais resultados e propostas
 futuras
 
+\section*{Referências}\label{referuxeancias}
+\addcontentsline{toc}{section}{Referências}
 
-\printbibliography[title=Referências]
+\protect\phantomsection\label{refs}
+\begin{CSLReferences}{0}{1}
+\bibitem[\citeproctext]{ref-dataset-loan}
+GREWAL, Rohit. \textbf{Loan Approval Dataset}. Disponível em:
+\textless{}\url{https://www.kaggle.com/datasets/rohitgrewal/loan-approval-dataset}\textgreater.
+Acesso em: 11 mar. 2026.
+
+\bibitem[\citeproctext]{ref-Tukey1977}
+TUKEY, John W. \textbf{Exploratory Data Analysis}. Reading, MA:
+Addison-Wesley, 1977.
+
+\bibitem[\citeproctext]{ref-IndexYouden}
+YOUDEN, W. J.
+\href{https://doi.org/10.1002/1097-0142(1950)3:1\%3C32::AID-CNCR2820030106\%3E3.0.CO;2-3}{Index
+for Rating Diagnostic Tests}. \textbf{Cancer}, v. 3, n. 1, p. 32--35,
+1950.
+
+\end{CSLReferences}
+
 
 
 

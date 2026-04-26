@@ -1,0 +1,39 @@
+**Legenda de status do documento**
+
+- **[TBD]** → tópico ainda indefinido; estrutura ou escopo em discussão
+
+- **[TO DO]** → tópico planejado, ainda não iniciado
+
+- **[WIP]** → em desenvolvimento
+
+- **[DRAFT]** → versão preliminar do texto
+
+- **[CHECK]** → verificação pendente (conceitos, dados, código ou referências)
+- **[REVISÃO]** → versão completa, pronta para avaliação
+- **[AJUSTAR]** → ajustes finos de redação, figuras ou formatação (pós revisão)
+- **[FINAL]** → versão definitiva (após revisão e ajustes finais)
+
+[TBD]
+  ↓
+[TO DO]
+  ↓
+[WIP]
+  ↓
+[DRAFT]
+  ↓
+[CHECK]
+  ↓
+[REVISÃO]
+  ↓
+[AJUSTAR]
+  ↓
+[FINAL]
+
+Anotações aleatórias
+
+usar kable() para estruturar as tabelas
+
+O BIC pode ser interpretado como uma aproximação assintótica do log fator de Bayes.
+
+Youden, W. J. (1950). Index for Rating Diagnostic Tests. Cancer, 3, 32–35.
+Este é o trabalho seminal que introduziu o Índice de Youden (estatística J) como medida de desempenho de um teste diagnóstico e critério para seleção de ponto de corte ótimo.

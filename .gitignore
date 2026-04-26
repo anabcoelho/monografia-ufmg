@@ -210,8 +210,8 @@ __marimo__/
 .kaggle/
 data/dados/
 /.vdoc*
+/monografia_files/
 monografia_files/
-
 .RData/
 .Rhistory/
 .Rprofile/

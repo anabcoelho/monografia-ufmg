@@ -1,0 +1,30 @@
+**Legenda de status do documento**
+
+- **[TBD]** → tópico ainda indefinido; estrutura ou escopo em discussão
+- **[TO DO]** → tópico planejado, ainda não iniciado
+- **[WIP]** → em desenvolvimento
+- **[DRAFT]** → versão preliminar do texto
+- **[CHECK]** → verificação pendente (conceitos, dados, código ou referências)
+- **[REVISÃO]** → versão completa, pronta para avaliação
+- **[AJUSTAR]** → ajustes finos de redação, figuras ou formatação (pós revisão)
+- **[FINAL]** → versão definitiva (após revisão e ajustes finais)
+
+[TBD]
+  ↓
+[TO DO]
+  ↓
+[WIP]
+  ↓
+[DRAFT]
+  ↓
+[CHECK]
+  ↓
+[REVISÃO]
+  ↓
+[AJUSTAR]
+  ↓
+[FINAL]
+
+Anotações aleatórias:
+
+usar kable() para estruturar as tabelas

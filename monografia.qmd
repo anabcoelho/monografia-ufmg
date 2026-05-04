@@ -379,9 +379,12 @@ Os modelos desenvolvidos neste trabalho utilizam o Loan Approval Dataset, uma ba
 : Descrição das variáveis do dataset {#tbl-descricao}
 
 Por se tratar de um dataset estruturado especificamente para fins de aprendizado de máquina e análise estatística, ele oferece um cenário controlado, permitindo focar na sensibilidade dos modelos aos preditores e na quantificação da incerteza sem as inconsistências típicas de bases de dados administrativas brutas.
+
 ## [TBD] Análise Exploratória
 \red{teriamos que ter uma seção de EDA? se sim, encaixar aqui}
+
 ## [REVISÃO-1] Pré-processamento
+
 ### [REVISÃO-1] Estrutura de dados e tratamento de valores ausentes
 Inicialmente, foi realizada a inspeção da estrutura do banco de dados, com o objetivo de confirmar a consistência dos tipos das variáveis e a adequação do formato dos dados às técnicas de modelagem adotadas. Essa análise compreendeu a identificação das classes das variáveis, a distinção entre atributos numéricos e categóricos e a validação da variável resposta quanto à sua natureza e domínio.
 
@@ -426,8 +429,10 @@ Do ponto de vista frequentista, modelos estimados por máxima verossimilhança p
 
 Na abordagem bayesiana, a incerteza dos parâmetros é explicitamente modelada por distribuições a posteriori. A utilização de distribuições com caudas mais pesadas, permite acomodar valores extremos de forma natural, reduzindo seu impacto sobre as estimativas centrais sem a necessidade de remoção explícita dos dados.
 -->
-### [TBD] Correlação
-\red{no minimo citar a correlação de pearson como avaliação}
+### [REVISÃO-1] Correlação
+A análise de correlação entre as variáveis numéricas foi conduzida com o objetivo de investigar associações lineares e identificar potenciais indícios de multicolinearidade entre os preditores candidatos ao modelo de regressão logística. As correlações foram estimadas por meio do coeficiente de correlação de Pearson, apropriado para avaliar associações lineares entre variáveis contínuas. O cálculo foi realizado utilizando observações completas.
+
+Os resultados foram sintetizados em uma matriz de correlação, posteriormente representada graficamente por meio de um mapa de calor (heatmap), no qual a intensidade e o sinal das correlações são indicados por uma escala de cores contínua. Essa etapa teve caráter exploratório e diagnóstico, servindo como subsídio para a avaliação de possíveis problemas de multicolinearidade na etapa de modelagem, especialmente no que se refere à estabilidade e interpretação dos coeficientes da regressão logística.
 
 ### [REVISÃO-1] Codificação de variáveis categóricas
 Para viabilizar a inclusão de variáveis qualitativas nos modelos de regressão, foi aplicada a técnica de One-Hot Encoding. Este procedimento consiste na transformação de variáveis categóricas nominais em um conjunto de variáveis indicadoras (binárias), onde o valor 1 representa a presença da categoria e 0 a sua ausência.

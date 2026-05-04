@@ -353,7 +353,7 @@ This study aims to compare frequentist and Bayesian inference approaches in the 
   \begin{itemize}
   \tightlist
   \item
-    {[}REVISÃO-1{]} → para uma primeira versão
+    \textbf{{[}REVISÃO-1{]}} → para uma primeira versão
   \end{itemize}
 \item
   \textbf{{[}AJUSTAR{]}} → ajustes finos de redação, figuras ou
@@ -365,8 +365,6 @@ This study aims to compare frequentist and Bayesian inference approaches in the 
 
 \red{dúvidas, pendências, decisões em aberto}
 \blue{comentários editoriais e lembretes}
-
-\textbf{Controle de versões} - \textbf{v1} -- Análise
 
 \section{{[}TBD{]} Introdução}\label{tbd-introduuxe7uxe3o}
 
@@ -617,16 +615,26 @@ Por se tratar de um dataset estruturado especificamente para fins de
 aprendizado de máquina e análise estatística, ele oferece um cenário
 controlado, permitindo focar na sensibilidade dos modelos aos preditores
 e na quantificação da incerteza sem as inconsistências típicas de bases
-de dados administrativas brutas. \#\# {[}TBD{]} Análise Exploratória
-\red{teriamos que ter uma seção de EDA? se sim, encaixar aqui} \#\#
-{[}REVISÃO-1{]} Pré-processamento \#\#\# {[}REVISÃO-1{]} Estrutura de
-dados e tratamento de valores ausentes Inicialmente, foi realizada a
-inspeção da estrutura do banco de dados, com o objetivo de confirmar a
-consistência dos tipos das variáveis e a adequação do formato dos dados
-às técnicas de modelagem adotadas. Essa análise compreendeu a
-identificação das classes das variáveis, a distinção entre atributos
-numéricos e categóricos e a validação da variável resposta quanto à sua
-natureza e domínio.
+de dados administrativas brutas.
+
+\subsection{{[}TBD{]} Análise
+Exploratória}\label{tbd-anuxe1lise-exploratuxf3ria}
+
+\red{teriamos que ter uma seção de EDA? se sim, encaixar aqui}
+
+\subsection{{[}REVISÃO-1{]}
+Pré-processamento}\label{revisuxe3o-1-pruxe9-processamento}
+
+\subsubsection{{[}REVISÃO-1{]} Estrutura de dados e tratamento de
+valores
+ausentes}\label{revisuxe3o-1-estrutura-de-dados-e-tratamento-de-valores-ausentes}
+
+Inicialmente, foi realizada a inspeção da estrutura do banco de dados,
+com o objetivo de confirmar a consistência dos tipos das variáveis e a
+adequação do formato dos dados às técnicas de modelagem adotadas. Essa
+análise compreendeu a identificação das classes das variáveis, a
+distinção entre atributos numéricos e categóricos e a validação da
+variável resposta quanto à sua natureza e domínio.
 
 Por fim, a presença de valores ausentes foi avaliada por meio da função
 \texttt{is.na()}, com sumarização via \texttt{colSums(is.na())}. Não
@@ -683,9 +691,25 @@ risco, sendo crucial que os modelos estatísticos sejam capazes de
 acomodar essa variabilidade sem que a remoção indiscriminada de outliers
 elimine informação relevante para a tarefa de classificação.
 
-\subsubsection{{[}TDB{]} Correlação}\label{tdb-correlauxe7uxe3o}
+\subsubsection{{[}REVISÃO-1{]}
+Correlação}\label{revisuxe3o-1-correlauxe7uxe3o}
 
-\red{no minimo citar a correlação de pearson como avaliação}
+A análise de correlação entre as variáveis numéricas foi conduzida com o
+objetivo de investigar associações lineares e identificar potenciais
+indícios de multicolinearidade entre os preditores candidatos ao modelo
+de regressão logística. As correlações foram estimadas por meio do
+coeficiente de correlação de Pearson, apropriado para avaliar
+associações lineares entre variáveis contínuas. O cálculo foi realizado
+utilizando observações completas.
+
+Os resultados foram sintetizados em uma matriz de correlação,
+posteriormente representada graficamente por meio de um mapa de calor
+(heatmap), no qual a intensidade e o sinal das correlações são indicados
+por uma escala de cores contínua. Essa etapa teve caráter exploratório e
+diagnóstico, servindo como subsídio para a avaliação de possíveis
+problemas de multicolinearidade na etapa de modelagem, especialmente no
+que se refere à estabilidade e interpretação dos coeficientes da
+regressão logística.
 
 \subsubsection{{[}REVISÃO-1{]} Codificação de variáveis
 categóricas}\label{revisuxe3o-1-codificauxe7uxe3o-de-variuxe1veis-categuxf3ricas}
@@ -1224,7 +1248,7 @@ residential\_assets\_value & 52 & 0.0121808 \\
 }
 
 \subsection{{[}REVISÃO-1{]} Pré
-processamento}\label{revisuxe3o-1-pruxe9-processamento}
+processamento}\label{revisuxe3o-1-pruxe9-processamento-1}
 
 \subsubsection{{[}REVISÃO-1{]} Verificação de valores ausentes e
 observações

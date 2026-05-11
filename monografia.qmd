@@ -263,50 +263,100 @@ Perguntas a serem respondidas nessa seção:
 - O que é o 'método'?
 - Por que esse 'método' é usado?
 - Quais são as vantagens e desvantagens do 'método'?
+Probabilidade → Inferência → Classificação → Avaliação → Modelos → Aplicação
 -->
 
 ## [TO DO] Fundamentos de Probabilidade e Inferência Estatística
-- Probabilidade como frequencia vs probabilidade como grau de crença
-- Variáveis aleatórias e distribuições
-- Teorema de Bayes
-- Conceito de incerteza estatística
-- Inferência como problema de estimação
+
+### [TO DO] Variáveis Aleatórias e Distribuições de Probabilidade
+Variável aleatória como função que associa resultados a números
+Variáveis discretas vs contínuas
+Distribuições como forma de modelar incerteza
+aprovação de crédito → Bernoulli/Binomial
+covariáveis contínuas → Normal, log-normal (sem entrar em detalhes)
+
+### [TO DO] Conceito de incerteza estatística
+mostrar por que precisamos de inferência
+Incerteza decorrente de:
+variabilidade natural
+amostragem
+Diferença entre:
+erro aleatório
+incerteza paramétrica
+Por que modelos probabilísticos são necessários em problemas reais
+
+### [TO DO] Inferência como problema de estimação
+Inferência como processo de aprender sobre parâmetros desconhecidos a partir dos dados
+Estimação pontual vs intervalar
+Ideia geral de:
+Máxima Verossimilhança (sem fórmulas)
+Distribuição a posteriori (apenas conceitual)
+
+### [TO DO] Interpretações da probabilidade
+Probabilidade frequentista
+Definição como limite de frequências relativas
+Parâmetros como valores fixos desconhecidos
+Dados como realizadores aleatórios
+Probabilidade como grau de crença (bayesiana)
+Probabilidade como medida de incerteza subjetiva/coerente
+Parâmetros como variáveis aleatórias
+Papel da distribuição a priori
+
+### [TO DO] Teorema de Bayes
+Teorema como mecanismo de atualização de crenças
+Relação entre:
+priori
+verossimilhança
+posteriori
+Interpretação inferencial, não só matemática
+
 
 ## [TO DO] Problemas de Classificação em Aprendizado Estatístico
-- Classificação binária
-- Função de perda e decisão
+### [TO DO] Classificação binária e probabilistica
+### [TO DO] Função de perda e decisão
 - Separabilidade linear e não linear
-- Overfitting e generalização
+### [TO DO] Overfitting e generalização e Trade off viés-variancia
 (preparando terreno para problemas de crédito, onde a separação perfeita é improvável e o trade-off entre viés e variância é crucial)
-- Probabilidades preditas vs. classes previstas
-- Threshold de decisão e custo de erro
+### [TO DO] Probabilidades preditas vs. classes previstas e Threshold de decisão e custo de erro
 
 ## [TO DO] Avaliação de Modelos de Classificação
 - Desbalanceamento de classes (muito comum em dados de crédito, mas não no dataset atual)
-- Matriz de confusão
+### [TO DO] Matriz de confusão
 - Accuracy, Precision, Recall, F1-score
+- Custo assimétrico de erros (FP vs FN)
+### [TO DO] Curvas
 - Curvas Precision–Recall
 - Curva ROC e AUC
 - Trade-off entre sensibilidade e especificidade
-- Custo assimétrico de erros (FP vs FN)
+
+
 
 ## [TO DO] Regressão Logística Frequentista
-- Formulação do modelo
+### [TO DO] Formulação do modelo
 - Assumptions do modelo (e.g., independência, linearidade no logit, ausência de multicolinearidade)
 - Parametrização e interpretação
 - Interpretação dos coeficientes
 - Função logística
-- Estimação por máxima verossimilhança (e a função de verossimilhança)
+### [TO DO] Estimação por máxima verossimilhança (e a função de verossimilhança)
 - Testes de hipótese
 - Intervalos de confiança
-- Odds e odds ratio
 - Limitações da abordagem frequentista
+
+### [TO DO] Interpretação dos coeficientes
+- Odds e odds ratio
+
+### [TO DO] Diagnóstico e qualidade do ajuste
 - Análise de Resíduos
 - Análise de Multicolinearidade
 - Fisher Scoring
 
-## [TO DO] Inferência Bayesiana
+### [TO DO] 
 
+
+## [TO DO] Inferência Bayesiana
+### [TO DO] Priori
+### [TO DO] Posteriori
+### [TO DO] Atualização bayesiana e incerteza
 - Teorema de Bayes aplicado à estatística
 - diferenças conceituais
 - parametros como variáveis aleatórias
@@ -319,14 +369,16 @@ Perguntas a serem respondidas nessa seção:
 (...)
 
 
-## [TO DO] Regressão Logística Bayesiana
+## [TO DO] Regressão Logística Bayesiana 
 
-\blue{(sempre traçando paralelos com a versão frequentista)}
-
+\blue{(sempre traçando paralelos com a versão frequentista, principalmente os tópicos)}
+### [TO DO] Formulação do modelo
 - Formulação do modelo probabilístico
-- Escolha de priors
-- Inferência via MCMC / aproximações variacionais
-- Diagnóstico de convergência (R-hat, traceplots)
+### [TO DO] Escolha de priors
+### [TO DO] Inferência 
+- via MCMC / aproximações variacionais
+### [TO DO] Diagnóstico de convergência 
+- (R-hat, traceplots)
 - Intervalos credíveis
 - Sensibilidade a priors
 - Robustez em pequenas amostras

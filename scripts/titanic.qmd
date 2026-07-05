@@ -1,0 +1,299 @@
+---
+jupyter: ir
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+#| vscode: {languageId: r}
+# Instalação de pacotes necessários
+pkgs <- c(
+  "tidymodels",
+  'glmnet',
+  "rstanarm",
+"DescTools"
+
+)
+
+instalar <- pkgs[!pkgs %in% installed.packages()[, "Package"]]
+
+if (length(instalar) > 0) {
+  install.packages(instalar)
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+set.seed(42)
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(tidyverse)
+library("tidymodels")
+library('janitor')
+library('ggcorrplot')
+library(workflowsets)
+library(rstanarm)
+library(dplyr)
+library(glmnet)
+library(DescTools)
+library(dplyr)
+library(purrr)
+library(yardstick)
+```
+
+```{r}
+#| vscode: {languageId: r}
+df <- read_csv("../data/titanic/train.csv") |>
+  clean_names()
+```
+
+```{r}
+#| vscode: {languageId: r}
+#preprocessamento
+df <- janitor::clean_names(df)
+```
+
+```{r}
+#| vscode: {languageId: r}
+df_num <- df |>
+  dplyr::select(where(is.numeric))
+
+cor_matrix <- cor(
+  df_num,
+  use = "complete.obs",
+  method = "pearson"
+)
+
+ggcorrplot(
+  cor_matrix,
+  type = "lower",
+  lab = TRUE,
+  lab_size = 4,
+  colors = c("#b2182b", "white", "#2166ac"),
+  outline.col = "gray70"
+) +
+  theme_minimal(base_size = 14) +
+  theme(
+    axis.text.x = element_text(
+      angle = 90,
+      hjust = 1,
+      vjust = 0.5
+    ),
+    axis.text.y = element_text(size = 8)
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+cat("Idades faltantes:", sum(is.na(df$age)), "\n")
+idade_mediana <- median(df$age, na.rm = TRUE)
+
+df <- df %>%
+  mutate(age = ifelse(is.na(age), idade_mediana, age))
+
+idade_mediana
+```
+
+```{r}
+#| vscode: {languageId: r}
+cat("Embarque faltante:", sum(is.na(df$embarked)), "\n")
+
+puerto_moda <- Mode(df$embarked, na.rm = TRUE)
+
+df$embarked[is.na(df$embarked)] <- puerto_moda
+```
+
+```{r}
+#| vscode: {languageId: r}
+df$HasCabin <- as.integer(!is.na(df$cabin))
+
+df <- select(df, -cabin)
+```
+
+```{r}
+#| vscode: {languageId: r}
+df <- df %>%
+  mutate(fare = ifelse(is.na(fare), median(fare, na.rm = TRUE), fare))
+
+
+
+df <- df %>%
+  mutate(
+    sex = ifelse(sex == "male", 0, 1),
+    embarked = case_when(
+      embarked == "S" ~ 0,
+      embarked == "C" ~ 1,
+      embarked == "Q" ~ 2
+    )
+  )
+
+
+df <- df %>%
+  select(-name, -ticket, -passenger_id)
+```
+
+```{r}
+#| vscode: {languageId: r}
+df_num <- df |>
+  dplyr::select(where(is.numeric))
+
+cor_matrix <- cor(
+  df_num,
+  use = "complete.obs",
+  method = "pearson"
+)
+
+ggcorrplot(
+  cor_matrix,
+  type = "lower",
+  lab = TRUE,
+  lab_size = 4,
+  colors = c("#b2182b", "white", "#2166ac"),
+  outline.col = "gray70"
+) +
+  theme_minimal(base_size = 14) +
+  theme(
+    axis.text.x = element_text(
+      angle = 90,
+      hjust = 1,
+      vjust = 0.5
+    ),
+    axis.text.y = element_text(size = 8)
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+split <- initial_split(
+  df,
+  prop   = 0.75,
+  strata = survived
+)
+
+train_data <- training(split)
+test_data  <- testing(split)
+```
+
+```{r}
+#| vscode: {languageId: r}
+train_data$survived <- as.factor(train_data$survived)
+```
+
+```{r}
+#| vscode: {languageId: r}
+train_data$survived <- as.factor(train_data$survived)
+test_data$survived  <- as.factor(test_data$survived)
+train_data$survived <- factor(train_data$survived, levels = c("0", "1"))
+test_data$survived  <- factor(test_data$survived, levels = c("0", "1"))
+```
+
+```{r}
+#| vscode: {languageId: r}
+log_spec <- logistic_reg() |>
+  set_engine("glm") |>
+  set_mode("classification")
+```
+
+```{r}
+#| vscode: {languageId: r}
+rec_all <- recipe(survived ~ ., data = train_data)
+
+rec_no_sex <- recipe(survived ~ ., data = train_data) |>
+  step_rm(sex)
+
+rec_sex_only <- recipe(survived ~ sex, data = train_data)
+```
+
+```{r}
+#| vscode: {languageId: r}
+wf_logit <- workflow_set(
+  preproc = list(
+    all_features = rec_all,
+    no_sex       = rec_no_sex, 
+    sex_only     = rec_sex_only
+  ),
+  models = list(
+    logit = log_spec
+  )
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+wf_fitted <- wf_logit %>%
+  mutate(
+    fit = purrr::map(
+      info,
+      ~ fit(.x$workflow[[1]], data = train_data)
+    )
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+
+
+pred_list <- wf_fitted$fit %>%
+  map(~ bind_cols(
+    predict(.x, test_data, type = "class"),
+    predict(.x, test_data, type = "prob"),
+    test_data
+  ))
+```
+
+```{r}
+#| vscode: {languageId: r}
+pred_all <- wf_fitted$wflow_id %>%
+  map2(pred_list, ~ mutate(.y, model = .x)) %>%
+  bind_rows()
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_class <- pred_all %>%
+  group_by(model) %>%
+  metric_set(
+    accuracy,
+    precision,
+    recall
+  )(
+    truth = survived,
+    estimate = .pred_class
+  )
+
+metrics_auc <- pred_all %>%
+  group_by(model) %>%
+  roc_auc(
+    truth = survived,
+    .pred_1,
+    event_level = "second"
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_final <- bind_rows(metrics_class, metrics_auc)
+metrics_final
+```
+
+```{r}
+#| vscode: {languageId: r}
+model_summary <- tibble(
+  model = wf_fitted$wflow_id,
+  summary = map(
+    wf_fitted$fit,
+    ~ summary(extract_fit_parsnip(.x)$fit)
+  )
+)
+for (i in seq_len(nrow(model_summary))) {
+  cat("\n============================\n")
+  cat("Modelo:", model_summary$model[i], "\n")
+  cat("============================\n\n")
+  print(model_summary$summary[[i]])
+}
+```
+
+

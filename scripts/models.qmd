@@ -1,0 +1,199 @@
+---
+lang: pt-BR
+
+documentclass: scrartcl
+
+bibliography: referencias.bib
+csl: abnt.csl
+
+format:
+  pdf:
+    keep-tex: true
+    toc: false
+    lof: false
+    lot: false
+    toc-depth: 3
+    toc-title: "SUMÁRIO"
+    number-sections: true
+    fontsize: 12pt
+    geometry:
+      - a4paper
+      - left=3cm
+      - right=2cm
+      - top=3cm
+      - bottom=2cm
+    linestretch: 1.5
+    fig-width: 14
+    fig-height: 6
+     
+    include-in-header:
+      - header.tex
+  html:
+    toc: false
+    number-sections: true
+    theme: cosmo
+
+execute:
+  engine: knitr
+
+header-includes:
+  - \usepackage{xcolor}
+  - \newcommand{\red}[1]{\textcolor{red}{#1}}
+  - \newcommand{\blue}[1]{\textcolor{blue}{#1}}
+---
+```{r r-setup, include=FALSE}
+#organizar pacotes e imports aqui
+
+#pkgs <- c(
+  #"tidyverse",
+  #"janitor",
+  #"skimr",
+  #"reticulate",
+  #"gtsummary",
+  #"patchwork",
+  #'ggcorrplot',
+  #'fastDummies',
+  #'dplyr',
+  #'pROC',
+  #'caret', 
+  #'PRROC',
+  #'gt',
+  #'broom',
+  #'kableExtra'
+#)
+pkgs <- c(
+  "tidymodels",
+  'glmnet',
+  "rstanarm", 
+  "reticulate",
+  'yardstick'
+)
+
+instalar <- pkgs[!pkgs %in% installed.packages()[, "Package"]]
+
+if (length(instalar) > 0) {
+  install.packages(instalar)
+}
+#library(kableExtra)
+
+#library(tidyverse)
+#library(janitor)
+#library(skimr)
+
+#library(dplyr)
+#library(tidyr)
+#library(janitor)
+
+#library(ggcorrplot)
+#library(dplyr)
+#library(fastDummies)
+#library(PRROC)
+#library(pROC)
+library(caret)
+#library(gt)
+#library(broom)
+#library(dplyr)
+#library(yardstick) recipies
+
+library(tidyverse)
+library("tidymodels")
+library('janitor')
+library('ggcorrplot')
+library(workflowsets)
+library(rstanarm)
+library(glmnet)
+library(reticulate)
+library(ggplot2)
+library(patchwork)
+library(dplyr)
+
+py_config()
+reticulate::py_install(c("pandas", "tabulate", "ipython"))
+
+set.seed(42)
+```
+
+```{r r-read-dataset, include=FALSE}
+loan <- read_csv("data/Loan/loan_approval_dataset.csv") |>
+  clean_names()
+
+#https://www.kaggle.com/datasets/uciml/default-of-credit-card-clients-dataset
+default <- read_csv("data/default/UCI_Credit_Card.csv")
+default
+```
+
+```{r loan-rename, include=FALSE}
+loan <- loan %>%
+  rename(
+    num_dependentes      = no_of_dependents,
+    escolaridade         = education,
+    autonomo             = self_employed,
+    renda_anual          = income_annum,
+    valor_emprestimo     = loan_amount,
+    prazo_anos           = loan_term,
+    score_credito        = cibil_score,
+    ativos_residenciais  = residential_assets_value,
+    ativos_comerciais    = commercial_assets_value,
+    ativos_luxo          = luxury_assets_value,
+    ativos_bancarios     = bank_asset_value,
+    status    = loan_status
+)
+
+
+loan$status <- ifelse(
+  loan$status %in% c("Approved", 1, "1"),
+  1, 0
+)
+loan$status <- as.factor(loan$status)
+```
+
+```{r default-rename, include=FALSE}
+default <- default %>%
+  rename(
+    id_cliente = ID,
+    limite_credito = LIMIT_BAL,
+    sexo = SEX,
+    escolaridade = EDUCATION,
+    estado_civil = MARRIAGE,
+    idade = AGE,
+    atraso_pagto_0 = PAY_0,
+    atraso_pagto_2 = PAY_2,
+    atraso_pagto_3 = PAY_3,
+    atraso_pagto_4 = PAY_4,
+    atraso_pagto_5 = PAY_5,
+    atraso_pagto_6 = PAY_6,
+    fatura_valor_1 = BILL_AMT1,
+    fatura_valor_2 = BILL_AMT2,
+    fatura_valor_3 = BILL_AMT3,
+    fatura_valor_4 = BILL_AMT4,
+    fatura_valor_5 = BILL_AMT5,
+    fatura_valor_6 = BILL_AMT6,
+    pagto_valor_1 = PAY_AMT1,
+    pagto_valor_2 = PAY_AMT2,
+    pagto_valor_3 = PAY_AMT3,
+    pagto_valor_4 = PAY_AMT4,
+    pagto_valor_5 = PAY_AMT5,
+    pagto_valor_6 = PAY_AMT6,
+    PD30 = default.payment.next.month
+)
+```
+
+```{r separacao-treino-teste, echo=FALSE}
+split_loan <- initial_split(
+  loan,
+  prop   = 0.75,
+  strata = status
+)
+
+train_data_loan <- training(split_loan)
+test_data_loan  <- testing(split_loan)
+
+split_default <- initial_split(
+  default,
+  prop   = 0.75,
+  strata = PD30
+)
+
+train_data_default <- training(split_default)
+test_data_default  <- testing(split_default)
+```

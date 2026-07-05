@@ -1,0 +1,1770 @@
+---
+lang: pt-BR
+
+documentclass: scrartcl
+
+bibliography: referencias.bib
+csl: abnt.csl
+
+format:
+  pdf:
+    keep-tex: true
+    toc: false
+    lof: false
+    lot: false
+    toc-depth: 3
+    toc-title: "SUMÁRIO"
+    number-sections: true
+    fontsize: 12pt
+    geometry:
+      - a4paper
+      - left=3cm
+      - right=2cm
+      - top=3cm
+      - bottom=2cm
+    linestretch: 1.5
+     
+    include-in-header:
+      - header.tex
+  html:
+    toc: false
+    number-sections: true
+    theme: cosmo
+
+execute:
+  engine: knitr
+
+header-includes:
+  - \usepackage{xcolor}
+  - \newcommand{\red}[1]{\textcolor{red}{#1}}
+  - \newcommand{\blue}[1]{\textcolor{blue}{#1}}
+---
+```{r r-setup, include=FALSE}
+#organizar pacotes e imports aqui
+
+#pkgs <- c(
+  #"tidyverse",
+  #"janitor",
+  #"skimr",
+  #"reticulate",
+  #"gtsummary",
+  #"patchwork",
+  #'ggcorrplot',
+  #'fastDummies',
+  #'dplyr',
+  #'pROC',
+  #'caret', 
+  #'PRROC',
+  #'gt',
+  #'broom',
+  #'kableExtra'
+#)
+pkgs <- c(
+  "tidymodels",
+  'glmnet',
+  "rstanarm", 
+  "reticulate",
+  'yardstick'
+)
+
+instalar <- pkgs[!pkgs %in% installed.packages()[, "Package"]]
+
+if (length(instalar) > 0) {
+  install.packages(instalar)
+}
+#library(kableExtra)
+
+#library(tidyverse)
+#library(janitor)
+#library(skimr)
+
+#library(dplyr)
+#library(tidyr)
+#library(janitor)
+
+#library(ggcorrplot)
+#library(dplyr)
+#library(fastDummies)
+#library(PRROC)
+#library(pROC)
+library(caret)
+#library(gt)
+#library(broom)
+#library(dplyr)
+#library(yardstick) recipies
+
+library(tidyverse)
+library("tidymodels")
+library('janitor')
+library('ggcorrplot')
+library(workflowsets)
+library(rstanarm)
+library(glmnet)
+library(reticulate)
+library(ggplot2)
+library(patchwork)
+
+py_config()
+reticulate::py_install(c("pandas", "tabulate", "ipython"))
+
+set.seed(123)
+```
+```{python py-setup, include=FALSE}
+#organizar pacotes e imports aqui
+import pandas as pd
+from IPython.display import Markdown
+from tabulate import tabulate
+```
+
+```{python py-read-dataset, include=FALSE}
+#load datasets (tanto em R quanto em python)
+loan = pd.read_csv("data/Loan/loan_approval_dataset.csv")
+loan = loan.rename(columns=str.lower)
+```
+
+```{r r-read-dataset, include=FALSE}
+loan <- read_csv("data/Loan/loan_approval_dataset.csv") |>
+  clean_names()
+
+cancer <- read_csv("data/cancer/breast_cancer_wisconsin_diagnostic.csv") |>
+  clean_names()
+```
+
+```{=latex}
+\begin{titlepage}
+\centering
+
+% --- IMAGEM NO TOPO ---
+\includegraphics[width=0.3\textwidth]{figuras/logo_ufmg.jpg}
+
+{\large UNIVERSIDADE FEDERAL DE MINAS GERAIS \par}
+{\large Instituto de Ciências Exatas \par}
+{\large Departamento de Ciência da Computação e Estatística \par}
+{\large Pós-Graduação Lato Sensu em Ciência de Dados \par}
+
+\vspace{2cm}
+
+{\bfseries\Large Uma Análise Comparativa entre Inferência Frequentista e Bayesiana em Modelos de Regressão Binária \par}
+
+\vspace{2cm}
+
+{\large Ana Beatriz Coelho Rodrigues \par}
+
+\vfill
+
+{\large Belo Horizonte \par}
+
+
+{\large Ago/2026 \par}
+
+\end{titlepage}
+
+\newpage
+\begin{center}
+
+Ana Beatriz Coelho Rodrigues
+
+\vspace{1cm}
+
+{\bfseries\Large Uma Análise Comparativa entre Inferência Frequentista e Bayesiana em Modelos de Regressão Binária}
+
+
+\vspace{2cm}
+
+\begin{flushright}
+Monografia apresentada ao Curso de Especialização em Ciência de Dados com Ênfase em Estatística da Universidade Federal de Minas Gerais como requisito parcial para obtenção do grau de Especialista em Ciência de Dados.
+
+
+\vspace{1cm}
+
+Orientador(a): Prof.(a) Dr.(a) Fábio N. Demarqui~
+\end{flushright}
+
+\vfill
+
+Belo Horizonte  
+
+Ago/2026
+\end{center}
+\newpage
+```
+```{=latex}
+\newpage
+\begin{center}
+{\bfseries\Large RESUMO}
+\end{center}
+
+\vspace{1cm}
+
+\textcolor{red}{reavaliar os resumos, quando o trabalho estiver concluído}
+
+Este trabalho tem como objetivo comparar as abordagens de inferência frequentista e bayesiana no contexto de modelos de classificação. O foco principal do estudo está na análise das diferenças conceituais, inferenciais e preditivas entre essas duas abordagens estatísticas, utilizando um conjunto de dados reais como estudo de caso para a aplicação dos modelos.
+
+Inicialmente, são discutidos os fundamentos teóricos das abordagens frequentista e bayesiana, destacando suas principais características, pressupostos e formas de interpretação dos parâmetros. Em seguida, realiza-se uma análise exploratória dos dados com o objetivo de compreender a estrutura das variáveis e subsidiar a construção dos modelos, sem que a análise dos dados constitua o foco central do trabalho.
+
+Na etapa de modelagem, são ajustados modelos de classificação sob as perspectivas frequentista e bayesiana, permitindo a comparação entre as abordagens quanto ao desempenho preditivo, à interpretação dos coeficientes estimados e à quantificação da incerteza associada às estimativas. A avaliação dos modelos é realizada por meio de métricas adequadas de classificação, possibilitando uma análise sistemática das diferenças e semelhanças entre os métodos.
+
+Por fim, os resultados obtidos evidenciam as vantagens e limitações de cada abordagem no contexto de problemas de classificação binária, contribuindo para uma compreensão mais aprofundada das implicações práticas e metodológicas da escolha entre inferência frequentista e bayesiana em aplicações de análise de risco de crédito e ciência de dados.
+
+\vspace{1cm}
+
+\noindent\textbf{Palavras-chave:} regressão estatística; inferência frequentista; inferência bayesiana; modelos preditivos; análise de risco de crédito.
+\newpage
+
+\newpage
+\begin{center}
+{\bfseries\Large ABSTRACT}
+\end{center}
+
+\vspace{1cm}
+
+This study aims to compare frequentist and Bayesian inference approaches in the context of regression models applied to the prediction of loan approval decisions. 
+
+\vspace{1cm}
+
+\noindent\textbf{Keywords:} frequentist inference; Bayesian inference; regression models; predictive modeling; credit risk analysis.
+\newpage
+
+\tableofcontents
+\newpage
+```
+<!-- Marcadores abaixo apenas para se achar mais rapidamente -->
+<!-- ========================================================== -->
+
+<!-- INICIO DO TEXTO -->
+
+<!-- ========================================================== -->
+
+**Legenda de status do documento**
+
+- **[TBD]** → tópico ainda indefinido; estrutura ou escopo em discussão
+- **[TO DO]** → tópico planejado, ainda não iniciado
+- **[WIP]** → em desenvolvimento
+- **[DRAFT]** → versão preliminar do texto
+- **[CHECK]** → verificação pendente (conceitos, dados, código ou referências)
+- **[REVISÃO]** → versão completa, pronta para avaliação
+  * **[REVISÃO-1]** → para uma primeira versão
+- **[AJUSTAR]** → ajustes finos de redação, figuras ou formatação (após revisão)
+- **[FINAL]** → versão definitiva (após revisão e ajustes finais)
+
+\red{dúvidas, pendências, decisões em aberto}
+\blue{comentários editoriais e lembretes}
+<!-- 
+**Controle de versões**
+
+- **v1** – Preparação e análise dos dados, primeiro modelo frequentista.
+-->
+
+<!-- 
+Versão final, para remover comentários coloridos:
+\newcommand{\red}[1]{}
+\newcommand{\blue}[1]{}
+
+-->
+
+
+# [TBD] Introdução
+
+- Contexto de risco de crédito (motivação do trabalho)
+- Importância de modelos estatísticos na decisão financeira (com referencias de estudos anteriores)
+- Diferença conceitual entre abordagem frequentista e bayesiana
+- Motivação do estudo
+- Objetivo geral (resumida)
+- indicar as técnicas Estatísticas/Computacionais que serão utilizadas para a resolução do problema.
+- Estrutura do trabalho (Este trabalho está assim organizado: Na Seção 2 apresentamos.... A Seção 3 trata de...  )
+
+<!-- ========================================================== -->
+
+<!-- Referencial Teórico -->
+
+<!-- ========================================================== -->
+# [TO DO] Referencial Teórico
+\blue{um dos principais capítulos, já que o foco do trabalho é a comparação entre abordagens.}
+<!--
+Perguntas a serem respondidas nessa seção:
+- O que é o 'método'?
+- Por que esse 'método' é usado?
+- Quais são as vantagens e desvantagens do 'método'?
+Probabilidade → Inferência → Classificação → Avaliação → Modelos → Aplicação
+-->
+
+## [TO DO] Fundamentos de Probabilidade e Inferência Estatística
+
+### [TO DO] Variáveis Aleatórias e Distribuições de Probabilidade
+A formalização da incerteza em experimentos aleatórios ocorre por meio de variáveis aleatórias,  que representam os resultados de um espaço amostral em uma escala numérica. Essa estrutura fundamenta o tratamento quantitativo de dados e a construção de modelos de probabilidade, servindo de base tanto para a inferência frequentista quanto para a abordagem bayesiana.
+
+As variáveis aleatórias são classificadas em discretas ou contínuas, a depender da natureza de seu suporte. As discretas assumem valores em conjuntos finitos ou enumeráveis, como a decisão de aprovação de crédito ou o número de ocorrências de inadimplência. Já as contínuas podem assumir qualquer valor em intervalos reais, como a renda dos proponentes ou o tempo até o default. A incerteza inerente a essas variáveis é formalizada por distribuições de probabilidade: no domínio discreto, pela função de massa de probabilidade e, no contínuo, pela função densidade de probabilidade. Tais funções não apenas sintetizam a natureza probabilística das variáveis, mas viabilizam o cálculo de medidas fundamentais, como esperança, variância e probabilidades condicionais, elementos centrais para a modelagem de risco. A escolha apropriada de distribuições de probabilidade é fundamental para capturar a variabilidade dos dados observados e para a construção de modelos inferenciais capazes de quantificar a incerteza associada às previsões.
+
+### [TO DO] Inferência Estatística
+
+A inferência estatística reúne os métodos que permitem extrair conclusões sobre uma população ampla a partir de uma amostra reduzida. Na prática, quando não é viável analisar cada indivíduo ou produto de um grupo inteiro, utilizamos os dados amostrais para realizar estimativas e previsões, fundamentadas em modelos que conectam o que observamos aos parâmetros que desejamos descobrir.
+
+O elemento central desse processo é a aceitação da incerteza. Como os dados estão sujeitos a variações e erros de medição, a inferência utiliza estruturas probabilísticas para descrever o comportamento da população (o conjunto total de elementos) com base na amostra, que é o subconjunto efetivamente analisado. Como a população é quase sempre muito maior que a amostra, as conclusões obtidas não são certezas absolutas, mas sim afirmações probabilísticas. O processo consiste em utilizar uma amostra aleatória para testar o modelo estatístico que representa a população, acompanhando cada conclusão de uma medida que quantifica o seu grau de confiabilidade. Esse caminho envolve escolher um modelo adequado para o fenômeno e deduzir informações sobre seus parâmetros desconhecidos. 
+
+### [TO DO] Interpretações da probabilidade
+
+A noção de probabilidade ocupa um papel central na inferência estatística, sendo a base para quantificar e interpretar a incerteza. Atualmente, essa análise é conduzida por dois grandes paradigmas, o frequentista e o bayesiano, que se distinguem essencialmente na interpretação do conceito de probabilidade e no tratamento da incerteza dos parâmetros.
+
+Na abordagem frequentista, também chamada de clássica, a probabilidade é entendida a partir da repetição de um experimento sob as mesmas condições. Dentro dessa visão, a probabilidade é vista como uma característica objetiva do processo que gera os dados, e não como algo que depende do observador. Os dados coletados são tratados como realizações aleatórias, enquanto os parâmetros do modelo estatístico que descreve a população são considerados valores fixos, ainda que desconhecidos. Assim, a incorporação de novas observações não altera diretamente o conceito de probabilidade, mas contribui para estimativas mais precisas desses parâmetros por meio de métodos inferenciais.
+
+Já na abordagem bayesiana, a probabilidade assume um papel mais amplo. Ela passa a representar o grau de confiança em uma afirmação, levando em conta as informações disponíveis. Nesse contexto, a probabilidade pode ser atribuída não apenas a eventos observáveis, mas também a hipóteses e parâmetros do modelo. Os parâmetros populacionais desconhecidos são tratados como variáveis aleatórias, cuja incerteza é descrita por distribuições de probabilidade. Além disso, é possível incorporar conhecimento prévio ao processo inferencial por meio de distribuições a priori. À medida que novos dados são observados, esse conhecimento é atualizado de forma sistemática pelo teorema de Bayes, resultando em uma distribuição a posteriori que reflete tanto as informações anteriores quanto a evidência empírica fornecida pelos dados.
+
+- Probabilidade frequentista
+Definição como limite de frequências relativas
+Parâmetros como valores fixos desconhecidos
+Dados como realizadores aleatórios
+- Probabilidade como grau de crença (bayesiana)
+Probabilidade como medida de incerteza subjetiva/coerente
+Parâmetros como variáveis aleatórias
+
+
+### [TO DO] Teorema de Bayes
+Teorema como mecanismo de atualização de crenças
+Relação entre:
+priori
+verossimilhança
+posteriori
+Interpretação inferencial, não só matemática
+
+
+## [TO DO] Problemas de Classificação em Aprendizado Estatístico
+### [TO DO] Classificação binária e probabilistica
+### [TO DO] Função de perda e decisão
+- Separabilidade linear e não linear
+### [TO DO] Overfitting e generalização e Trade off viés-variancia
+(preparando terreno para problemas de crédito, onde a separação perfeita é improvável e o trade-off entre viés e variância é crucial)
+### [TO DO] Probabilidades preditas vs. classes previstas e Threshold de decisão e custo de erro
+
+## [TO DO] Avaliação de Modelos de Classificação
+- Desbalanceamento de classes (muito comum em dados de crédito, mas não no dataset atual)
+### [TO DO] Matriz de confusão
+- Accuracy, Precision, Recall, F1-score
+- Custo assimétrico de erros (FP vs FN)
+### [TO DO] Curvas
+- Curvas Precision–Recall
+- Curva ROC e AUC
+- Trade-off entre sensibilidade e especificidade
+
+
+
+## [TO DO] Regressão Logística Frequentista
+### [TO DO] Formulação do modelo
+- Assumptions do modelo (e.g., independência, linearidade no logit, ausência de multicolinearidade)
+- Parametrização e interpretação
+- Interpretação dos coeficientes
+- Função logística
+### [TO DO] Estimação por máxima verossimilhança (e a função de verossimilhança)
+A função de verossimilhança é comum na abordagem frequentista e Bayesiana
+- Testes de hipótese
+- Intervalos de confiança
+- Limitações da abordagem frequentista
+
+### [TO DO] Interpretação dos coeficientes
+- Odds e odds ratio
+
+### [TO DO] Diagnóstico e qualidade do ajuste
+- Análise de Resíduos
+- Análise de Multicolinearidade
+- Fisher Scoring
+
+### [TO DO] 
+
+
+## [TO DO] Inferência Bayesiana
+### [TO DO] Priori
+### [TO DO] Posteriori
+### [TO DO] Atualização bayesiana e incerteza
+- Teorema de Bayes aplicado à estatística
+- diferenças conceituais
+- parametros como variáveis aleatórias
+- Priors, likelihood e posterior
+- Incerteza e distribuição posterior
+- Vantagens da abordagem bayesiana
+- Atualização sequencial da evidência
+- Interpretação probabilística
+- controle de sobreajuste
+(...)
+
+
+## [TO DO] Regressão Logística Bayesiana 
+
+\blue{(sempre traçando paralelos com a versão frequentista, principalmente os tópicos)}
+### [TO DO] Formulação do modelo
+- Formulação do modelo probabilístico
+### [TO DO] Escolha de priors
+### [TO DO] Inferência 
+- via MCMC 
+### [TO DO] Diagnóstico de convergência 
+- (R-hat, traceplots)
+- Intervalos de credibilidade
+- Sensibilidade a priors
+- Robustez em pequenas amostras
+- Interpretação dos coeficientes sob posterior
+- Comparação direta de MLE- maximum likelyhood estimation e MAP- Maximum-a-Posteriori
+
+(...)
+
+
+## [TO DO] Aplicações em Risco de Crédito e Finanças/Saude
+\blue{Não estender muito, acho que 1 página já deve ser suficiente}
+(Contextualização)
+
+- Modelos de scoring de crédito
+- Variáveis financeiras e risco
+- Decisão de concessão de empréstimos
+- Uso das probabilidades preditas para gestão de risco
+- Transparência e interpretabilidade
+
+* Em problemas de concessão de empréstimos, a incerteza é tão importante quanto a previsão.
+* O enfoque bayesiano permite incorporar conhecimento prévio do risco.
+* O enfoque frequentista fornece base tradicional de modelos de scoring.
+* A comparação entre ambas abordagens permite avaliar robustez das decisões.
+
+<!-- ========================================================== -->
+
+<!-- METODOLOGIA -->
+
+<!-- ========================================================== -->
+
+# [WIP] Metodologia
+## [REVISÃO-1] Descrição dos Dados
+Os modelos desenvolvidos neste trabalho utilizam o Loan Approval Dataset, uma base de dados pública disponibilizada na plataforma Kaggle (@dataset-loan). A variável alvo é binária, indicando o status de aprovação do empréstimo. A @tbl-descricao apresenta uma descrição detalhada das variáveis presentes no conjunto de dados.
+
+| Feature | Descrição |
+|----------|----------|
+| No_of_dependents | Número de dependentes do solicitante |
+| Education | Nível de escolaridade (Graduate / Not Graduate) |
+| Self_employed | Autônomo (Yes / No) |
+| Income_annum | Renda anual |
+| Loan_amount | Valor do empréstimo |
+| Loan_term | Prazo em anos |
+| Cibil_score | Score de crédito |
+| Residential_assets_value | Bens residenciais, em valor monetário |
+| Commercial_assets_value | Bens comerciais, em valor monetário |
+| Luxury_assets_value | Bens de luxo, em valor monetário |
+| Bank_asset_value | Ativos bancários, em valor monetário |
+| Loan_status | Variável alvo (Approved/Rejected) |
+
+: Descrição das variáveis do dataset {#tbl-descricao}
+
+Por se tratar de um dataset estruturado especificamente para fins de aprendizado de máquina e análise estatística, ele oferece um cenário controlado, permitindo focar na sensibilidade dos modelos aos preditores e na quantificação da incerteza sem as inconsistências típicas de bases de dados administrativas brutas.
+
+## [TBD] Análise Exploratória
+\red{Apenas se tivermos tempo}
+
+## [REVISÃO-1] Pré-processamento
+
+### [REVISÃO-1] Estrutura de dados e tratamento de valores ausentes
+Inicialmente, foi realizada a inspeção da estrutura do banco de dados, com o objetivo de confirmar a consistência dos tipos das variáveis e a adequação do formato dos dados às técnicas de modelagem adotadas. Essa análise compreendeu a identificação das classes das variáveis, a distinção entre atributos numéricos e categóricos e a validação da variável resposta quanto à sua natureza e domínio.
+
+Por fim, a presença de valores ausentes foi avaliada por meio da função `is.na()`, com sumarização via `colSums(is.na())`. Não foram identificadas observações faltantes no conjunto de dados, eliminando a necessidade de técnicas de imputação e evitando a introdução de incerteza adicional ou viés sistemático no processo de estimação.
+
+### [REVISÃO-1] Outliers
+A identificação de valores atípicos (*outliers*) nas variáveis numéricas foi realizada por meio do critério do intervalo interquartil (*Interquartile Range*, IQR), amplamente utilizado em estatística descritiva por sua robustez em relação a distribuições assimétricas e à presença de valores extremos.
+
+Para cada variável contínua, o primeiro quartil $Q_1$ e o terceiro quartil $Q_3$ foram calculados. Definindo o intervalo interquartil como
+$$
+\begin{equation}
+\mathrm{IQR} = Q_3 - Q_1
+\label{eq:iqr}
+\end{equation}
+$$
+
+Os limites inferior e superior para identificação de outliers são definidos como
+
+$$
+\begin{equation}
+L = Q_1 - 1.5 \cdot \mathrm{IQR}
+\label{eq:lower_bound}
+\end{equation}
+$$
+
+$$
+\begin{equation}
+U = Q_3 + 1.5 \cdot \mathrm{IQR}
+\label{eq:upper_bound}
+\end{equation}
+$$
+
+Esse procedimento foi empregado exclusivamente com finalidade exploratória, visando caracterizar a distribuição das variáveis e avaliar a presença de valores extremos potencialmente influentes. Não foi realizada a exclusão automática de observações, de modo a preservar a integridade do conjunto de dados e permitir que os modelos estatísticos capturassem adequadamente a heterogeneidade inerente aos dados financeiros.
+
+O fator 1.5 no critério do IQR foi proposto por @Tukey1977 como um compromisso empírico entre robustez e sensibilidade, sendo amplamente adotado por sua boa performance em distribuições assimétricas e com caudas longas, como é típico em dados financeiros.
+
+No contexto de análise de risco de crédito, a presença de valores extremos pode refletir perfis legítimos de alto patrimônio ou elevado risco, sendo crucial que os modelos estatísticos sejam capazes de acomodar essa variabilidade sem que a remoção indiscriminada de outliers elimine informação relevante para a tarefa de classificação.
+
+<!--
+Apenas um comentário que pensei aqui:
+Do ponto de vista frequentista, modelos estimados por máxima verossimilhança podem ser sensíveis a observações extremas, uma vez que tais pontos influenciam diretamente o ajuste dos coeficientes. 
+
+Na abordagem bayesiana, a incerteza dos parâmetros é explicitamente modelada por distribuições a posteriori. A utilização de distribuições com caudas mais pesadas, permite acomodar valores extremos de forma natural, reduzindo seu impacto sobre as estimativas centrais sem a necessidade de remoção explícita dos dados.
+-->
+### [REVISÃO-1] Correlação
+A análise de correlação entre as variáveis numéricas foi conduzida com o objetivo de investigar associações lineares e identificar potenciais indícios de multicolinearidade entre os preditores candidatos ao modelo de regressão logística. As correlações foram estimadas por meio do coeficiente de correlação de Pearson, apropriado para avaliar associações lineares entre variáveis contínuas. O cálculo foi realizado utilizando observações completas.
+
+Os resultados foram sintetizados em uma matriz de correlação, posteriormente representada graficamente por meio de um mapa de calor (_heatmap_), no qual a intensidade e o sinal das correlações são indicados por uma escala de cores contínua. Essa etapa teve caráter exploratório e diagnóstico, servindo como subsídio para a avaliação de possíveis problemas de multicolinearidade na etapa de modelagem, especialmente no que se refere à estabilidade e interpretação dos coeficientes da regressão logística.
+
+### [REVISÃO-1] Codificação de variáveis categóricas
+Para possibilitar a inclusão de variáveis qualitativas nos modelos de regressão, foi aplicada a transformação dessas variáveis em variáveis indicadoras (binárias). Nesse procedimento, cada categoria de uma variável nominal é representada por uma coluna específica, assumindo valor 1 quando a categoria está presente na observação e 0 caso contrário.
+
+<!---Você consegue fazer esse tipo de coisa no framework do tidymodels. Veja o  pacote recipies...--->
+
+\red{(EDITAR DEPOIS)Para a implementação, utilizou-se a função `dummy_cols` do pacote `fastDummies`, parametrizada com o argumento `remove_first_dummy = TRUE`. Esta etapa é metodologicamente crítica para mitigar a armadilha da variável *dummy* (multicolinearidade perfeita), que ocorre quando as variáveis indicadoras são linearmente dependentes, impossibilitando a estimativa dos parâmetros por métodos de máxima verossimilhança ou por algoritmos de amostragem bayesiana. Com a remoção da primeira categoria, o modelo estabelece uma base de comparação necessária para a interpretação dos coeficientes estimados. Essas variáveis são comumente chamadas de dummies por atuarem como substitutos numéricos simplificados (fictícios) de conceitos abstratos.}
+
+### [REVISÃO-1] Padronização de variáveis numéricas
+Para assegurar a estabilidade numérica dos algoritmos de estimação e permitir a comparabilidade entre os coeficientes do modelo, as variáveis quantitativas foram submetidas ao processo de padronização (*Standardization*). Inicialmente, realizou-se a conversão dos dados para o tipo numérico e, em seguida, aplicou-se a transformação de escala centralizada na média com unidade de desvio padrão. A fórmula utilizada para a padronização de cada variável $X$ é dada por
+$$
+\begin{equation}
+z_i = \frac{x_i - \bar{x}}{S}
+\label{eq:standardization}
+\end{equation}
+$$
+
+onde $x_i$ representa o valor original da variável, $\bar{x}$ é a média amostral e $S$ é o desvio padrão amostral. Essa transformação resulta em variáveis com média zero e desvio padrão um. Com todas as variáveis na mesma escala, os coeficientes estimados tornam-se comparáveis entre si, permitindo identificar quais preditores exercem maior impacto relativo sobre a probabilidade de aprovação do empréstimo.
+
+### [REVISÃO-1] Divisão entre treino e teste
+O conjunto de dados foi particionado em subconjuntos de treino (75%) e teste (25%) por meio de amostragem aleatória estratificada em relação à variável resposta Y=`loan_status`. Essa estratégia assegura que as distribuições marginais das classes sejam preservadas em ambos os subconjuntos, como:
+$$
+\begin{equation}
+\mathbb{P}(Y = 1 \mid \text{treino})
+\;\approx\;
+\mathbb{P}(Y = 1 \mid \text{teste})
+\;\approx\;
+\mathbb{P}(Y = 1).
+\label{eq:eq-treino-teste}
+\end{equation}
+$$
+
+A preservação das proporções de classe é fundamental em problemas de classificação binária, pois evita distorções na estimação dos parâmetros e na avaliação das funções de decisão, especialmente em cenários com possíveis assimetrias entre as classes.
+
+Os modelos foram estimados exclusivamente com observações do conjunto de treino, enquanto o conjunto de teste foi utilizado apenas para a avaliação do desempenho preditivo fora da amostra. Essa separação garante que as métricas de desempenho estimadas correspondam a uma aproximação não enviesada do erro de generalização, reduzindo o risco de sobreajuste (*overfitting*) e vazamento de informação.
+
+## [TO DO] Modelos Avaliados
+### [TBD] Regressão logística frequentista
+### [TBD] Regressão logística bayesiana
+### [TO DO] Métricas de avaliação
+#### [TO DO] Métricas: Ajuste do modelo
+\blue{citamos quais vamos usar, deixar a teoria para o referencial teorico}
+
+- Deviance
+- AIC
+- BIC
+- Teste da razão de verossimilhança
+- Fisher Scoring
+- FIV
+- Análise de resíduos
+
+#### [TO DO] Métricas: Avaliação preditiva
+A avaliação dos modelos de classificação foi realizada por meio de métricas adequadas para problemas de classificação binária, considerando a distribuição das classes e a importância relativa dos erros de classificação. As métricas selecionadas incluem:
+
+- ROC-AUC (Área sob a curva ROC)
+- Curva Precision-Recall e AUC-PR
+- Curva Sensibilidade (Recall) e Especificidade
+- (Índice de Youden)
+- Matriz de confusão
+- Accuracy, Precision, Recall e F1-score
+
+<!-- ========================================================== -->
+
+<!-- Resultados: Análise Exploratória e Preprossessamento -->
+
+<!-- ========================================================== -->
+
+# [WIP] Resultados
+
+## [REVISÃO-1] Análise Exploratória
+<!--
+- Falta revisar o texto
+-->
+
+A análise exploratória é fundamental para orientar as decisões de modelagem, especialmente no que tange à escolha de variáveis, tratamento de outliers e seleção de técnicas de modelagem adequadas ao perfil dos dados.
+
+```{r info-dataset, include=FALSE}
+#| include: false
+n_obs <- nrow(loan)
+n_vars <- ncol(loan)
+```
+
+O conjunto de dados é composto por `r n_obs` observações e `r n_vars` variáveis, incluindo a variável resposta `loan_status`, que indica se o empréstimo foi aprovado ou rejeitado. As variáveis preditoras incluem informações como renda anual, pontuação de crédito, nível educacional, entre outras características dos solicitantes.
+
+### [REVISÃO-1] Estatísticas univariadas
+<!--
+Tabela de estatística de variáveis numéricas e categoricas
+-->
+
+A @tbl-variaveis-num apresenta as principais estatísticas descritivas das variáveis numéricas do conjunto de dados, incluindo média, mediana, valor mínimo e máximo. Em média, os solicitantes apresentam aproximadamente 2 a 3 dependentes, renda anual em torno de 5 milhões e solicitam empréstimos próximos a 15 milhões. O prazo médio dos empréstimos é de cerca de 11 anos, enquanto o score de crédito médio está próximo de 600 pontos. Esses valores sugerem uma população com perfil financeiro intermediário, mas com ampla variabilidade entre indivíduos, com desvios-padrão elevados.
+
+```{python py-describe-dataset, echo=FALSE}
+#| label: tbl-variaveis-num
+#| tbl-cap: "Estatísticas descritivas das variáveis numéricas do conjunto de dados."
+loan.columns = loan.columns.str.strip()
+cols = loan.columns.drop("loan_id")
+resumo = loan[cols].describe().T[["mean", "50%", "min", "max", 'std']]
+resumo = resumo.rename(columns={"50%": "median"}).round(2)
+
+Markdown(tabulate(resumo, headers = resumo.columns))
+#loan[cols].describe()
+```
+
+
+
+```{r, echo=FALSE}
+#| label: fig-distribuicoes
+#| fig-cap: "Distribuição das principais variáveis numéricas do conjunto de dados"
+#| fig-subcap: 
+#|   - "Distribuição da renda anual"
+#|   - "Distribuição do valor do empréstimo"
+#|   - "Distribuição do prazo"
+#|   - "Distribuição do CIBIL score"
+#|   - "Distribuição dos ativos residenciais"
+#|   - "Distribuição dos ativos comerciais"
+#|   - "Distribuição dos bens de luxo"
+#|   - "Distribuição dos ativos bancários"
+#| layout-ncol: 2
+#| out-width: "100%"
+#| 
+
+loan <- janitor::clean_names(loan)
+vars <- c(
+  "income_annum",
+  "loan_amount",
+  "loan_term",
+  "cibil_score",
+  "residential_assets_value",
+  "commercial_assets_value",
+  "luxury_assets_value",
+  "bank_asset_value"
+)
+
+for (v in vars) {
+  
+  p <- ggplot(loan, aes(x = .data[[v]])) +
+    geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+    theme_minimal() +
+    labs(
+      x = v,
+      y = "Frequência"
+    )
+  
+  print(p)
+}
+
+```
+
+Na @fig-distribuicoes são apresentadas as distribuições das variáveis numéricas analisadas. As variáveis (a) Renda Anual, (c) Prazo do Empréstimo e (d) CIBIL Score exibem distribuições relativamente homogêneas, sem concentração acentuada em intervalos específicos. Esse padrão sugere que o conjunto de dados contempla uma ampla variedade de perfis de clientes, não havendo predominância excessiva de indivíduos com renda muito elevada ou muito baixa, nem de faixas específicas de score de crédito.
+
+Para a variável Prazo do Empréstimo (c), observa-se a presença de picos discretos ao longo da distribuição, o que é esperado, dado que prazos de empréstimo são usualmente definidos em valores inteiros de anos.
+
+Em contraste, as variáveis (e) Ativos Residenciais, (f) Ativos Comerciais, (g) Bens de Luxo e (h) Ativos Bancários apresentam acentuada assimetria à direita, indicando que a maioria dos indivíduos possui ativos de menor valor, enquanto uma parcela reduzida concentra patrimônios significativamente mais elevados.
+
+\red{podemos tratar com transformações logarítmicas ou Box-Cox, mas deixei quieto por enquanto, usaria apenas na frequentista}
+
+A (b) Distribuição do valor do empréstimo se mantém constante até um certo patamar (em torno de 20 milhões) e depois sofre uma queda acentuada. Indicando que o banco tem um limite de crédito comum para a maioria dos clientes, e empréstimos acima desse valor são exceções ou exigem critérios muito mais rígidos, tornando-os menos frequentes.
+
+Outro ponto relevante é a presença de valores negativos em `residential_assets_value`, como podemos ver em @tbl-variaveis-num, o que pode indicar inconsistências de registro ou tratamentos contábeis específicos no conjunto de dados. Esse tipo de característica pode afetar a modelagem, exigindo atenção em etapas de pré-processamento.
+
+A @tbl-categoricas apresenta a distribuição das variáveis categóricas do conjunto de dados. Observa-se que as categorias analisadas exibem distribuições globalmente equilibradas, sem predominância acentuada de um único grupo, o que contribui para a estabilidade estatística e reduz potenciais vieses na etapa de modelagem.
+
+```{python, echo=FALSE}
+#| label: tbl-categoricas
+#| tbl-cap: "Distribuição das variáveis categóricas do conjunto de dados."
+
+vars_categoricas = [
+    "no_of_dependents",
+    "education",
+    "self_employed"
+]
+
+tabelas = []
+
+for var in vars_categoricas:
+    tab = loan[var].value_counts(dropna=False).reset_index()
+    tab.columns = ["categoria", "n"]
+    
+    tab["percentual (%)"] = (tab["n"] / tab["n"].sum() * 100).round(2)
+    tab["variavel"] = var
+
+    if var == "no_of_dependents":
+        tab["categoria"] = tab["categoria"].astype(int)
+        tab = tab.sort_values("categoria")
+
+    tabelas.append(tab)
+
+resumo_cat = pd.concat(tabelas, ignore_index=True)
+
+resumo_cat["variavel"] = pd.Categorical(
+    resumo_cat["variavel"],
+    categories=vars_categoricas,
+    ordered=True
+)
+
+resumo_cat = resumo_cat.sort_values(["variavel", "categoria"])
+
+Markdown(
+    tabulate(
+        resumo_cat[["variavel", "categoria", "n", "percentual (%)"]],
+        headers="keys",
+        tablefmt="pipe",
+        showindex=False
+    )
+)
+
+resumo_cat["variavel"] = resumo_cat["variavel"].astype(str).str.strip().str.lower()
+resumo_cat["categoria"] = resumo_cat["categoria"].astype(str).str.strip().str.lower()
+resumo_wide = resumo_cat.pivot(
+    index="variavel",
+    columns="categoria",
+    values="percentual (%)"
+)
+
+selfemp_yes = resumo_wide.loc["self_employed", "yes"]
+selfemp_no = resumo_wide.loc["self_employed", "no"]
+grad_perc = resumo_wide.loc["education", "graduate"]
+```
+### [REVISÃO-1] Análise da variável resposta e relações com as variáveis preditoras
+<!--
+Análise da target
+- tanto a distribuição dela quanto em relação às outras variáveis
+Bayes: variáveis fracas → distribuições posteriores muito semelhantes.
+distribuições posterior muito parecidas com a prior (se for uma prior informativa) ou muito largas (se for não informativa).pode ser legal se a gente fizer uma análise de sensibilidade, mostrando como a escolha da prior afeta a distribuição posterior dessas variáveis fracas. (removendo o CHIBIL)
+-->
+```{r target-percentual}
+#| include: false
+
+target_tab <- loan |>
+  dplyr::count(loan_status) |>
+  dplyr::mutate(
+    pct = n / sum(n) * 100
+  )
+
+positive_pct <- round(
+  target_tab$pct[target_tab$loan_status == "Approved"], 2
+)
+
+negative_pct <- round(
+  target_tab$pct[target_tab$loan_status == "Rejected"], 2
+)
+positive_pct
+```
+
+Na @fig-target-plot, observa-se a distribuição da variável resposta `loan_status`, indicando que aproximadamente  `r positive_pct`% dos empréstimos foram aprovados, enquanto  `r negative_pct`% foram rejeitados. Essa proporção sugere um desequilíbrio leve na classe alvo.
+
+```{r, echo=FALSE}
+#| label: fig-target-plot
+#| fig-cap: "Distribuição da aprovação de empréstimos"
+#| fig-width: 4
+#| fig-height: 3
+
+loan |>
+  count(loan_status) |>
+  mutate(pct = n / sum(n)) |>
+  ggplot(aes(x = factor(loan_status), y = pct)) +
+  geom_col() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    x = "Status do Empréstimo",
+    y = "Percentual"
+  )
+```
+
+
+
+```{r analise-educacao, include=FALSE}
+# removi do texto, mantendo o código apenas para minha análise
+loan |> 
+  count(education, loan_status) |> 
+  group_by(education) |> 
+  mutate(rate = n / sum(n))
+loan |> 
+  ggplot(aes(x = income_annum, fill = factor(loan_status))) +
+  geom_histogram(bins = 30, alpha = 0.6, position = "identity") +
+  labs(
+    x = "Renda anual",
+    fill = "Status do empréstimo"
+  )
+```
+
+
+
+
+A @fig-distribuicoes-target apresenta a estimativa de densidade para as variáveis numéricas do conjunto de dados, segmentadas pelo status de aprovação do empréstimo (Rejeitado ou Aprovado). Observa-se que a variável `cibil_score` é a que apresenta a separação mais nítida entre as classes: candidatos com scores mais baixos (aproximadamente abaixo de 600) concentram-se majoritariamente no grupo de rejeitados, enquanto scores elevados mostram uma densidade quase exclusiva de aprovações.
+
+No que tange ao prazo do empréstimo (`loan_term`), nota-se uma ligeira predominância de rejeições em prazos muito curtos, enquanto os prazos mais longos apresentam uma distribuição mais equilibrada entre os grupos. Em contraste, o restante das variáveis exibem distribuições sobrepostas e visualmente semelhantes entre as duas classes. Tal sobreposição indica que, isoladamente, essas variáveis possuem menor poder discriminatório, o que exigirá dos modelos de regressão a identificação de correlações mais complexas ou efeitos multivariados para contribuir com a predição. 
+
+```{r, echo=FALSE}
+#| label: fig-distribuicoes-target
+#| fig-cap: "Distribuição das variáveis numéricas por status de aprovação do empréstimo"
+#| fig-width: 14
+#| fig-height: 10
+
+
+loan <- clean_names(loan)
+
+loan$loan_status <- factor(
+  loan$loan_status,
+  labels = c("Rejeitado", "Aprovado")
+)
+
+vars <- c(
+  "income_annum",
+  "loan_amount",
+  "loan_term",
+  "cibil_score",
+  "residential_assets_value",
+  "commercial_assets_value",
+  "luxury_assets_value",
+  "bank_asset_value"
+)
+
+loan_long <- loan %>%
+  select(all_of(vars), loan_status) %>%
+  pivot_longer(
+    cols = all_of(vars),
+    names_to = "variavel",
+    values_to = "valor"
+  )
+
+plot_vars <- function(vars_subset) {
+  loan_long %>%
+    filter(variavel %in% vars_subset) %>%
+    ggplot(aes(x = valor, fill = loan_status)) +
+    geom_density(alpha = 0.35) +
+    facet_wrap(~variavel, scales = "free", ncol = 2) +
+    scale_fill_manual(values = c("#d95f02", "#1b9e77")) +
+    theme_minimal(base_size = 15) +
+    theme(
+      legend.position = "bottom",
+      legend.box = "horizontal",
+      strip.text = element_text(size = 13),
+      axis.text = element_text(size = 12),
+      axis.title = element_text(size = 13),
+      legend.text = element_text(size = 12),
+      legend.title = element_text(size = 13)
+    ) +
+    labs(
+      x = NULL,
+      y = "Densidade",
+      fill = "Status"
+    )
+}
+
+p1 <- plot_vars(vars[1:4])
+p2 <- plot_vars(vars[5:8])
+
+(p1 / p2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
+
+A @fig-categoricas apresenta a distribuição das frequências absolutas para as variáveis categóricas Nível educacional, Trabalho autônomo e Número de dependentes, segmentadas pelo status de aprovação. Observa-se que a proporção entre empréstimos aprovados e rejeitados mantém-se praticamente constante, independentemente de o candidato ser graduado ou não, ou de possuir trabalho autônomo. No que tange ao número de dependentes, o comportamento é análogo: não há uma categoria específica (de 0 a 5 dependentes) que apresente uma vantagem ou desvantagem desproporcional na aprovação do crédito. Sob a ótica da modelagem estatística, essa independência aparente sugere que tais variáveis podem apresentar coeficientes com menor magnitude ou maior incerteza .
+
+```{r, echo=FALSE}
+#| label: fig-categoricas
+#| fig-cap: "Distribuição das variáveis categóricas segundo o status do empréstimo"
+#| fig-width: 12
+#| fig-height: 8
+
+loan <- loan %>% 
+  clean_names() %>%
+  mutate(
+    loan_status = factor(loan_status, labels = c("Rejeitado", "Aprovado")),
+    no_of_dependents = factor(
+      no_of_dependents,
+      levels = sort(unique(no_of_dependents)),  
+      ordered = TRUE
+    )
+  )
+
+plot_cat <- function(var, xlab) {
+  ggplot(
+    loan,
+    aes(x = .data[[var]], fill = loan_status)
+  ) +
+    geom_bar(position = "dodge") +
+    scale_fill_manual(values = c("#d95f02", "#1b9e77")) +
+    theme_minimal(base_size = 15) +
+    theme(
+      legend.position = "bottom",
+      axis.text = element_text(size = 13),
+      axis.title.x = element_text(size = 14),
+      axis.title.y = element_text(size = 14),
+      legend.text = element_text(size = 13),
+      legend.title = element_text(size = 14)
+    ) +
+    labs(
+      x = xlab,
+      y = "Número de observações",
+      fill = "Status do Empréstimo"
+    )
+}
+
+p1 <- plot_cat("education", "Nível educacional")
+p2 <- plot_cat("self_employed", "Trabalho autônomo")
+p3 <- plot_cat("no_of_dependents", "Número de dependentes")
+
+(p1 + p2) / p3
+```
+
+
+
+
+### [REVISÃO-1] Análise de correlação entre variáveis numéricas
+<!--
+Correlação numéricas
+-->
+
+A matriz de correlação (@fig-correlacao) revela associações relevantes entre as variáveis numéricas do conjunto de dados. Observa-se forte correlação entre renda anual (`income_annum`) e valor do empréstimo (`loan_amount`), bem como entre essas variáveis e os ativos patrimoniais, especialmente ativos de luxo e ativos bancários, indicando que essas medidas capturam aspectos relacionados da condição financeira dos solicitantes. As correlações entre os diferentes tipos de ativos são positivas e moderadas, sugerindo coerência interna do perfil patrimonial, sem redundância perfeita entre as variáveis.
+
+Por outro lado, o prazo do empréstimo (`loan_term`) apresenta correlação praticamente nula com as demais variáveis, indicando independência em relação ao perfil financeiro. De forma semelhante, o cibil_score exibe correlações muito fracas com renda, ativos e valor do empréstimo, sugerindo que essa variável representa uma dimensão distinta de risco de crédito, relevante para a classificação, mas não diretamente associada ao nível de riqueza.
+
+A presença de correlações elevadas entre algumas variáveis explicativas indica potencial multicolinearidade, aspecto que deve ser considerado na etapa de modelagem, especialmente na interpretação dos coeficientes da regressão logística.
+
+```{r, echo=FALSE}
+#| label: fig-correlacao
+#| fig-cap: "Mapa de calor da correlação entre variáveis numéricas"
+#| warning: false
+#| fig-width: 7
+#| fig-height: 5
+#| fig-pos: "htbp"
+
+loan_num <- loan %>%
+  clean_names() %>%
+  select(
+    income_annum,
+    loan_amount,
+    loan_term,
+    cibil_score,
+    residential_assets_value,
+    commercial_assets_value,
+    luxury_assets_value,
+    bank_asset_value
+  )
+
+cor_matrix <- round(cor(loan_num, use = "complete.obs"), 3)
+
+ggcorrplot(
+  cor_matrix,
+  type = "lower",
+  lab = TRUE,
+  lab_size = 4,
+  colors = c("#b2182b", "white", "#2166ac"),
+  outline.col = "gray70"
+) +
+  theme_minimal(base_size = 14) +
+  theme(
+    axis.text.x = element_text(
+      angle = 90,
+      hjust = 1,
+      vjust = 0.5
+    ),
+    axis.text.y = element_text(size = 8)
+  )
+```
+
+
+### [REVISÃO-1] Análise de outliers
+<!--
+Análise de outliers
+-->
+
+
+A presença de valores atípicos, particularmente em variáveis relacionadas a ativos patrimoniais, é corroborada quantitativamente pela @tbl-outliers, que apresenta o número e o percentual de observações classificadas como outliers segundo o critério do intervalo interquartil. Esses valores extremos refletem a heterogeneidade típica de dados financeiros e possuem implicações diretas para a modelagem estatística. Enquanto abordagens frequentistas podem demandar procedimentos de tratamento ou estimadores robustos para mitigar a influência desses pontos, modelos bayesianos permitem incorporar explicitamente essa incerteza por meio de distribuições com caudas mais pesadas, oferecendo maior flexibilidade na avaliação do impacto dos outliers sobre os parâmetros estimados.
+
+```{r, include=FALSE}
+#não vou mostrar no texto, deixando código para análise
+
+vars <- c(
+  "income_annum",
+  "loan_amount",
+  "loan_term",
+  "cibil_score",
+  "residential_assets_value",
+  "commercial_assets_value",
+  "luxury_assets_value",
+  "bank_asset_value"
+)
+
+loan_long <- loan %>%
+  select(all_of(vars), loan_status) %>%
+  mutate(
+    loan_status = factor(
+      loan_status,
+      labels = c("Rejeitado", "Aprovado")
+    )
+  ) %>%
+  pivot_longer(
+    cols = all_of(vars),
+    names_to = "variavel",
+    values_to = "valor"
+  )
+
+ggplot(loan_long, aes(x = loan_status, y = valor, fill = loan_status)) +
+  geom_boxplot(
+    alpha = 0.6,
+    outlier.shape = 16,      
+    outlier.size = 1.5,
+    outlier.color = "red",  
+    outlier.alpha = 0.7
+  ) +
+  facet_wrap(~ variavel, scales = "free_y", ncol = 2) +
+  scale_fill_manual(
+    values = c("Rejeitado" = "#d95f02", "Aprovado" = "#1b9e77")
+  ) +
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal(base_size = 16) +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(size = 14),
+    axis.title = element_blank(),
+    axis.text.x = element_text(size = 13),
+    axis.text.y = element_text(size = 12)
+  )
+```
+```{r, echo=FALSE}
+#| label: tbl-outliers
+#| tbl-cap: "Número e percentual de outliers identificados pelo critério do IQR"
+#| echo: false
+#| warning: false
+
+library(dplyr)
+library(tidyr)
+library(knitr)
+
+# Função para contar outliers
+iqr_outliers <- function(x) {
+  Q1 <- quantile(x, 0.25, na.rm = TRUE)
+  Q3 <- quantile(x, 0.75, na.rm = TRUE)
+  IQR_val <- Q3 - Q1
+  lower <- Q1 - 1.5 * IQR_val
+  upper <- Q3 + 1.5 * IQR_val
+  sum(x < lower | x > upper, na.rm = TRUE)
+}
+
+# Processamento dos dados
+outlier_df <- loan %>%
+  select(all_of(vars)) %>%
+  pivot_longer(everything(), names_to = "Feature", values_to = "value") %>%
+  group_by(Feature) %>%
+  summarise(
+    Outliers = iqr_outliers(value),
+    # Criamos como número puro para formatar no GT depois
+    Percentual = (Outliers / nrow(loan)) 
+  ) %>%
+  ungroup()
+
+# Gerando a tabela
+kable(outlier_df)
+```
+
+## [REVISÃO-1] Pré processamento
+
+```{r, include=FALSE}
+#apenas para consulta
+summary(loan)
+colSums(is.na(loan))
+sum(duplicated(loan))
+```
+
+### [REVISÃO-1] Verificação de valores ausentes e observações duplicadas
+Inicialmente, foi realizada a verificação da presença de valores ausentes e observações duplicadas no conjunto de dados. Não foram identificados valores faltantes em nenhuma das variáveis, o que dispensou a aplicação de técnicas de imputação e evitou a introdução de incerteza adicional ou viés sistemático no processo de modelagem. Adicionalmente, não foram detectadas observações duplicadas, assegurando que cada registro corresponda a uma unidade amostral distinta e contribuindo para a validade das estimativas inferenciais.
+
+### [REVISÃO-1] Tratamento de inconsistências e outliers
+```{r, include=FALSE}
+
+
+negativos <- sum(loan$residential_assets_value < 0)
+total <- nrow(loan)
+
+percentual <- negativos / total 
+percentual
+negativos
+
+# tratamento para os valores negativos
+n_before <- nrow(loan)
+
+loan <- loan |>
+  dplyr::filter(residential_assets_value >= 0)
+
+n_after <- nrow(loan)
+
+n_removed <- n_before - n_after
+```
+
+Observa-se que aproximadamente `r round(percentual, 2)`% dos solicitantes apresentam valores negativos para ativos residenciais, correspondendo a um contingente residual de observações atípicas. Esses valores não possuem interpretação econômica direta no contexto da variável analisada e podem estar associados a inconsistências de registro ou a particularidades não representativas do perfil financeiro da amostra. Considerando o caráter marginal dessas observações e seu potencial de introduzir ruído na estimação dos parâmetros, optou-se por removê-las do conjunto de dados, sem prejuízo à representatividade da amostra ou à validade inferencial dos modelos ajustados.
+A exclusão resultou na remoção de `r n_removed` observações.
+
+Não foi aplicado tratamento automático de outliers, uma vez que valores extremos são esperados em dados financeiros e podem conter informação relevante para a classificação do risco de crédito.
+
+### [REVISÃO-1] Seleção de variáveis e análise de correlação
+
+A @fig-correlacao foi utilizada para investigar possíveis relações de dependência linear entre as variáveis numéricas. Observou-se a presença de correlações elevadas entre variáveis associadas à escala de renda e patrimônio, como renda anual, valor do empréstimo e ativos financeiros, comportamento esperado em bases de dados financeiras.
+
+Apesar dessas correlações, optou-se por não remover variáveis nesta etapa, uma vez que correlação elevada não implica, necessariamente, multicolinearidade prejudicial à estimação, e tais variáveis podem conter informação complementar relevante para a classificação do risco de crédito.
+
+### [REVISÃO-1] Codificação e padronização de variáveis
+
+
+```{r, include=FALSE}
+names(loan)
+vars_categoricas <- c(
+  "education",
+  "self_employed"
+)
+
+vars_numericas <- c(
+  "no_of_dependents",
+  "income_annum",
+  "loan_amount",
+  "loan_term",
+  "cibil_score",
+  "residential_assets_value",
+  "commercial_assets_value",
+  "luxury_assets_value",
+  "bank_asset_value"
+)
+
+# One-Hot Encoding
+loan_encoded <- loan %>%
+  mutate(
+    education = factor(education),
+    self_employed = factor(self_employed)
+  ) %>%
+  fastDummies::dummy_cols(
+    select_columns = vars_categoricas,
+    remove_selected_columns = TRUE,
+    remove_first_dummy = TRUE
+  )
+
+# Padronização (Standardization)
+loan_encoded[vars_numericas] <- lapply(
+  loan_encoded[vars_numericas],
+  function(x) as.numeric(as.character(x))
+)
+loan_encoded[vars_numericas] <- scale(loan_encoded[vars_numericas])
+
+
+table(loan_encoded$loan_status)
+str(loan_encoded$loan_status)
+```
+
+Com o objetivo de tornar os dados adequados à aplicação de modelos de regressão logística, foi realizado um processo de codificação das variáveis categóricas e padronização das variáveis numéricas. As variáveis categóricas consideradas no estudo incluem: o nível educacional (Graduate / Not Graduate) e a condição de trabalho autônomo (Yes/No). Essas variáveis foram tratadas por meio de `one-hot encoding`, convertendo cada categoria em variáveis indicadoras binárias. Para evitar problemas de multicolinearidade perfeita, uma categoria de referência foi removida em cada conjunto de `dummies`.
+
+As variáveis numéricas foram padronizadas utilizando o método standard. Essa etapa garante que todas as variáveis estejam na mesma escala, facilitando a convergência dos algoritmos de estimação e permitindo uma interpretação mais comparável dos coeficientes estimados.
+
+Ressalta-se que a padronização não altera a informação contida nos dados, mas apenas sua escala, sendo especialmente relevante em modelos que utilizam métodos de otimização numérica e em abordagens bayesianas, nas quais a escolha de distribuições a priori é sensível à magnitude dos parâmetros.
+
+### [REVISÃO-1]  Separação treino/teste
+```{r treino-teste}
+#| include: false
+
+loan_encoded <- loan_encoded |>
+  dplyr::select(-loan_id)
+
+loan_encoded$loan_status <- ifelse(
+  loan_encoded$loan_status %in% c("Aprovado", 1, "1"),
+  1, 0
+)
+loan_encoded$loan_status <- as.numeric(loan_encoded$loan_status)
+
+
+idx <- createDataPartition(
+  loan_encoded$loan_status,
+  p = 0.75,
+  list = FALSE
+)
+
+treino <- loan_encoded[idx, ]
+teste  <- loan_encoded[-idx, ]
+prop.table(table(treino$loan_status))
+prop.table(table(teste$loan_status))
+```
+
+O conjunto de dados foi dividido aleatoriamente em subconjuntos de treino (75%) e teste (25%), utilizando amostragem estratificada em relação à variável resposta (loan_status). Essa estratégia assegura que a proporção de observações pertencentes a cada classe seja preservada em ambos os subconjuntos.
+
+O ajuste do modelo foi realizado exclusivamente com o conjunto de treino, enquanto o conjunto de teste foi reservado para a avaliação do desempenho preditivo fora da amostra, assegurando a separação adequada entre as etapas de estimação e validação.
+
+## [WIP] Modelagem e Avaliação
+
+### [REVISÃO-1] Modelo Frequentista
+
+<!-- ========================================================== -->
+
+<!-- Resultados: FREQUENTISTA -->
+
+<!-- ========================================================== -->
+```{r reglogit-freq-fit, include=FALSE}
+#depois, vamos dar include = FALSE
+modelo_logit <- glm(
+  loan_status ~ .,
+  data = treino,
+  family = binomial(link = "logit")
+)
+
+summary(modelo_logit)
+
+```
+
+#### [REVISÃO-1] Avaliação do ajuste e propriedades estatísticas do modelo
+<!-- 
+- interpretação dos coeficientes
+- Odds Ratios
+- Teste de razão de Verossimilhança
+- AIC e BIC
+- Analise de multiocolinearidade (VIF)
+- Análise de resíduos
+-->
+
+```{r tbl-ajuste-modelo, echo=FALSE}
+#| label: tbl-ajuste-modelo
+#| tbl-cap: "Medidas de ajuste do modelo de regressão logística"
+#| echo: false
+#| warning: false 
+
+null_dev <- modelo_logit$null.deviance
+res_dev  <- modelo_logit$deviance
+aic_val  <- AIC(modelo_logit)
+
+lr_stat <- null_dev - res_dev
+df_diff <- modelo_logit$df.null - modelo_logit$df.residual
+p_val <- pchisq(lr_stat, df = df_diff, lower.tail = FALSE)
+
+bic_val <- BIC(modelo_logit)
+
+# Extrair informações do modelo
+tbl_ajuste <- data.frame(
+  Medida = c(
+    "Null deviance",
+    "Residual deviance",
+    "Δ Deviance (LR)",
+    "gl (diferença)",
+    "p-valor (teste qui-quadrado)",
+    "AIC",
+    "BIC",
+    "Número de iterações (Fisher scoring)"
+  ),
+  Valor = c(
+    null_dev,
+    res_dev,
+    lr_stat,
+    df_diff,
+    p_val,
+    aic_val,
+    bic_val,
+    round(modelo_logit$iter)
+  )
+)
+
+kable(
+  tbl_ajuste,
+  digits = 4,
+  booktabs = TRUE,
+  col.names = c("Medida", "Valor"),
+  align = c("l", "r")
+)
+```
+
+O modelo de regressão logística foi estimado por máxima verossimilhança, tendo como variável resposta o status do empréstimo e como variáveis explicativas os atributos socioeconômicos e financeiros do solicitante.
+
+A @tbl-ajuste-modelo possui metricas de ajuste do modelo. O algoritmo de Fisher scoring convergiu após `r round(modelo_logit$iter, 0)` iterações, indicando estabilidade na estimação dos parâmetros do modelo. É possível observar que o modelo apresentou redução substancial da deviance, passando de `r round(null_dev, 1)` no modelo nulo para `r round(res_dev, 1)` no modelo ajustado, com critério de informação de Akaike (AIC) igual a `r round(aic_val, 1)`, indicando que a inclusão das variáveis explicativas contribui significativamente para a explicação da variável resposta. 
+
+Adicionalmente, foi calculado o Critério de Informação Bayesiano (BIC), cujo valor foi de `r round(bic_val, 1)`. O BIC impõe uma penalização mais severa à complexidade do modelo do que o AIC, sendo particularmente informativo em amostras de maior dimensão. O valor obtido sugere que a especificação adotada mantém um equilíbrio adequado entre qualidade de ajuste e parcimônia, reforçando a robustez do modelo sob um critério mais conservador.
+
+O teste da razão de verossimilhança confirmou que o modelo ajustado apresenta desempenho estatisticamente superior ao modelo sem covariáveis ($\chi^2 = `r round(lr_stat, 1)`, \; df = `r df_diff`, \; p < 0{,}001$), evidenciando que o conjunto de variáveis explicativas contribui de forma significativa para a modelagem da probabilidade de aprovação do empréstimo.
+
+```{r tbl-logit-freq-1, echo=FALSE}
+#| label: tbl-logit-freq-1
+#| tbl-cap: "Estimativas do modelo de regressão logística"
+knitr::opts_chunk$set(size = "small")
+tabela_logit <- tidy(
+  modelo_logit,
+  conf.int = TRUE
+) |>
+  mutate(
+    Beta = round(estimate, 3),
+    `StdErr` = round(std.error, 3),
+    `z` = round(statistic, 3),
+    `p-valor` = round(p.value, 4),
+    `OddsRatio` = round(exp(estimate), 3),
+  ) |>
+  select(
+    term,
+    Beta,
+    `StdErr`,
+    z,
+    `p-valor`,
+    `OddsRatio`,
+  ) |>
+  rename(
+    Variável = term
+  )
+
+
+tabela_logit_fmt <- tabela_logit |>
+  dplyr::mutate(across(where(is.numeric), ~ round(.x, 2)))
+
+kable(
+  tabela_logit_fmt,
+  booktabs = TRUE,
+  digits = 2,
+  format = "latex"
+)
+```
+
+A @tbl-logit-freq-1 apresenta as estimativas dos coeficientes, erros-padrão, estatísticas z e respectivos valores-p. Entre as variáveis analisadas, `income_annum`, `loan_amount`, `loan_term` e `cibil_score` mostraram-se estatisticamente significativas ao nível de 1%. O coeficiente (Coluna Beta da tabela) associado à renda anual (`income_annum`) é positivo, indicando que maiores níveis de renda aumentam a probabilidade de aprovação do empréstimo, mantendo-se as demais variáveis constantes. Em contrapartida, o valor solicitado (`loan_amount`) apresenta coeficiente negativo, sugerindo que empréstimos de maior montante estão associados a uma menor probabilidade de aprovação, refletindo maior percepção de risco por parte da instituição financeira.
+
+O prazo do empréstimo (`loan_term`) possui coeficiente positivo e estatisticamente significativo, indicando que prazos mais longos tendem a aumentar a chance de aprovação, possivelmente por reduzirem o valor das parcelas e, consequentemente, o risco de inadimplência. A variável `cibil_score` destaca-se como o preditor mais relevante do modelo, apresentando coeficiente negativo de grande magnitude e elevada significância estatística. Esse resultado sugere forte associação entre o score de crédito e a decisão de concessão, reforçando seu papel central na avaliação de risco.
+
+As demais variáveis, incluindo número de dependentes, valores de ativos (residenciais, comerciais, de luxo e bancários), nível educacional e status de trabalho autônomo, não apresentaram significância estatística aos níveis usuais. A ausência de significância estatística dessas covariáveis indica que, uma vez controladas as variáveis centrais do modelo, sua contribuição marginal para a verossimilhança do modelo é limitada, não resultando em melhora estatisticamente detectável na capacidade de discriminação do risco de crédito.
+
+O intercepto negativo e estatisticamente significativo reflete a probabilidade basal de aprovação quando todas as variáveis explicativas estão em seus valores de referência, reforçando a necessidade da presença de características financeiras favoráveis para aumentar a chance de concessão do crédito.
+
+Como as variáveis quantitativas foram padronizadas, os coeficientes estimados e seus respectivos *Odds Ratios* (OR) devem ser interpretados como o efeito associado a um aumento de um desvio padrão na variável explicativa, mantendo-se as demais constantes. Essa transformação permite a comparabilidade direta da magnitude dos efeitos entre variáveis originalmente medidas em escalas distintas. Portanto, um aumento de um desvio padrão na renda anual está associado a um aumento de `r round(exp(coef(modelo_logit)["income_annum"]), 3)` vezes na odds de aprovação do empréstimo, enquanto um aumento de um desvio padrão no valor do empréstimo reduz as odds em `r round(exp(coef(modelo_logit)["loan_amount"]), 3)` vezes, e assim por diante para as demais variáveis.
+
+
+
+```{r, echo=FALSE}
+#| label: tbl-vif-freq
+#| tbl-cap: "Fatores de Inflação de Variância por feature"
+#| echo: false
+#| warning: false
+library(car)
+
+
+vif_valores <- vif(modelo_logit)
+
+vif_tabela <- data.frame(
+  Variavel = names(vif_valores),
+  VIF = round(vif_valores, 2)
+)
+
+kable(vif_tabela)
+
+# Maior VIF
+vif_max <- max(vif_tabela$VIF)
+
+# Variável com maior VIF
+var_vif_max <- vif_tabela$Variavel[which.max(vif_tabela$VIF)]
+
+# VIFs acima de limiares usuais
+vif_gt_5  <- vif_tabela |> subset(VIF > 5)
+vif_gt_10 <- vif_tabela |> subset(VIF > 10)
+
+# Resumos automáticos
+vif_max        <- max(vif_tabela$VIF)
+var_vif_max    <- vif_tabela$Variavel[which.max(vif_tabela$VIF)]
+
+vif_gt_5  <- subset(vif_tabela, VIF > 5)
+vif_gt_10 <- subset(vif_tabela, VIF > 10)
+
+vars_gt_5  <- vif_gt_5$Variavel
+vars_gt_10 <- vif_gt_10$Variavel
+
+n_gt_5  <- length(vars_gt_5)
+n_gt_10 <- length(vars_gt_10)
+```
+
+A @tbl-vif-freq apresenta os fatores de inflação da variância (VIF) para as variáveis explicativas do modelo de regressão logística. O VIF quantifica o quanto a variância do estimador de cada coeficiente é inflacionada devido à correlação linear com as demais covariáveis. Valores próximos de 1 indicam ausência de multicolinearidade, enquanto valores acima de 5 sugerem atenção e valores superiores a 10 são usualmente interpretados como indicativos de multicolinearidade severa.
+
+Observa-se que a maior parte das variáveis apresenta VIFs baixos, próximos de 1, indicando fraca dependência linear entre si. Esse é o caso, por exemplo, de `no_of_dependents`, `loan_term`, `cibil_score`, das variáveis associadas a ativos residenciais e comerciais, bem como das variáveis categóricas relacionadas à escolaridade e ao status de emprego.
+
+Entretanto, duas variáveis merecem destaque. A variável `income_annum` apresenta VIF elevado (17,97), caracterizando multicolinearidade severa, o que indica forte correlação linear com outras covariáveis do modelo. Esse resultado já havia sido observado na análise de correlação de pearson (ver @fig-correlacao), na qual `income_annum` apresentou alta correlação com `loan_amount` e com variáveis patrimoniais. Além disso, as variáveis loan_amount (VIF = 7,73) e luxury_assets_value (VIF = 7,31) exibem multicolinearidade moderada, acima do limiar usual de 5, sugerindo a presença de sobreposição parcial de informação explicativa no modelo.
+
+\red {podemos remover essas features em uma outra versão do modelo, só teriamos que repetir os resultados, é valido?}
+
+```{r, echo=FALSE}
+#| label: fig-residuals-freq
+#| fig-cap: "Gráficos de diagnóstico de resíduos do modelo de regressão logística"
+#| fig-width: 6
+#| fig-height: 4
+
+# Ajuste do layout: 2 linhas x 2 colunas
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+par(mfrow=c(2,2))
+plot(modelo_logit, pch=19, col="blue")
+
+```
+
+A análise de diagnóstico é uma etapa crucial para validar a robustez do modelo de regressão logística e identificar possíveis observações influentes que possam enviesar as estimativas de crédito. A Figura @fig-residuals-freq apresenta os gráficos de diagnóstico gerados para o modelo final. Embora a regressão logística não pressuponha a normalidade dos resíduos, uma vez que a variável dependente segue uma distribuição binomial e os parâmetros são estimados via Máxima Verossimilhança,a análise dos resíduos de Pearson e resíduos de desvio permite avaliar a qualidade do ajuste.
+
+O gráfico `Residuals vs Fitted` mostra a dispersão dos resíduos de Pearson em relação aos valores preditos. Observa-se uma concentração de resíduos próximos de zero, o que é esperado, todavia, a presença de pontos isolados com valores de resíduos extremamente altos (especialmente os casos 675, 2404 e 3059) indica que o modelo apresenta dificuldades em classificar corretamente determinados perfis de tomadores de empréstimo.
+
+No grafico `Q-Q Residuals`, o desvio observado nas caudas do gráfico Quantil-Quantil não deve ser interpretado como uma violação de pressuposto, mas sim como um indicativo de que a distribuição dos erros do modelo possui "caudas pesadas". Isso reforça a existência de outliers ou casos em que a probabilidade prevista pelo modelo diverge drasticamente do desfecho real da aprovação.
+
+Diferente dos modelos lineares clássicos, a regressão logística não assume a homocedasticidade dos resíduos, uma vez que a variância em uma distribuição binomial é intrinsecamente dependente da probabilidade de ocorrência do evento. Contudo, a análise do gráfico Scale-Location (@fig-residuals-freq) permanece relevante para identificar possíveis problemas de superdispersão ou má especificação do modelo. No presente estudo, a dispersão observada sugere que, embora a heterocedasticidade seja um traço inerente ao método, a presença de observações com resíduos padronizados elevados indica que a variabilidade dos dados de aprovação de crédito pode não estar sendo totalmente capturada pelas variáveis independentes selecionadas.
+
+O gráfico `Residuals vs Leverage` é fundamental para identificar observações que possuem alto "poder de alavancagem". O ponto 675 destaca-se significativamente por apresentar um resíduo de Pearson padronizado superior a 80. Embora a distância de Cook não indique que este ponto esteja isolado fora dos limites críticos usuais, sua magnitude residual sugere que ele é um caso atípico.
+
+A instabilidade observada nos resíduos (@fig-residuals-freq) e a presença de valores discrepantes podem estar associadas à existência de multicolinearidade entre as variáveis independentes. Variáveis altamente correlacionadas tendem a inflar a variância dos estimadores, dificultando a convergência do modelo e resultando em previsões menos robustas para perfis de crédito específicos.
+
+\red{Bom, podemos remover as feats mais correlacionadas ou não... e aí repetiriamos a análise ou nem chegamos a avaliar o desempenho desse modelo, seguindo apenas com o outro...}
+
+#### [REVISÃO-1] Desempenho preditivo
+
+##### [REVISÃO-1] Avaliação do classificador a partir das probabilidades estimadas
+
+<!-- 
+- ROC e PR
+- Escolha do limiar
+- matriz de confusão
+- métricas de classificação
+-->
+
+```{r, include=FALSE}
+# Probabilidades previstas (classe positiva = 1)
+prob_treino <- predict(modelo_logit, type = "response")
+prob_teste  <- predict(modelo_logit, newdata = teste, type = "response")
+y_treino_num <- as.numeric(as.character(treino$loan_status))
+y_teste_num  <- as.numeric(as.character(teste$loan_status))
+# Classe verdadeira (garantir que é 0/1 numérico)
+y_teste <- as.numeric(teste$loan_status)
+```
+
+```{r, echo=FALSE}
+#| label: fig-ROC-freq
+#| fig-cap: "Curvas ROC para os conjuntos de treino e teste"
+#| fig-width: 6
+#| fig-height: 4
+
+roc_treino <- roc(
+  response = y_treino_num,
+  predictor = prob_treino,
+  levels = c(0, 1),
+  direction = "<"
+)
+
+roc_teste <- roc(
+  response = y_teste_num,
+  predictor = prob_teste,
+  levels = c(0, 1),
+  direction = "<"
+)
+
+auc_treino <- auc(roc_treino)
+auc_teste  <- auc(roc_teste)
+
+plot(
+  roc_treino,
+  col = "blue",
+  lwd = 2,
+  #main = "Curvas ROC — Treino vs Teste"
+)
+
+plot(
+  roc_teste,
+  col = "red",
+  lwd = 2,
+  add = TRUE
+)
+
+legend(
+  "bottomright",
+  legend = c(
+    paste0("Treino (AUC = ", round(auc_treino, 3), ")"),
+    paste0("Teste (AUC = ", round(auc_teste, 3), ")")
+  ),
+  col = c("blue", "red"),
+  lwd = 2
+)
+```
+
+A capacidade discriminatória do modelo foi avaliada por meio da Área sob a Curva ROC (ROC-AUC) (@fig-ROC-freq), métrica amplamente utilizada em problemas de classificação binária por ser independente da escolha de um limiar de decisão e por avaliar diretamente a qualidade das probabilidades estimadas. A AUC pode ser interpretada como a probabilidade de que o modelo atribua uma probabilidade maior a uma observação pertencente à classe positiva do que a uma observação da classe negativa, escolhidas aleatoriamente. Valores de AUC próximos de 1 indicam excelente poder discriminatório, enquanto valores próximos de 0,5 sugerem desempenho equivalente ao acaso.
+
+Os resultados indicam AUC = `r round(auc_treino, 2)` no conjunto de treino e AUC = `r round(auc_teste, 2)` no conjunto de teste. A proximidade entre esses valores sugere que o modelo apresenta excelente capacidade de discriminação, mantendo desempenho consistente fora da amostra utilizada para estimação dos parâmetros.Além disso, a ausência de queda relevante da AUC do treino para o teste indica baixo indício de sobreajuste (*overfitting*), reforçando a robustez do modelo no que diz respeito à ordenação correta das probabilidades preditas. Esse comportamento é particularmente relevante no contexto da análise de risco de crédito, em que a correta hierarquização dos indivíduos segundo o risco é mais importante do que decisões baseadas em um único ponto de corte.
+
+```{r, echo=FALSE}
+#| label: fig-PR-freq
+#| fig-cap: "Curvas Precision-Recall para os conjuntos de treino e teste"
+#| fig-width: 6
+#| fig-height: 4
+# Treino
+pr_treino <- pr.curve(
+  scores.class0 = prob_treino[treino$loan_status == 1],
+  scores.class1 = prob_treino[treino$loan_status == 0],
+  curve = TRUE
+)
+
+# Teste
+pr_teste <- pr.curve(
+  scores.class0 = prob_teste[teste$loan_status == 1],
+  scores.class1 = prob_teste[teste$loan_status == 0],
+  curve = TRUE
+)
+
+plot(
+  pr_treino$curve,
+  type = "l",
+  col = "blue",
+  lwd = 2,
+  xlab = "Recall",
+  ylab = "Precision",
+  #main = "Precision–Recall Curve — Treino vs Teste"
+)
+
+lines(
+  pr_teste$curve,
+  col = "red",
+  lwd = 2
+)
+
+legend(
+  "bottomleft",
+  legend = c(
+    paste0("Treino (AUC-PR = ", round(pr_treino$auc.integral, 3), ")"),
+    paste0("Teste (AUC-PR = ", round(pr_teste$auc.integral, 3), ")")
+  ),
+  col = c("blue", "red"),
+  lwd = 2
+)
+
+```
+
+Complementarmente à análise por meio da curva ROC, avaliou-se o desempenho do modelo utilizando a curva Precision–Recall (PR)(@fig-PR-freq), a qual é particularmente informativa em contextos de classes desbalanceadas ou quando o interesse principal está na qualidade das previsões da classe positiva. Enquanto a curva ROC avalia a relação entre sensibilidade e especificidade, a curva Precision–Recall enfatiza o compromisso entre precisão (precision),  a proporção de observações corretamente classificadas como positivas entre todas as classificadas como positivas, e recall (sensibilidade), a proporção de positivos corretamente identificados. Dessa forma, a AUC–PR fornece uma medida mais direta da utilidade prática das probabilidades estimadas quando o custo de falsos positivos é relevante, como no contexto de concessão de crédito.
+
+A área sob a curva Precision–Recall foi calculada separadamente para os conjuntos de treino e teste, resultando em AUC–PR = `r round(pr_treino$auc.integral, 3)` no conjunto de treino e AUC–PR = `r round(pr_teste$auc.integral, 3)` no conjunto de teste. Esses valores elevados indicam que o modelo apresenta alta capacidade de manter níveis simultaneamente elevados de precisão e revocação, mesmo quando se exige maior rigor na identificação da classe positiva.
+
+De forma consistente com os resultados observados na curva ROC, a similaridade entre as AUC–PR dos conjuntos de treino e teste sugere boa capacidade de generalização e estabilidade do modelo fora da amostra de estimação. Ademais, o desempenho superior na métrica Precision–Recall reforça a adequação do modelo para aplicações em risco de crédito, nas quais decisões baseadas em probabilidades bem calibradas são preferíveis à simples classificação binária.
+
+```{r, include=FALSE}
+library(pROC)
+
+# ROC object
+roc_obj <- roc(
+  response = modelo_logit$y,
+  predictor = modelo_logit$fitted.values,
+  direction = "<"
+)
+
+# Extrai valores
+sens <- roc_obj$sensitivities
+esp  <- roc_obj$specificities
+tau  <- roc_obj$thresholds
+youden <- sens + esp - 1
+tau_star <- tau[which.max(youden)]
+
+```
+```{r, echo=FALSE}
+#| label: fig-SE-freq
+#| fig-cap: "Curvas Sensibilidade-Especificidade em função do limiar de decisão"
+#| fig-width: 6
+#| fig-height: 4
+# Plot
+# Plot principal
+plot(
+  tau, sens,
+  type = "l",
+  col = "red",
+  lwd = 2,
+  ylim = c(0, 1),
+  xlab = "Limiar de probabilidade (\u03C4)",
+  ylab = "Valor",
+  #main = "Sensibilidade e Especificidade em função do limiar"
+)
+grid()
+
+# Especificidade
+lines(tau, esp, col = "blue", lwd = 2, lty = 2)
+
+# Linha vertical em tau_star
+abline(v = tau_star, lwd = 2, lty = 3)
+
+# Índice do tau mais próximo de tau_star
+i_star <- which.min(abs(tau - tau_star))
+
+# Pontos em tau_star
+points(tau[i_star], sens[i_star], pch = 16)
+points(tau[i_star], esp[i_star], pch = 16)
+
+# Anotação do valor numérico de tau_star
+text(
+  x = tau_star,
+  y = 0.05,
+  labels = bquote(tau^"*" == .(round(tau_star, 3))),
+  pos = 4,
+  cex = 1
+)
+
+# Legenda
+legend(
+  "center",
+  legend = c("Sensibilidade", "Especificidade", expression(tau^"*")),
+  col = c("red", "blue", "black"),
+  lty = c(1, 2, 3),
+  lwd = 2,
+  bty = "n"
+)
+
+
+```
+
+A escolha do limiar de corte da probabilidade foi baseada na análise conjunta da sensibilidade e da especificidade do classificador, coomo podemos ver na @fig-SE-freq. Para isso, foram avaliados os valores dessas métricas ao longo de todo o intervalo de limiares possíveis, construindo-se curvas de sensibilidade e especificidade em função do limiar de decisão.
+
+O ponto de corte ótimo foi definido a partir da maximização do índice de Youden (@IndexYouden), que busca simultaneamente maximizar a taxa de verdadeiros positivos e a taxa de verdadeiros negativos. Esse critério fornece um equilíbrio entre erros de classificação dos dois tipos, evitando a adoção arbitrária do valor padrão de 0,5.
+
+O limiar selecionado (`r round(tau_star, 3)`) foi então utilizado para a construção da matriz de confusão e para o cálculo das métricas de desempenho no conjunto de teste.
+
+##### [REVISÃO-1] Avaliação do desempenho classificatório sob limiar de decisão
+```{r, include=FALSE}
+
+pred_treino <- ifelse(prob_treino >= tau_star, 1, 0)
+pred_teste  <- ifelse(prob_teste  >= tau_star, 1, 0)
+
+# Converter para factor com níveis alinhados
+pred_treino_fac <- factor(pred_treino, levels = c(0, 1))
+pred_teste_fac  <- factor(pred_teste,  levels = c(0, 1))
+
+y_treino_fac <- factor(treino$loan_status, levels = c(0, 1))
+y_teste_fac  <- factor(teste$loan_status,  levels = c(0, 1))
+```
+
+Após a definição do limiar de decisão, as previsões probabilísticas foram convertidas em classes, permitindo a construção das matrizes de confusão para os conjuntos de treino e teste (@tbl-confusao).
+
+```{r, echo=FALSE}
+#| label: tbl-confusao
+#| tbl-cap: "Matrizes de confusão do modelo de regressão logística (treino e teste)"
+#| echo: false
+#| warning: false
+
+# Matrizes
+conf_treino <- confusionMatrix(
+  data      = pred_treino_fac,
+  reference = y_treino_fac,
+  positive  = "1"
+)$table
+
+conf_teste <- confusionMatrix(
+  data      = pred_teste_fac,
+  reference = y_teste_fac,
+  positive  = "1"
+)$table
+
+# Data frame com nomes neutros
+tbl_conf <- data.frame(
+  `Classe real` = rownames(conf_treino),
+  A = conf_treino[, "0"],
+  B = conf_treino[, "1"],
+  C = conf_teste[, "0"],
+  D = conf_teste[, "1"]
+)
+
+kable(
+  tbl_conf,
+  col.names = c("Classe real", "0", "1", "0", "1"),
+  row.names = FALSE,
+  booktabs = TRUE,
+  align = "lcccc"
+) |>
+  add_header_above(
+    c(" " = 1, "Treino (classe prevista)" = 2, "Teste (classe prevista)" = 2)
+  ) |>
+  kable_styling(full_width = FALSE)
+```
+
+
+
+
+```{r, echo=FALSE}
+#| label: tbl-metricas-freq
+#| tbl-cap: "Métricas de desempenho do modelo de regressão logística para os conjuntos de treino e teste"
+#| echo: false
+#| warning: false
+conf_treino <- confusionMatrix(
+  data      = pred_treino_fac,
+  reference = y_treino_fac,
+  positive  = "1"
+)
+
+conf_teste <- confusionMatrix(
+  data      = pred_teste_fac,
+  reference = y_teste_fac,
+  positive  = "1"
+)
+
+
+metricas <- data.frame(
+  Conjunto = c("Treino", "Teste"),
+
+  Accuracy = c(
+    conf_treino$overall["Accuracy"],
+    conf_teste$overall["Accuracy"]
+  ),
+
+  Precision = c(
+    conf_treino$byClass["Precision"],
+    conf_teste$byClass["Precision"]
+  ),
+
+  Recall = c(  # Sensibilidade
+    conf_treino$byClass["Sensitivity"],
+    conf_teste$byClass["Sensitivity"]
+  ),
+
+  Specificity = c(
+    conf_treino$byClass["Specificity"],
+    conf_teste$byClass["Specificity"]
+  ),
+
+  F1 = c(
+    conf_treino$byClass["F1"],
+    conf_teste$byClass["F1"]
+  ),
+
+  AUC_ROC = c(auc_treino, auc_teste),
+
+  AUC_PR = c(
+    pr_treino$auc.integral,
+    pr_teste$auc.integral
+  )
+)
+
+kable(
+  metricas,
+  booktabs = TRUE,
+  digits = 2,
+  format = "latex"
+)
+```
+
+A partir dessas matrizes, foram calculadas métricas clássicas de desempenho, 
+incluindo acurácia, precisão, sensibilidade, especificidade e F1-score, cujos valores estão sumarizados na @tbl-metricas-freq. Observa-se desempenho consistente entre os conjuntos, com valores semelhantes de acurácia, indicando boa capacidade de generalização.
+
+A sensibilidade (recall) é elevada em ambos os conjuntos, o que é particularmente desejável no contexto de risco de crédito, pois reduz a probabilidade de classificar incorretamente clientes inadimplentes. A precisão e o F1-score também apresentam valores altos e estáveis, sugerindo um bom equilíbrio entre identificação correta da classe positiva e controle de falsos positivos.
+
+As métricas independentes do limiar reforçam esse resultado: a AUC-ROC assume valores próximos de 1 tanto no treino quanto no teste, evidenciando excelente capacidade discriminatória, enquanto a AUC da curva Precision–Recall confirma a robustez do modelo mesmo em um cenário de possível desbalanceamento entre classes.
+
+
+### [TBD] Modelo Frequentista Alternativo
+
+\blue{se fizer sentido... }
+talvez fique longo demais, seria remover as features de income_annum, ou até fazer loan_amount/income_annum para a razão e avaliar as correlações
+
+### [TBD] Modelo Bayesiano
+<!-- ========================================================== -->
+
+<!-- Resultados: BAYESIANO -->
+
+<!-- ========================================================== -->
+- Análise de Sensibilidade à Multicolinearidade (já que temos features com correlação elevada) ->avaliação do impacto
+
+<!-- ========================================================== -->
+
+<!-- DISCUSSÃO -->
+
+<!-- ========================================================== -->
+# [TBD] Discussão
+<!--  -->
+- Comparação dos modelos
+- Diferenças conceituais observadas
+- Robustez dos resultados
+- Interpretabilidade
+- Incerteza
+- Aplicabilidade prática 
+
+# [TBD] Conclusão
+
+- Síntese dos resultados
+- Quando usar frequentista vs bayesiano
+- Limitações
+
+Breve explicação do problema, com principais resultados e propostas futuras
+
+# Referências

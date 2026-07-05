@@ -1,0 +1,523 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "jupyter: ir\n",
+        "format: \n",
+        "  html:\n",
+        "    embed-resources: true\n",
+        "---"
+      ],
+      "id": "8552bb86"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "# Instalação de pacotes necessários\n",
+        "pkgs <- c(\n",
+        "  \"tidymodels\",\n",
+        "  'glmnet',\n",
+        "  \"rstanarm\",\n",
+        "\"DescTools\"\n",
+        "\n",
+        ")\n",
+        "\n",
+        "instalar <- pkgs[!pkgs %in% installed.packages()[, \"Package\"]]\n",
+        "\n",
+        "if (length(instalar) > 0) {\n",
+        "  install.packages(instalar)\n",
+        "}"
+      ],
+      "id": "247a4184",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "set.seed(42)"
+      ],
+      "id": "75050047",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(tidyverse)\n",
+        "library(\"tidymodels\")\n",
+        "library('janitor')\n",
+        "library('ggcorrplot')\n",
+        "library(workflowsets)\n",
+        "library(rstanarm)\n",
+        "library(dplyr)\n",
+        "library(glmnet)\n",
+        "library(DescTools)\n",
+        "library(dplyr)\n",
+        "library(purrr)\n",
+        "library(yardstick)"
+      ],
+      "id": "b79eca14",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "df <- read_csv(\"../data/titanic/train.csv\") |>\n",
+        "  clean_names()"
+      ],
+      "id": "9ee4690f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "#preprocessamento\n",
+        "df <- janitor::clean_names(df)"
+      ],
+      "id": "2c383178",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "df_num <- df |>\n",
+        "  dplyr::select(where(is.numeric))\n",
+        "\n",
+        "cor_matrix <- cor(\n",
+        "  df_num,\n",
+        "  use = \"complete.obs\",\n",
+        "  method = \"pearson\"\n",
+        ")\n",
+        "\n",
+        "ggcorrplot(\n",
+        "  cor_matrix,\n",
+        "  type = \"lower\",\n",
+        "  lab = TRUE,\n",
+        "  lab_size = 4,\n",
+        "  colors = c(\"#b2182b\", \"white\", \"#2166ac\"),\n",
+        "  outline.col = \"gray70\"\n",
+        ") +\n",
+        "  theme_minimal(base_size = 14) +\n",
+        "  theme(\n",
+        "    axis.text.x = element_text(\n",
+        "      angle = 90,\n",
+        "      hjust = 1,\n",
+        "      vjust = 0.5\n",
+        "    ),\n",
+        "    axis.text.y = element_text(size = 8)\n",
+        "  )"
+      ],
+      "id": "ad70c55b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "cat(\"Idades faltantes:\", sum(is.na(df$age)), \"\\n\")\n",
+        "idade_mediana <- median(df$age, na.rm = TRUE)\n",
+        "\n",
+        "df <- df %>%\n",
+        "  mutate(age = ifelse(is.na(age), idade_mediana, age))\n",
+        "\n",
+        "idade_mediana"
+      ],
+      "id": "2db2b20f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "cat(\"Embarque faltante:\", sum(is.na(df$embarked)), \"\\n\")\n",
+        "\n",
+        "puerto_moda <- Mode(df$embarked, na.rm = TRUE)\n",
+        "\n",
+        "df$embarked[is.na(df$embarked)] <- puerto_moda"
+      ],
+      "id": "9d525f15",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "df$HasCabin <- as.integer(!is.na(df$cabin))\n",
+        "\n",
+        "df <- select(df, -cabin)"
+      ],
+      "id": "5e0ad20f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "df <- df %>%\n",
+        "  mutate(fare = ifelse(is.na(fare), median(fare, na.rm = TRUE), fare))\n",
+        "\n",
+        "\n",
+        "\n",
+        "df <- df %>%\n",
+        "  mutate(\n",
+        "    sex = ifelse(sex == \"male\", 0, 1),\n",
+        "    embarked = case_when(\n",
+        "      embarked == \"S\" ~ 0,\n",
+        "      embarked == \"C\" ~ 1,\n",
+        "      embarked == \"Q\" ~ 2\n",
+        "    )\n",
+        "  )\n",
+        "\n",
+        "\n",
+        "df <- df %>%\n",
+        "  select(-name, -ticket, -passenger_id)"
+      ],
+      "id": "43cd9a93",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "df_num <- df |>\n",
+        "  dplyr::select(where(is.numeric))\n",
+        "\n",
+        "cor_matrix <- cor(\n",
+        "  df_num,\n",
+        "  use = \"complete.obs\",\n",
+        "  method = \"pearson\"\n",
+        ")\n",
+        "\n",
+        "ggcorrplot(\n",
+        "  cor_matrix,\n",
+        "  type = \"lower\",\n",
+        "  lab = TRUE,\n",
+        "  lab_size = 4,\n",
+        "  colors = c(\"#b2182b\", \"white\", \"#2166ac\"),\n",
+        "  outline.col = \"gray70\"\n",
+        ") +\n",
+        "  theme_minimal(base_size = 14) +\n",
+        "  theme(\n",
+        "    axis.text.x = element_text(\n",
+        "      angle = 90,\n",
+        "      hjust = 1,\n",
+        "      vjust = 0.5\n",
+        "    ),\n",
+        "    axis.text.y = element_text(size = 8)\n",
+        "  )"
+      ],
+      "id": "ba8306fc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "split <- initial_split(\n",
+        "  df,\n",
+        "  prop   = 0.75,\n",
+        "  strata = survived\n",
+        ")\n",
+        "\n",
+        "train_data <- training(split)\n",
+        "test_data  <- testing(split)"
+      ],
+      "id": "444e331d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "train_data$survived <- as.factor(train_data$survived)"
+      ],
+      "id": "fc9809f4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "train_data$survived <- as.factor(train_data$survived)\n",
+        "test_data$survived  <- as.factor(test_data$survived)\n",
+        "train_data$survived <- factor(train_data$survived, levels = c(\"0\", \"1\"))\n",
+        "test_data$survived  <- factor(test_data$survived, levels = c(\"0\", \"1\"))"
+      ],
+      "id": "68404fe7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "log_spec <- logistic_reg() |>\n",
+        "  set_engine(\"glm\") |>\n",
+        "  set_mode(\"classification\")"
+      ],
+      "id": "dd4514c9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "rec_all <- recipe(survived ~ ., data = train_data)\n",
+        "\n",
+        "rec_no_sex <- recipe(survived ~ ., data = train_data) |>\n",
+        "  step_rm(sex)\n",
+        "\n",
+        "rec_sex_only <- recipe(survived ~ sex, data = train_data)"
+      ],
+      "id": "0780b9b7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "wf_logit <- workflow_set(\n",
+        "  preproc = list(\n",
+        "    all_features = rec_all,\n",
+        "    no_sex       = rec_no_sex, \n",
+        "    sex_only     = rec_sex_only\n",
+        "  ),\n",
+        "  models = list(\n",
+        "    logit = log_spec\n",
+        "  )\n",
+        ")"
+      ],
+      "id": "0c86b0cd",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "wf_fitted <- wf_logit %>%\n",
+        "  mutate(\n",
+        "    fit = purrr::map(\n",
+        "      info,\n",
+        "      ~ fit(.x$workflow[[1]], data = train_data)\n",
+        "    )\n",
+        "  )"
+      ],
+      "id": "24966e68",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "pred_list <- wf_fitted$fit %>%\n",
+        "  map(~ bind_cols(\n",
+        "    predict(.x, test_data, type = \"class\"),\n",
+        "    predict(.x, test_data, type = \"prob\"),\n",
+        "    test_data\n",
+        "  ))"
+      ],
+      "id": "7a8280e8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "pred_all <- wf_fitted$wflow_id %>%\n",
+        "  map2(pred_list, ~ mutate(.y, model = .x)) %>%\n",
+        "  bind_rows()"
+      ],
+      "id": "be5e2b93",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_class <- pred_all %>%\n",
+        "  group_by(model) %>%\n",
+        "  metric_set(\n",
+        "    accuracy,\n",
+        "    precision,\n",
+        "    recall\n",
+        "  )(\n",
+        "    truth = survived,\n",
+        "    estimate = .pred_class\n",
+        "  )\n",
+        "\n",
+        "metrics_auc <- pred_all %>%\n",
+        "  group_by(model) %>%\n",
+        "  roc_auc(\n",
+        "    truth = survived,\n",
+        "    .pred_1,\n",
+        "    event_level = \"second\"\n",
+        "  )"
+      ],
+      "id": "bcbffb18",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_final <- bind_rows(metrics_class, metrics_auc)\n",
+        "metrics_final"
+      ],
+      "id": "32acb6a4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "model_summary <- tibble(\n",
+        "  model = wf_fitted$wflow_id,\n",
+        "  summary = map(\n",
+        "    wf_fitted$fit,\n",
+        "    ~ summary(extract_fit_parsnip(.x)$fit)\n",
+        "  )\n",
+        ")\n",
+        "for (i in seq_len(nrow(model_summary))) {\n",
+        "  cat(\"\\n============================\\n\")\n",
+        "  cat(\"Modelo:\", model_summary$model[i], \"\\n\")\n",
+        "  cat(\"============================\\n\\n\")\n",
+        "  print(model_summary$summary[[i]])\n",
+        "}"
+      ],
+      "id": "05e90857",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "ir",
+      "language": "R",
+      "display_name": "R",
+      "path": "C:\\Users\\T-GAMER\\AppData\\Roaming\\jupyter\\kernels\\ir"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

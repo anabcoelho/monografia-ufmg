@@ -157,20 +157,6 @@
 \setcounter{tocdepth}{3}
 \usepackage{placeins}
 \usepackage{pdflscape}
-\usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
-\usepackage{xcolor}
 \KOMAoption{captions}{tableheading}
 \usepackage{xcolor}
 \newcommand{\red}[1]{\textcolor{red}{#1}}
@@ -248,7 +234,7 @@
 
 \vspace{2cm}
 
-{\bfseries\Large Uma Análise Comparativa entre Inferência Frequentista e Bayesiana em Modelos de Regressão Aplicados à Aprovação de Empréstimos \par}
+{\bfseries\Large Uma Análise Comparativa entre Inferência Frequentista e Bayesiana em Modelos de Regressão Binária Aplicada a Risco de Crédito \par}
 
 \vspace{2cm}
 
@@ -270,7 +256,7 @@ Ana Beatriz Coelho Rodrigues
 
 \vspace{1cm}
 
-{\bfseries\Large Uma Análise Comparativa entre Inferência Frequentista e Bayesiana em Modelos de Regressão Aplicados à Aprovação de Empréstimos}
+{\bfseries\Large Uma Análise Comparativa entre Inferência Frequentista e Bayesiana em Modelos de Regressão Binária Aplicada a Risco de Crédito}
 
 
 \vspace{2cm}
@@ -301,7 +287,7 @@ Ago/2026
 
 \textcolor{red}{reavaliar os resumos, quando o trabalho estiver concluído}
 
-Este trabalho tem como objetivo comparar as abordagens de inferência frequentista e bayesiana no contexto de modelos de classificação aplicados à predição da aprovação de empréstimos bancários. O foco principal do estudo está na análise das diferenças conceituais, inferenciais e preditivas entre essas duas abordagens estatísticas, utilizando um conjunto de dados reais como estudo de caso para a aplicação dos modelos.
+Este trabalho tem como objetivo comparar as abordagens de inferência frequentista e bayesiana no contexto de modelos de classificação. O foco principal do estudo está na análise das diferenças conceituais, inferenciais e preditivas entre essas duas abordagens estatísticas, utilizando um conjunto de dados reais como estudo de caso para a aplicação dos modelos.
 
 Inicialmente, são discutidos os fundamentos teóricos das abordagens frequentista e bayesiana, destacando suas principais características, pressupostos e formas de interpretação dos parâmetros. Em seguida, realiza-se uma análise exploratória dos dados com o objetivo de compreender a estrutura das variáveis e subsidiar a construção dos modelos, sem que a análise dos dados constitua o foco central do trabalho.
 
@@ -400,35 +386,97 @@ Estatística}\label{to-do-fundamentos-de-probabilidade-e-inferuxeancia-estatuxed
 \subsubsection{{[}TO DO{]} Variáveis Aleatórias e Distribuições de
 Probabilidade}\label{to-do-variuxe1veis-aleatuxf3rias-e-distribuiuxe7uxf5es-de-probabilidade}
 
-Variável aleatória como função que associa resultados a números
-Variáveis discretas vs contínuas Distribuições como forma de modelar
-incerteza aprovação de crédito → Bernoulli/Binomial covariáveis
-contínuas → Normal, log-normal (sem entrar em detalhes)
+A formalização da incerteza em experimentos aleatórios ocorre por meio
+de variáveis aleatórias, que representam os resultados de um espaço
+amostral em uma escala numérica. Essa estrutura fundamenta o tratamento
+quantitativo de dados e a construção de modelos de probabilidade,
+servindo de base tanto para a inferência frequentista quanto para a
+abordagem bayesiana.
 
-\subsubsection{{[}TO DO{]} Conceito de incerteza
-estatística}\label{to-do-conceito-de-incerteza-estatuxedstica}
+As variáveis aleatórias são classificadas em discretas ou contínuas, a
+depender da natureza de seu suporte. As discretas assumem valores em
+conjuntos finitos ou enumeráveis, como a decisão de aprovação de crédito
+ou o número de ocorrências de inadimplência. Já as contínuas podem
+assumir qualquer valor em intervalos reais, como a renda dos proponentes
+ou o tempo até o default. A incerteza inerente a essas variáveis é
+formalizada por distribuições de probabilidade: no domínio discreto,
+pela função de massa de probabilidade e, no contínuo, pela função
+densidade de probabilidade. Tais funções não apenas sintetizam a
+natureza probabilística das variáveis, mas viabilizam o cálculo de
+medidas fundamentais, como esperança, variância e probabilidades
+condicionais, elementos centrais para a modelagem de risco. A escolha
+apropriada de distribuições de probabilidade é fundamental para capturar
+a variabilidade dos dados observados e para a construção de modelos
+inferenciais capazes de quantificar a incerteza associada às previsões.
 
-mostrar por que precisamos de inferência Incerteza decorrente de:
-variabilidade natural amostragem Diferença entre: erro aleatório
-incerteza paramétrica Por que modelos probabilísticos são necessários em
-problemas reais
+\subsubsection{{[}TO DO{]} Inferência
+Estatística}\label{to-do-inferuxeancia-estatuxedstica}
 
-\subsubsection{{[}TO DO{]} Inferência como problema de
-estimação}\label{to-do-inferuxeancia-como-problema-de-estimauxe7uxe3o}
+A inferência estatística reúne os métodos que permitem extrair
+conclusões sobre uma população ampla a partir de uma amostra reduzida.
+Na prática, quando não é viável analisar cada indivíduo ou produto de um
+grupo inteiro, utilizamos os dados amostrais para realizar estimativas e
+previsões, fundamentadas em modelos que conectam o que observamos aos
+parâmetros que desejamos descobrir.
 
-Inferência como processo de aprender sobre parâmetros desconhecidos a
-partir dos dados Estimação pontual vs intervalar Ideia geral de: Máxima
-Verossimilhança (sem fórmulas) Distribuição a posteriori (apenas
-conceitual)
+O elemento central desse processo é a aceitação da incerteza. Como os
+dados estão sujeitos a variações e erros de medição, a inferência
+utiliza estruturas probabilísticas para descrever o comportamento da
+população (o conjunto total de elementos) com base na amostra, que é o
+subconjunto efetivamente analisado. Como a população é quase sempre
+muito maior que a amostra, as conclusões obtidas não são certezas
+absolutas, mas sim afirmações probabilísticas. O processo consiste em
+utilizar uma amostra aleatória para testar o modelo estatístico que
+representa a população, acompanhando cada conclusão de uma medida que
+quantifica o seu grau de confiabilidade. Esse caminho envolve escolher
+um modelo adequado para o fenômeno e deduzir informações sobre seus
+parâmetros desconhecidos.
 
 \subsubsection{{[}TO DO{]} Interpretações da
 probabilidade}\label{to-do-interpretauxe7uxf5es-da-probabilidade}
 
-Probabilidade frequentista Definição como limite de frequências
-relativas Parâmetros como valores fixos desconhecidos Dados como
-realizadores aleatórios Probabilidade como grau de crença (bayesiana)
-Probabilidade como medida de incerteza subjetiva/coerente Parâmetros
-como variáveis aleatórias Papel da distribuição a priori
+A noção de probabilidade ocupa um papel central na inferência
+estatística, sendo a base para quantificar e interpretar a incerteza.
+Atualmente, essa análise é conduzida por dois grandes paradigmas, o
+frequentista e o bayesiano, que se distinguem essencialmente na
+interpretação do conceito de probabilidade e no tratamento da incerteza
+dos parâmetros.
+
+Na abordagem frequentista, também chamada de clássica, a probabilidade é
+entendida a partir da repetição de um experimento sob as mesmas
+condições. Dentro dessa visão, a probabilidade é vista como uma
+característica objetiva do processo que gera os dados, e não como algo
+que depende do observador. Os dados coletados são tratados como
+realizações aleatórias, enquanto os parâmetros do modelo estatístico que
+descreve a população são considerados valores fixos, ainda que
+desconhecidos. Assim, a incorporação de novas observações não altera
+diretamente o conceito de probabilidade, mas contribui para estimativas
+mais precisas desses parâmetros por meio de métodos inferenciais.
+
+Já na abordagem bayesiana, a probabilidade assume um papel mais amplo.
+Ela passa a representar o grau de confiança em uma afirmação, levando em
+conta as informações disponíveis. Nesse contexto, a probabilidade pode
+ser atribuída não apenas a eventos observáveis, mas também a hipóteses e
+parâmetros do modelo. Os parâmetros populacionais desconhecidos são
+tratados como variáveis aleatórias, cuja incerteza é descrita por
+distribuições de probabilidade. Além disso, é possível incorporar
+conhecimento prévio ao processo inferencial por meio de distribuições a
+priori. À medida que novos dados são observados, esse conhecimento é
+atualizado de forma sistemática pelo teorema de Bayes, resultando em uma
+distribuição a posteriori que reflete tanto as informações anteriores
+quanto a evidência empírica fornecida pelos dados.
+
+\begin{itemize}
+\tightlist
+\item
+  Probabilidade frequentista Definição como limite de frequências
+  relativas Parâmetros como valores fixos desconhecidos Dados como
+  realizadores aleatórios
+\item
+  Probabilidade como grau de crença (bayesiana) Probabilidade como
+  medida de incerteza subjetiva/coerente Parâmetros como variáveis
+  aleatórias
+\end{itemize}
 
 \subsubsection{{[}TO DO{]} Teorema de
 Bayes}\label{to-do-teorema-de-bayes}
@@ -439,22 +487,21 @@ verossimilhança posteriori Interpretação inferencial, não só matemática
 \subsection{{[}TO DO{]} Problemas de Classificação em Aprendizado
 Estatístico}\label{to-do-problemas-de-classificauxe7uxe3o-em-aprendizado-estatuxedstico}
 
+\subsubsection{{[}TO DO{]} Classificação binária e
+probabilistica}\label{to-do-classificauxe7uxe3o-binuxe1ria-e-probabilistica}
+
+\subsubsection{{[}TO DO{]} Função de perda e
+decisão}\label{to-do-funuxe7uxe3o-de-perda-e-decisuxe3o}
+
 \begin{itemize}
 \tightlist
 \item
-  Classificação binária
-\item
-  Função de perda e decisão
-\item
-  Separabilidade linear e não linear
-\item
-  Overfitting e generalização (preparando terreno para problemas de
-  crédito, onde a separação perfeita é improvável e o trade-off entre
-  viés e variância é crucial)
-\item
-  Probabilidades preditas vs.~classes previstas
-\item
-  Threshold de decisão e custo de erro
+  Separabilidade linear e não linear \#\#\# {[}TO DO{]} Overfitting e
+  generalização e Trade off viés-variancia (preparando terreno para
+  problemas de crédito, onde a separação perfeita é improvável e o
+  trade-off entre viés e variância é crucial) \#\#\# {[}TO DO{]}
+  Probabilidades preditas vs.~classes previstas e Threshold de decisão e
+  custo de erro
 \end{itemize}
 
 \subsection{{[}TO DO{]} Avaliação de Modelos de
@@ -464,28 +511,27 @@ Classificação}\label{to-do-avaliauxe7uxe3o-de-modelos-de-classificauxe7uxe3o}
 \tightlist
 \item
   Desbalanceamento de classes (muito comum em dados de crédito, mas não
-  no dataset atual)
-\item
-  Matriz de confusão
+  no dataset atual) \#\#\# {[}TO DO{]} Matriz de confusão
 \item
   Accuracy, Precision, Recall, F1-score
+\item
+  Custo assimétrico de erros (FP vs FN) \#\#\# {[}TO DO{]} Curvas
 \item
   Curvas Precision--Recall
 \item
   Curva ROC e AUC
 \item
   Trade-off entre sensibilidade e especificidade
-\item
-  Custo assimétrico de erros (FP vs FN)
 \end{itemize}
 
 \subsection{{[}TO DO{]} Regressão Logística
 Frequentista}\label{to-do-regressuxe3o-loguxedstica-frequentista}
 
+\subsubsection{{[}TO DO{]} Formulação do
+modelo}\label{to-do-formulauxe7uxe3o-do-modelo}
+
 \begin{itemize}
 \tightlist
-\item
-  Formulação do modelo
 \item
   Assumptions do modelo (e.g., independência, linearidade no logit,
   ausência de multicolinearidade)
@@ -494,17 +540,31 @@ Frequentista}\label{to-do-regressuxe3o-loguxedstica-frequentista}
 \item
   Interpretação dos coeficientes
 \item
-  Função logística
-\item
-  Estimação por máxima verossimilhança (e a função de verossimilhança)
+  Função logística \#\#\# {[}TO DO{]} Estimação por máxima
+  verossimilhança (e a função de verossimilhança) A função de
+  verossimilhança é comum na abordagem frequentista e Bayesiana
 \item
   Testes de hipótese
 \item
   Intervalos de confiança
 \item
-  Odds e odds ratio
-\item
   Limitações da abordagem frequentista
+\end{itemize}
+
+\subsubsection{{[}TO DO{]} Interpretação dos
+coeficientes}\label{to-do-interpretauxe7uxe3o-dos-coeficientes}
+
+\begin{itemize}
+\tightlist
+\item
+  Odds e odds ratio
+\end{itemize}
+
+\subsubsection{{[}TO DO{]} Diagnóstico e qualidade do
+ajuste}\label{to-do-diagnuxf3stico-e-qualidade-do-ajuste}
+
+\begin{itemize}
+\tightlist
 \item
   Análise de Resíduos
 \item
@@ -513,8 +573,17 @@ Frequentista}\label{to-do-regressuxe3o-loguxedstica-frequentista}
   Fisher Scoring
 \end{itemize}
 
+\subsubsection{{[}TO DO{]}}\label{to-do}
+
 \subsection{{[}TO DO{]} Inferência
 Bayesiana}\label{to-do-inferuxeancia-bayesiana}
+
+\subsubsection{{[}TO DO{]} Priori}\label{to-do-priori}
+
+\subsubsection{{[}TO DO{]} Posteriori}\label{to-do-posteriori}
+
+\subsubsection{{[}TO DO{]} Atualização bayesiana e
+incerteza}\label{to-do-atualizauxe7uxe3o-bayesiana-e-incerteza}
 
 \begin{itemize}
 \tightlist
@@ -541,20 +610,22 @@ Bayesiana}\label{to-do-inferuxeancia-bayesiana}
 \subsection{{[}TO DO{]} Regressão Logística
 Bayesiana}\label{to-do-regressuxe3o-loguxedstica-bayesiana}
 
-\blue{(sempre traçando paralelos com a versão frequentista)}
+\blue{(sempre traçando paralelos com a versão frequentista, principalmente os tópicos)}
+
+\subsubsection{{[}TO DO{]} Formulação do
+modelo}\label{to-do-formulauxe7uxe3o-do-modelo-1}
 
 \begin{itemize}
 \tightlist
 \item
-  Formulação do modelo probabilístico
+  Formulação do modelo probabilístico \#\#\# {[}TO DO{]} Escolha de
+  priors \#\#\# {[}TO DO{]} Inferência
 \item
-  Escolha de priors
+  via MCMC \#\#\# {[}TO DO{]} Diagnóstico de convergência
 \item
-  Inferência via MCMC / aproximações variacionais
+  (R-hat, traceplots)
 \item
-  Diagnóstico de convergência (R-hat, traceplots)
-\item
-  Intervalos credíveis
+  Intervalos de credibilidade
 \item
   Sensibilidade a priors
 \item
@@ -569,7 +640,7 @@ Bayesiana}\label{to-do-regressuxe3o-loguxedstica-bayesiana}
 (\ldots)
 
 \subsection{{[}TO DO{]} Aplicações em Risco de Crédito e
-Finanças}\label{to-do-aplicauxe7uxf5es-em-risco-de-cruxe9dito-e-finanuxe7as}
+Finanças/Saude}\label{to-do-aplicauxe7uxf5es-em-risco-de-cruxe9dito-e-finanuxe7assaude}
 
 \blue{Não estender muito, acho que 1 página já deve ser suficiente}
 
@@ -603,15 +674,21 @@ Finanças}\label{to-do-aplicauxe7uxf5es-em-risco-de-cruxe9dito-e-finanuxe7as}
 \subsection{{[}REVISÃO-1{]} Descrição dos
 Dados}\label{revisuxe3o-1-descriuxe7uxe3o-dos-dados}
 
-Os modelos desenvolvidos neste trabalho utilizam o Loan Approval
-Dataset, uma base de dados pública disponibilizada na plataforma Kaggle
-(Grewal (2026)). A variável alvo é binária, indicando o status de
-aprovação do empréstimo. A Tabela~\ref{tbl-descricao} apresenta uma
-descrição detalhada das variáveis presentes no conjunto de dados.
+\subsubsection{Descrição: Loan Approval
+Dataset}\label{descriuxe7uxe3o-loan-approval-dataset}
+
+Os modelos desenvolvidos neste trabalho utilizam dois conjuntos de dados
+públicos. O primeiro conjunto de dados é o Loan Approval Dataset,
+disponibilizado na plataforma Kaggle (Grewal (2026)), que contém
+informações socioeconômicas e de crédito de clientes solicitando
+empréstimos. A variável resposta é binária, indicando se o empréstimo
+foi aprovado ou rejeitado. A Tabela~\ref{tbl-descricao-emprestimos}
+apresenta uma descrição detalhada de todas as variáveis preditoras
+incluídas no conjunto de dados.
 
 \begin{longtable}[]{@{}ll@{}}
-\caption{Descrição das variáveis do
-dataset}\label{tbl-descricao}\tabularnewline
+\caption{Descrição das variáveis do dataset de
+emprestimos}\label{tbl-descricao-emprestimos}\tabularnewline
 \toprule\noalign{}
 Feature & Descrição \\
 \midrule\noalign{}
@@ -622,18 +699,18 @@ Feature & Descrição \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-No\_of\_dependents & Número de dependentes do solicitante \\
-Education & Nível de escolaridade (Graduate / Not Graduate) \\
-Self\_employed & Autônomo (Yes / No) \\
-Income\_annum & Renda anual \\
-Loan\_amount & Valor do empréstimo \\
-Loan\_term & Prazo em anos \\
-Cibil\_score & Score de crédito \\
-Residential\_assets\_value & Bens residenciais \\
-Commercial\_assets\_value & Bens comerciais \\
-Luxury\_assets\_value & Bens de luxo \\
-Bank\_asset\_value & Ativos bancários \\
-Loan\_status & Variável alvo (Approved/Rejected) \\
+num\_dependentes & Número de dependentes do solicitante \\
+escolaridade & Nível de escolaridade (Graduate / Not Graduate) \\
+autonomo & Autônomo (Yes / No) \\
+renda\_anual & Renda anual \\
+valor\_emprestimo & Valor do empréstimo \\
+prazo\_anos & Prazo em anos \\
+score\_credito & Score de crédito \\
+ativos\_residenciais & Bens residenciais, em valor monetário \\
+ativos\_comerciais & Bens comerciais, em valor monetário \\
+ativos\_luxo & Bens de luxo, em valor monetário \\
+ativos\_bancarios & Ativos bancários, em valor monetário \\
+status & Variável alvo (Approved = 1/Rejected = 0) \\
 \end{longtable}
 
 Por se tratar de um dataset estruturado especificamente para fins de
@@ -642,10 +719,103 @@ controlado, permitindo focar na sensibilidade dos modelos aos preditores
 e na quantificação da incerteza sem as inconsistências típicas de bases
 de dados administrativas brutas.
 
+\subsubsection{Descrição: Dataset de Inadimplência de Cartões de
+Crédito}\label{descriuxe7uxe3o-dataset-de-inadimpluxeancia-de-cartuxf5es-de-cruxe9dito}
+
+Como segundo conjunto de dados, este trabalho também utiliza o
+\texttt{Default\ of\ Credit\ Card\ Clients\ Dataset}, originalmente
+disponibilizado por Yeh e Lien (Yeh; Lien (2009)) e atualmente mantido
+no UCI Machine Learning Repository (Lichman (2013)). O conjunto reúne
+informações de clientes de cartão de crédito em Taiwan, abrangendo o
+período de abril a setembro de 2005, incluindo variáveis demográficas,
+dados financeiros, histórico de pagamentos e valores de fatura. A
+variável alvo é binária, denotada por \texttt{PD30} (Probability of
+Default in 30 days), a qual indica a ocorrência de inadimplência no
+horizonte de 30 dias --- operacionalmente definida, neste conjunto de
+dados, como a inadimplência observada no mês subsequente. Assim, embora
+\texttt{PD30} seja um conceito probabilístico no contexto de risco de
+crédito, neste estudo ela é observada como uma variável indicadora,
+assumindo valor 1 quando ocorre inadimplência e 0 caso contrário.
+
+A inclusão deste segundo conjunto de dados tem dois objetivos
+principais: (i) avaliar a capacidade de generalização dos modelos
+desenvolvidos em um domínio distinto de crédito, e (ii) comparar o
+desempenho preditivo e a interpretabilidade de diferentes abordagens de
+modelagem e estratégias de seleção de variáveis. A
+Tabela~\ref{tbl-descricao-inadimplencia} apresenta uma descrição
+detalhada das variáveis presentes neste conjunto de dados, incluindo
+informações demográficas, financeiras e comportamentais dos clientes.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4211}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5789}}@{}}
+\caption{Descrição das variáveis do dataset de
+inadimplência}\label{tbl-descricao-inadimplencia}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Feature
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Descrição
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Feature
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Descrição
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{id\_cliente} & Identificador único de cada cliente \\
+\texttt{limite\_credito} & Limite de crédito concedido ao cliente
+(inclui crédito individual e suplementar) \\
+\texttt{sexo} & Sexo do cliente (1 = masculino, 2 = feminino) \\
+\texttt{escolaridade} & Nível de escolaridade (1 = pós-graduação, 2 =
+universidade, 3 = ensino médio, 4 = outros) \\
+\texttt{estado\_civil} & Estado civil (1 = casado, 2 = solteiro, 3 =
+outros) \\
+\texttt{idade} & Idade do cliente, em anos \\
+\texttt{atraso\_pagto\_0} & Status de atraso no pagamento no mês
+09/2005 \\
+\texttt{atraso\_pagto\_2} & Status de atraso no pagamento no mês
+08/2005 \\
+\texttt{atraso\_pagto\_3} & Status de atraso no pagamento no mês
+07/2005 \\
+\texttt{atraso\_pagto\_4} & Status de atraso no pagamento no mês
+06/2005 \\
+\texttt{atraso\_pagto\_5} & Status de atraso no pagamento no mês
+05/2005 \\
+\texttt{atraso\_pagto\_6} & Status de atraso no pagamento no mês
+04/2005 \\
+\texttt{fatura\_valor\_1} & Valor da fatura no mês 09/2005 (NT
+dollar) \\
+\texttt{fatura\_valor\_2} & Valor da fatura no mês 08/2005 (NT
+dollar) \\
+\texttt{fatura\_valor\_3} & Valor da fatura no mês 07/2005 (NT
+dollar) \\
+\texttt{fatura\_valor\_4} & Valor da fatura no mês 06/2005 (NT
+dollar) \\
+\texttt{fatura\_valor\_5} & Valor da fatura no mês 05/2005 (NT
+dollar) \\
+\texttt{fatura\_valor\_6} & Valor da fatura no mês 04/2005 (NT
+dollar) \\
+\texttt{pagto\_valor\_1} & Valor pago no mês 09/2005 (NT dollar) \\
+\texttt{pagto\_valor\_2} & Valor pago no mês 08/2005 (NT dollar) \\
+\texttt{pagto\_valor\_3} & Valor pago no mês 07/2005 (NT dollar) \\
+\texttt{pagto\_valor\_4} & Valor pago no mês 06/2005 (NT dollar) \\
+\texttt{pagto\_valor\_5} & Valor pago no mês 05/2005 (NT dollar) \\
+\texttt{pagto\_valor\_6} & Valor pago no mês 04/2005 (NT dollar) \\
+\texttt{PD30} & Indicador binário de inadimplência no mês seguinte (1 =
+sim, 0 = não) \\
+\end{longtable}
+
 \subsection{{[}TBD{]} Análise
 Exploratória}\label{tbd-anuxe1lise-exploratuxf3ria}
 
-\red{teriamos que ter uma seção de EDA? se sim, encaixar aqui}
+\red{Apenas se tivermos tempo}
 
 \subsection{{[}REVISÃO-1{]}
 Pré-processamento}\label{revisuxe3o-1-pruxe9-processamento}
@@ -729,34 +899,35 @@ utilizando observações completas.
 
 Os resultados foram sintetizados em uma matriz de correlação,
 posteriormente representada graficamente por meio de um mapa de calor
-(heatmap), no qual a intensidade e o sinal das correlações são indicados
-por uma escala de cores contínua. Essa etapa teve caráter exploratório e
-diagnóstico, servindo como subsídio para a avaliação de possíveis
-problemas de multicolinearidade na etapa de modelagem, especialmente no
-que se refere à estabilidade e interpretação dos coeficientes da
-regressão logística.
+(\emph{heatmap}), no qual a intensidade e o sinal das correlações são
+indicados por uma escala de cores contínua. Essa etapa teve caráter
+exploratório e diagnóstico, servindo como subsídio para a avaliação de
+possíveis problemas de multicolinearidade na etapa de modelagem,
+especialmente no que se refere à estabilidade e interpretação dos
+coeficientes da regressão logística.
 
 \subsubsection{{[}REVISÃO-1{]} Codificação de variáveis
 categóricas}\label{revisuxe3o-1-codificauxe7uxe3o-de-variuxe1veis-categuxf3ricas}
 
-Para viabilizar a inclusão de variáveis qualitativas nos modelos de
-regressão, foi aplicada a técnica de One-Hot Encoding. Este procedimento
-consiste na transformação de variáveis categóricas nominais em um
-conjunto de variáveis indicadoras (binárias), onde o valor 1 representa
-a presença da categoria e 0 a sua ausência.
+Para possibilitar a inclusão de variáveis qualitativas nos modelos de
+regressão, foi aplicada a transformação dessas variáveis em variáveis
+indicadoras (binárias). Nesse procedimento, cada categoria de uma
+variável nominal é representada por uma coluna específica, assumindo
+valor 1 quando a categoria está presente na observação e 0 caso
+contrário.
 
-Para a implementação, utilizou-se a função \texttt{dummy\_cols} do
-pacote \texttt{fastDummies}, parametrizada com o argumento
-\texttt{remove\_first\_dummy\ =\ TRUE}. Esta etapa é metodologicamente
-crítica para mitigar a armadilha da variável \emph{dummy}
-(multicolinearidade perfeita), que ocorre quando as variáveis
-indicadoras são linearmente dependentes, impossibilitando a estimativa
-dos parâmetros por métodos de máxima verossimilhança ou por algoritmos
-de amostragem bayesiana. Com a remoção da primeira categoria, o modelo
-estabelece uma base de comparação necessária para a interpretação dos
-coeficientes estimados. Essas variáveis são comumente chamadas de
-dummies por atuarem como substitutos numéricos simplificados (fictícios)
-de conceitos abstratos.
+\red{(EDITAR DEPOIS)}Para a implementação, utilizou-se a função
+\texttt{dummy\_cols} do pacote \texttt{fastDummies}, parametrizada com o
+argumento \texttt{remove\_first\_dummy\ =\ TRUE}. Esta etapa é
+metodologicamente crítica para mitigar a armadilha da variável
+\emph{dummy} (multicolinearidade perfeita), que ocorre quando as
+variáveis indicadoras são linearmente dependentes, impossibilitando a
+estimativa dos parâmetros por métodos de máxima verossimilhança ou por
+algoritmos de amostragem bayesiana. Com a remoção da primeira categoria,
+o modelo estabelece uma base de comparação necessária para a
+interpretação dos coeficientes estimados. Essas variáveis são comumente
+chamadas de dummies por atuarem como substitutos numéricos simplificados
+(fictícios) de conceitos abstratos.
 
 \subsubsection{{[}REVISÃO-1{]} Padronização de variáveis
 numéricas}\label{revisuxe3o-1-padronizauxe7uxe3o-de-variuxe1veis-numuxe9ricas}
@@ -769,11 +940,12 @@ dados para o tipo numérico e, em seguida, aplicou-se a transformação de
 escala centralizada na média com unidade de desvio padrão. A fórmula
 utilizada para a padronização de cada variável \(X\) é dada por
 \begin{equation}
-z_i = \frac{x_i - \mu}{\sigma}
+z_i = \frac{x_i - \bar{x}}{S}
 \label{eq:standardization}
 \end{equation}
-onde \(x_i\) representa o valor original da variável, \(\mu\) é a média
-amostral e \(\sigma\) é o desvio padrão amostral. Essa transformação
+
+onde \(x_i\) representa o valor original da variável, \(\bar{x}\) é a
+média amostral e \(S\) é o desvio padrão amostral. Essa transformação
 resulta em variáveis com média zero e desvio padrão um. Com todas as
 variáveis na mesma escala, os coeficientes estimados tornam-se
 comparáveis entre si, permitindo identificar quais preditores exercem
@@ -784,8 +956,8 @@ teste}\label{revisuxe3o-1-divisuxe3o-entre-treino-e-teste}
 
 O conjunto de dados foi particionado em subconjuntos de treino (75\%) e
 teste (25\%) por meio de amostragem aleatória estratificada em relação à
-variável resposta Y=\texttt{loan\_status}. Essa estratégia assegura que
-as distribuições marginais das classes sejam preservadas em ambos os
+variável resposta Y=\texttt{status}. Essa estratégia assegura que as
+distribuições marginais das classes sejam preservadas em ambos os
 subconjuntos, como:
 \begin{equation}
 \mathbb{P}(Y = 1 \mid \text{treino})
@@ -877,13 +1049,15 @@ modelagem, especialmente no que tange à escolha de variáveis, tratamento
 de outliers e seleção de técnicas de modelagem adequadas ao perfil dos
 dados.
 
+\subsubsection{Dataset de empréstimos}\label{dataset-de-empruxe9stimos}
+
 O conjunto de dados é composto por 4269 observações e 13 variáveis,
-incluindo a variável resposta \texttt{loan\_status}, que indica se o
+incluindo a variável resposta \texttt{status}, que indica se o
 empréstimo foi aprovado ou rejeitado. As variáveis preditoras incluem
 informações como renda anual, pontuação de crédito, nível educacional,
 entre outras características dos solicitantes.
 
-\subsubsection{{[}REVISÃO-1{]} Estatísticas
+\paragraph{{[}REVISÃO-1{]} Estatísticas
 univariadas}\label{revisuxe3o-1-estatuxedsticas-univariadas}
 
 A Tabela~\ref{tbl-variaveis-num} apresenta as principais estatísticas
@@ -911,20 +1085,19 @@ numéricas do conjunto de dados.}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-no\_of\_dependents & 2.5 & 3 & 0 & 5 & 1.7 \\
-income\_annum & 5.05912e+06 & 5.1e+06 & 200000 & 9.9e+06 &
-2.80684e+06 \\
-loan\_amount & 1.51335e+07 & 1.45e+07 & 300000 & 3.95e+07 &
+num\_dependentes & 2.5 & 3 & 0 & 5 & 1.7 \\
+renda\_anual & 5.05912e+06 & 5.1e+06 & 200000 & 9.9e+06 & 2.80684e+06 \\
+valor\_emprestimo & 1.51335e+07 & 1.45e+07 & 300000 & 3.95e+07 &
 9.04336e+06 \\
-loan\_term & 10.9 & 10 & 2 & 20 & 5.71 \\
-cibil\_score & 599.94 & 600 & 300 & 900 & 172.43 \\
-residential\_assets\_value & 7.47262e+06 & 5.6e+06 & -100000 & 2.91e+07
-& 6.50364e+06 \\
-commercial\_assets\_value & 4.97316e+06 & 3.7e+06 & 0 & 1.94e+07 &
+prazo\_anos & 10.9 & 10 & 2 & 20 & 5.71 \\
+score\_credito & 599.94 & 600 & 300 & 900 & 172.43 \\
+ativos\_residenciais & 7.47262e+06 & 5.6e+06 & -100000 & 2.91e+07 &
+6.50364e+06 \\
+ativos\_comerciais & 4.97316e+06 & 3.7e+06 & 0 & 1.94e+07 &
 4.38897e+06 \\
-luxury\_assets\_value & 1.51263e+07 & 1.46e+07 & 300000 & 3.92e+07 &
+ativos\_luxo & 1.51263e+07 & 1.46e+07 & 300000 & 3.92e+07 &
 9.10375e+06 \\
-bank\_asset\_value & 4.97669e+06 & 4.6e+06 & 0 & 1.47e+07 &
+ativos\_bancarios & 4.97669e+06 & 4.6e+06 & 0 & 1.47e+07 &
 3.25019e+06 \\
 
 \end{longtable}
@@ -1040,12 +1213,12 @@ numéricas do conjunto de dados}
 
 Na Figura~\ref{fig-distribuicoes} são apresentadas as distribuições das
 variáveis numéricas analisadas. As variáveis (a) Renda Anual, (c) Prazo
-do Empréstimo e (d) CIBIL Score exibem distribuições relativamente
-homogêneas, sem concentração acentuada em intervalos específicos. Esse
-padrão sugere que o conjunto de dados contempla uma ampla variedade de
-perfis de clientes, não havendo predominância excessiva de indivíduos
-com renda muito elevada ou muito baixa, nem de faixas específicas de
-score de crédito.
+do Empréstimo e (d) Score exibem distribuições relativamente homogêneas,
+sem concentração acentuada em intervalos específicos. Esse padrão sugere
+que o conjunto de dados contempla uma ampla variedade de perfis de
+clientes, não havendo predominância excessiva de indivíduos com renda
+muito elevada ou muito baixa, nem de faixas específicas de score de
+crédito.
 
 Para a variável Prazo do Empréstimo (c), observa-se a presença de picos
 discretos ao longo da distribuição, o que é esperado, dado que prazos de
@@ -1094,28 +1267,28 @@ variavel & categoria & n & percentual (\%) \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-no\_of\_dependents & 0 & 712 & 16.68 \\
-no\_of\_dependents & 1 & 697 & 16.33 \\
-no\_of\_dependents & 2 & 708 & 16.58 \\
-no\_of\_dependents & 3 & 727 & 17.03 \\
-no\_of\_dependents & 4 & 752 & 17.62 \\
-no\_of\_dependents & 5 & 673 & 15.76 \\
-education & Graduate & 2144 & 50.22 \\
-education & Not Graduate & 2125 & 49.78 \\
-self\_employed & No & 2119 & 49.64 \\
-self\_employed & Yes & 2150 & 50.36 \\
+num\_dependentes & 0 & 712 & 16.68 \\
+num\_dependentes & 1 & 697 & 16.33 \\
+num\_dependentes & 2 & 708 & 16.58 \\
+num\_dependentes & 3 & 727 & 17.03 \\
+num\_dependentes & 4 & 752 & 17.62 \\
+num\_dependentes & 5 & 673 & 15.76 \\
+escolaridade & Graduate & 2144 & 50.22 \\
+escolaridade & Not Graduate & 2125 & 49.78 \\
+autonomo & No & 2119 & 49.64 \\
+autonomo & Yes & 2150 & 50.36 \\
 
 \end{longtable}
 
 }
 
-\subsubsection{{[}REVISÃO-1{]} Análise da variável resposta e relações
-com as variáveis
+\paragraph{{[}REVISÃO-1{]} Análise da variável resposta e relações com
+as variáveis
 preditoras}\label{revisuxe3o-1-anuxe1lise-da-variuxe1vel-resposta-e-relauxe7uxf5es-com-as-variuxe1veis-preditoras}
 
 Na Figura~\ref{fig-target-plot}, observa-se a distribuição da variável
-resposta \texttt{loan\_status}, indicando que aproximadamente 62.22\%
-dos empréstimos foram aprovados, enquanto 37.78\% foram rejeitados. Essa
+resposta \texttt{status}, indicando que aproximadamente 62.22\% dos
+empréstimos foram aprovados, enquanto 37.78\% foram rejeitados. Essa
 proporção sugere um desequilíbrio leve na classe alvo.
 
 \begin{figure}
@@ -1134,7 +1307,7 @@ empréstimos}
 A Figura~\ref{fig-distribuicoes-target} apresenta a estimativa de
 densidade para as variáveis numéricas do conjunto de dados, segmentadas
 pelo status de aprovação do empréstimo (Rejeitado ou Aprovado).
-Observa-se que a variável \texttt{cibil\_score} é a que apresenta a
+Observa-se que a variável \texttt{score\_credito} é a que apresenta a
 separação mais nítida entre as classes: candidatos com scores mais
 baixos (aproximadamente abaixo de 600) concentram-se majoritariamente no
 grupo de rejeitados, enquanto scores elevados mostram uma densidade
@@ -1189,26 +1362,26 @@ segundo o status do empréstimo}
 
 \end{figure}%
 
-\subsubsection{{[}REVISÃO-1{]} Análise de correlação entre variáveis
+\paragraph{{[}REVISÃO-1{]} Análise de correlação entre variáveis
 numéricas}\label{revisuxe3o-1-anuxe1lise-de-correlauxe7uxe3o-entre-variuxe1veis-numuxe9ricas}
 
 A matriz de correlação (Figura~\ref{fig-correlacao}) revela associações
 relevantes entre as variáveis numéricas do conjunto de dados. Observa-se
-forte correlação entre renda anual (\texttt{income\_annum}) e valor do
-empréstimo (\texttt{loan\_amount}), bem como entre essas variáveis e os
-ativos patrimoniais, especialmente ativos de luxo e ativos bancários,
-indicando que essas medidas capturam aspectos relacionados da condição
-financeira dos solicitantes. As correlações entre os diferentes tipos de
-ativos são positivas e moderadas, sugerindo coerência interna do perfil
-patrimonial, sem redundância perfeita entre as variáveis.
+forte correlação entre renda anual e valor do empréstimo, bem como entre
+essas variáveis e os ativos patrimoniais, especialmente ativos de luxo e
+ativos bancários, indicando que essas medidas capturam aspectos
+relacionados da condição financeira dos solicitantes. As correlações
+entre os diferentes tipos de ativos são positivas e moderadas, sugerindo
+coerência interna do perfil patrimonial, sem redundância perfeita entre
+as variáveis.
 
-Por outro lado, o prazo do empréstimo (\texttt{loan\_term}) apresenta
-correlação praticamente nula com as demais variáveis, indicando
-independência em relação ao perfil financeiro. De forma semelhante, o
-cibil\_score exibe correlações muito fracas com renda, ativos e valor do
-empréstimo, sugerindo que essa variável representa uma dimensão distinta
-de risco de crédito, relevante para a classificação, mas não diretamente
-associada ao nível de riqueza.
+Por outro lado, o prazo do empréstimo apresenta correlação praticamente
+nula com as demais variáveis, indicando independência em relação ao
+perfil financeiro. De forma semelhante, o score\_credito exibe
+correlações muito fracas com renda, ativos e valor do empréstimo,
+sugerindo que essa variável representa uma dimensão distinta de risco de
+crédito, relevante para a classificação, mas não diretamente associada
+ao nível de riqueza.
 
 A presença de correlações elevadas entre algumas variáveis explicativas
 indica potencial multicolinearidade, aspecto que deve ser considerado na
@@ -1228,7 +1401,7 @@ variáveis numéricas}
 
 \end{figure}%
 
-\subsubsection{{[}REVISÃO-1{]} Análise de
+\paragraph{{[}REVISÃO-1{]} Análise de
 outliers}\label{revisuxe3o-1-anuxe1lise-de-outliers}
 
 A presença de valores atípicos, particularmente em variáveis
@@ -1259,23 +1432,23 @@ Feature & Outliers & Percentual \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-bank\_asset\_value & 5 & 0.0011712 \\
-cibil\_score & 0 & 0.0000000 \\
-commercial\_assets\_value & 37 & 0.0086671 \\
-income\_annum & 0 & 0.0000000 \\
-loan\_amount & 0 & 0.0000000 \\
-loan\_term & 0 & 0.0000000 \\
-luxury\_assets\_value & 0 & 0.0000000 \\
-residential\_assets\_value & 52 & 0.0121808 \\
+ativos\_bancarios & 5 & 0.0011712 \\
+ativos\_comerciais & 37 & 0.0086671 \\
+ativos\_luxo & 0 & 0.0000000 \\
+ativos\_residenciais & 52 & 0.0121808 \\
+prazo\_anos & 0 & 0.0000000 \\
+renda\_anual & 0 & 0.0000000 \\
+score\_credito & 0 & 0.0000000 \\
+valor\_emprestimo & 0 & 0.0000000 \\
 
 \end{longtable}
 
 }
 
-\subsection{{[}REVISÃO-1{]} Pré
+\paragraph{{[}REVISÃO-1{]} Pré
 processamento}\label{revisuxe3o-1-pruxe9-processamento-1}
 
-\subsubsection{{[}REVISÃO-1{]} Verificação de valores ausentes e
+\subparagraph{{[}REVISÃO-1{]} Verificação de valores ausentes e
 observações
 duplicadas}\label{revisuxe3o-1-verificauxe7uxe3o-de-valores-ausentes-e-observauxe7uxf5es-duplicadas}
 
@@ -1288,7 +1461,7 @@ Adicionalmente, não foram detectadas observações duplicadas, assegurando
 que cada registro corresponda a uma unidade amostral distinta e
 contribuindo para a validade das estimativas inferenciais.
 
-\subsubsection{{[}REVISÃO-1{]} Tratamento de inconsistências e
+\paragraph{{[}REVISÃO-1{]} Tratamento de inconsistências e
 outliers}\label{revisuxe3o-1-tratamento-de-inconsistuxeancias-e-outliers}
 
 Observa-se que aproximadamente 0.01\% dos solicitantes apresentam
@@ -1306,7 +1479,7 @@ Não foi aplicado tratamento automático de outliers, uma vez que valores
 extremos são esperados em dados financeiros e podem conter informação
 relevante para a classificação do risco de crédito.
 
-\subsubsection{{[}REVISÃO-1{]} Seleção de variáveis e análise de
+\paragraph{{[}REVISÃO-1{]} Seleção de variáveis e análise de
 correlação}\label{revisuxe3o-1-seleuxe7uxe3o-de-variuxe1veis-e-anuxe1lise-de-correlauxe7uxe3o}
 
 A Figura~\ref{fig-correlacao} foi utilizada para investigar possíveis
@@ -1316,44 +1489,523 @@ de renda e patrimônio, como renda anual, valor do empréstimo e ativos
 financeiros, comportamento esperado em bases de dados financeiras.
 
 Apesar dessas correlações, optou-se por não remover variáveis nesta
-etapa, uma vez que correlação elevada não implica, necessariamente,
-multicolinearidade prejudicial à estimação, e tais variáveis podem
-conter informação complementar relevante para a classificação do risco
-de crédito.
+etapa, mantendo todas as variáveis numéricas disponíveis para a
+modelagem. Essa decisão foi motivada pelo interesse em avaliar o impacto
+de cada variável no modelo de regressão logística.
 
-\subsubsection{{[}REVISÃO-1{]} Codificação e padronização de
-variáveis}\label{revisuxe3o-1-codificauxe7uxe3o-e-padronizauxe7uxe3o-de-variuxe1veis}
+\subsubsection{Dataset de
+Inadimplência}\label{dataset-de-inadimpluxeancia}
 
-Com o objetivo de tornar os dados adequados à aplicação de modelos de
-regressão logística, foi realizado um processo de codificação das
-variáveis categóricas e padronização das variáveis numéricas. As
-variáveis categóricas consideradas no estudo incluem: o nível
-educacional (Graduate / Not Graduate) e a condição de trabalho autônomo
-(Yes/No). Essas variáveis foram tratadas por meio de
-\texttt{one-hot\ encoding}, convertendo cada categoria em variáveis
-indicadoras binárias. Para evitar problemas de multicolinearidade
-perfeita, uma categoria de referência foi removida em cada conjunto de
-\texttt{dummies}.
+O conjunto de dados de inadimplência é composto por 30000 observações e
+25 variáveis, incluindo a variável resposta \texttt{PD30}, que indica se
+As variáveis preditoras incluem informações como renda anual, pontuação
+de crédito, nível educacional, entre outras características dos
+solicitantes.
 
-As variáveis numéricas foram padronizadas utilizando o método standard.
-Essa etapa garante que todas as variáveis estejam na mesma escala,
-facilitando a convergência dos algoritmos de estimação e permitindo uma
-interpretação mais comparável dos coeficientes estimados.
+\paragraph{{[}WIP{]} Estatísticas
+univariadas}\label{wip-estatuxedsticas-univariadas}
 
-Ressalta-se que a padronização não altera a informação contida nos
-dados, mas apenas sua escala, sendo especialmente relevante em modelos
-que utilizam métodos de otimização numérica e em abordagens bayesianas,
-nas quais a escolha de distribuições a priori é sensível à magnitude dos
-parâmetros.
+A Tabela~\ref{tbl-variaveis-num-default} evidencia uma população
+heterogênea de clientes de cartão de crédito, com ampla variabilidade
+tanto nas características demográficas quanto nas variáveis financeiras,
+o que também pode ser visto no dataset de empretimos. O limite médio de
+crédito é de aproximadamente NT\$ 167 mil, com mediana inferior (NT\$
+140 mil), indicando assimetria à direita e a presença de clientes com
+limites substancialmente mais elevados, o que é reforçado pelo alto
+desvio padrão. A idade média dos clientes é de cerca de 35 anos, com
+concentração em adultos jovens e de meia-idade. As variáveis categóricas
+codificadas numericamente, como sexo, escolaridade e estado civil,
+apresentam baixa variabilidade relativa, refletindo uma distribuição
+razoavelmente equilibrada entre suas categorias principais.
+
+No que diz respeito ao comportamento de pagamento, as variáveis de
+atraso (\texttt{atraso\_pagto\_0} a \texttt{atraso\_pagto\_6})
+apresentam médias próximas de zero e medianas iguais a zero, sugerindo
+que a maioria dos clientes não apresenta atraso significativo nos
+pagamentos, embora existam casos extremos de inadimplência prolongada
+(até oito meses). Os valores de fatura e de pagamento exibem grande
+dispersão (que pode ser vista na
+Figura~\ref{fig-distribuicoes-default}), com médias substancialmente
+superiores às medianas, o que indica distribuições fortemente
+assimétricas e a presença de outliers. Ademais, a ocorrência de valores
+negativos nas faturas é consistente com ajustes, estornos ou créditos no
+sistema de faturamento. Em conjunto, esses resultados reforçam a
+complexidade do perfil financeiro dos clientes e justificam o uso de
+técnicas de modelagem robustas à assimetria, à presença de valores
+extremos e à heterogeneidade dos dados monetários expressos em dólares
+taiwaneses (NT\$).
+
+{
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2133}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1467}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1333}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1200}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2400}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1467}}@{}}
+
+\caption{\label{tbl-variaveis-num-default}Estatísticas descritivas das
+variáveis numéricas do conjunto de dados.}
+
+\tabularnewline
+
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+median
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+min
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+max
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+std
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+limite\_credito & 167484 & 140000 & 10000 & 1e+06 & 129748 \\
+sexo & 1.6 & 2 & 1 & 2 & 0.49 \\
+escolaridade & 1.85 & 2 & 0 & 6 & 0.79 \\
+estado\_civil & 1.55 & 2 & 0 & 3 & 0.52 \\
+idade & 35.49 & 34 & 21 & 79 & 9.22 \\
+atraso\_pagto\_0 & -0.02 & 0 & -2 & 8 & 1.12 \\
+atraso\_pagto\_2 & -0.13 & 0 & -2 & 8 & 1.2 \\
+atraso\_pagto\_3 & -0.17 & 0 & -2 & 8 & 1.2 \\
+atraso\_pagto\_4 & -0.22 & 0 & -2 & 8 & 1.17 \\
+atraso\_pagto\_5 & -0.27 & 0 & -2 & 8 & 1.13 \\
+atraso\_pagto\_6 & -0.29 & 0 & -2 & 8 & 1.15 \\
+fatura\_valor\_1 & 51223.3 & 22381.5 & -165580 & 964511 & 73635.9 \\
+fatura\_valor\_2 & 49179.1 & 21200 & -69777 & 983931 & 71173.8 \\
+fatura\_valor\_3 & 47013.2 & 20088.5 & -157264 & 1.66409e+06 &
+69349.4 \\
+fatura\_valor\_4 & 43262.9 & 19052 & -170000 & 891586 & 64332.9 \\
+fatura\_valor\_5 & 40311.4 & 18104.5 & -81334 & 927171 & 60797.2 \\
+fatura\_valor\_6 & 38871.8 & 17071 & -339603 & 961664 & 59554.1 \\
+pagto\_valor\_1 & 5663.58 & 2100 & 0 & 873552 & 16563.3 \\
+pagto\_valor\_2 & 5921.16 & 2009 & 0 & 1.68426e+06 & 23040.9 \\
+pagto\_valor\_3 & 5225.68 & 1800 & 0 & 896040 & 17607 \\
+pagto\_valor\_4 & 4826.08 & 1500 & 0 & 621000 & 15666.2 \\
+pagto\_valor\_5 & 4799.39 & 1500 & 0 & 426529 & 15278.3 \\
+pagto\_valor\_6 & 5215.5 & 1500 & 0 & 528666 & 17777.5 \\
+
+\end{longtable}
+
+}
+
+\begin{figure}
+
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-1.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-1}Limite de crédito}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-2.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-2}Idade}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-3.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-3}Fatura - mês 1}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-4.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-4}Fatura - mês 2}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-5.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-5}Fatura - mês 3}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-6.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-6}Fatura - mês 4}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-7.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-7}Fatura - mês 5}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-8.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-8}Fatura - mês 6}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-9.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-9}Pagamento - mês 1}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-10.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-10}Pagamento - mês 2}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-11.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-11}Pagamento - mês 3}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-12.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-12}Pagamento - mês 4}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-13.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-13}Pagamento - mês 5}
+
+\end{minipage}%
+%
+\begin{minipage}[t]{0.33\linewidth}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-distribuicoes-default-14.pdf}
+
+}
+
+\subcaption{\label{fig-distribuicoes-default-14}Pagamento - mês 6}
+
+\end{minipage}%
+
+\caption{\label{fig-distribuicoes-default}Distribuição das principais
+variáveis numéricas do conjunto de dados}
+
+\end{figure}%
+
+\begin{verbatim}
+[   categoria      n  percentual (%) variavel
+0          2  18112           60.37     sexo
+1          1  11888           39.63     sexo,    categoria      n  percentual (%)      variavel
+0          2  14030           46.77  escolaridade
+1          1  10585           35.28  escolaridade
+2          3   4917           16.39  escolaridade
+3          5    280            0.93  escolaridade
+4          4    123            0.41  escolaridade
+5          6     51            0.17  escolaridade
+6          0     14            0.05  escolaridade,    categoria      n  percentual (%)      variavel
+0          2  15964           53.21  estado_civil
+1          1  13659           45.53  estado_civil
+2          3    323            1.08  estado_civil
+3          0     54            0.18  estado_civil]
+\end{verbatim}
+
+{
+
+\begin{longtable}[]{@{}lrrr@{}}
+
+\caption{\label{tbl-categoricas-default}Distribuição das variáveis
+categóricas do conjunto de dados.}
+
+\tabularnewline
+
+\toprule\noalign{}
+variavel & categoria & n & percentual (\%) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+sexo & 1 & 11888 & 39.63 \\
+sexo & 2 & 18112 & 60.37 \\
+escolaridade & 0 & 14 & 0.05 \\
+escolaridade & 1 & 10585 & 35.28 \\
+escolaridade & 2 & 14030 & 46.77 \\
+escolaridade & 3 & 4917 & 16.39 \\
+escolaridade & 4 & 123 & 0.41 \\
+escolaridade & 5 & 280 & 0.93 \\
+escolaridade & 6 & 51 & 0.17 \\
+estado\_civil & 0 & 54 & 0.18 \\
+estado\_civil & 1 & 13659 & 45.53 \\
+estado\_civil & 2 & 15964 & 53.21 \\
+estado\_civil & 3 & 323 & 1.08 \\
+
+\end{longtable}
+
+}
+
+As variáveis categóricas do conjunto de dados descrevem características
+demográficas relevantes dos clientes de cartão de crédito, em particular
+sexo, escolaridade e estado civil, e apresentam distribuições
+assimétricas entre suas categorias.
+
+Em relação ao sexo, codificado como 1 para homens e 2 para mulheres,
+observa-se predominância de clientes do sexo feminino. Essa assimetria
+sugere uma maior participação de mulheres na base analisada, o que pode
+refletir tanto características da população atendida pela instituição
+financeira quanto critérios históricos de concessão de crédito.
+
+A variável estado civil apresenta maior concentração nas categorias
+``solteiro'' (código 2), com aproximadamente 53,2\% dos registros, e
+``casado'' (código 1), com cerca de 45,5\%. A categoria ``outros''
+(código 3) representa pouco mais de 1\% da amostra, enquanto valores
+codificados como 0 são residuais, indicando possíveis inconsistências ou
+registros atípicos. Essa distribuição sugere que a maioria dos clientes
+pertence a estruturas familiares tradicionais, o que pode ter
+implicações no perfil de risco e na capacidade de pagamento.
+
+Quanto à escolaridade, a maior parte dos clientes possui nível
+universitário (código 2) ou pós-graduação (código 1), seguidos por
+ensino médio (código 3). As categorias ``outros'' e ``desconhecido''
+(códigos 4, 5 e 6) são pouco representativas, indicando que a informação
+de escolaridade é, em geral, bem registrada. A concentração em níveis
+educacionais mais elevados pode estar associada a maior estabilidade de
+renda e, potencialmente, a menores níveis de inadimplência, embora essa
+relação deva ser avaliada empiricamente no processo de modelagem.
+
+\paragraph{{[}WIP{]} Avaliação da variável
+resposta}\label{wip-avaliauxe7uxe3o-da-variuxe1vel-resposta}
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-target-plot-default-1.pdf}}
+
+}
+
+\caption{\label{fig-target-plot-default}Distribuição da Inadimplência}
+
+\end{figure}%
+
+Na Figura~\ref{fig-target-plot-default}, observa-se a distribuição da
+variável resposta PD30, indicando que aproximadamente 22.12\% dos
+clientes apresentam inadimplência no mês subsequente, enquanto os demais
+77.88\% correspondem à classe de adimplentes. Esse desbalanceamento de
+classes é característico de problemas de risco de crédito e deve ser
+considerado na etapa de modelagem, uma vez que pode influenciar métricas
+de desempenho e a calibração das probabilidades previstas pelos modelos.
+
+Esse cenário é típico de problemas de credit scoring e caracteriza um
+contexto de \texttt{imbalanced\ learning}, no qual a classe minoritária
+(inadimplência) é justamente a de maior interesse analítico.
+
+Nesse tipo de distribuição, métricas globais como acurácia podem ser
+enganosas, pois modelos que privilegiam a classe majoritária tendem a
+apresentar desempenho aparentemente elevado mesmo sem capacidade
+discriminativa adequada para a classe de interesse. Por essa razão,
+métricas baseadas em discriminação e equilíbrio entre classes tornam-se
+mais informativas.
+
+\paragraph{{[}WIP{]} Análise de correlação entre variáveis
+numéricas}\label{wip-anuxe1lise-de-correlauxe7uxe3o-entre-variuxe1veis-numuxe9ricas}
+
+\begin{figure}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{monografia_files/figure-pdf/fig-correlacao-default-1.pdf}
+
+}
+
+\caption{\label{fig-correlacao-default}Mapa de calor da correlação entre
+variáveis numéricas do conjunto de dados de crédito}
+
+\end{figure}%
+
+A Figura~\ref{fig-correlacao-default} evidencia padrões estruturais
+importantes entre as variáveis numéricas do conjunto de dados.
+Observa-se uma forte correlação positiva entre os valores de fatura ao
+longo dos meses (por exemplo, entre \texttt{fatura\_valor\_1} e
+\texttt{fatura\_valor\_2}, com correlação próxima de 0,95), indicando
+alta persistência temporal do saldo devedor dos clientes. Esse
+comportamento é esperado em dados de crédito, onde o saldo de fatura
+tende a evoluir de forma gradual ao longo do tempo.
+
+De forma semelhante, as variáveis de atraso de pagamento
+(\texttt{atraso\_pagto\_*}) apresentam correlações moderadas a altas
+entre si (chegando a valores acima de 0,8), sugerindo forte dependência
+temporal e possível redundância informacional. Esse padrão é relevante
+do ponto de vista de modelagem, pois indica potencial multicolinearidade
+entre variáveis de comportamento de pagamento, o que pode afetar
+estimativas em modelos lineares tradicionais e justificar o uso de
+abordagens regularizadas ou bayesianas mais robustas.
+
+Por outro lado, variáveis como idade e limite de crédito apresentam
+correlações fracas com a maioria das demais variáveis, sugerindo que
+carregam informação relativamente independente dentro do conjunto de
+dados. Já os valores de pagamento (\texttt{pagto\_valor\_*}) mostram
+correlações baixas entre si e com outras variáveis, indicando maior
+variabilidade e menor estrutura temporal consistente quando comparados
+aos saldos de fatura e atrasos de pagamento.
+
+\paragraph{{[}WIP{]} Análise de
+outliers}\label{wip-anuxe1lise-de-outliers}
+
+{
+
+\begin{longtable}[]{@{}lrr@{}}
+
+\caption{\label{tbl-outliers-default}Número e percentual de outliers
+identificados pelo critério do IQR no conjunto de dados de crédito}
+
+\tabularnewline
+
+\toprule\noalign{}
+Feature & Outliers & Percentual \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+atraso\_pagto\_0 & 3130 & 0.1043333 \\
+atraso\_pagto\_2 & 4410 & 0.1470000 \\
+atraso\_pagto\_3 & 4209 & 0.1403000 \\
+atraso\_pagto\_4 & 3508 & 0.1169333 \\
+atraso\_pagto\_5 & 2968 & 0.0989333 \\
+atraso\_pagto\_6 & 3079 & 0.1026333 \\
+fatura\_valor\_1 & 2400 & 0.0800000 \\
+fatura\_valor\_2 & 2395 & 0.0798333 \\
+fatura\_valor\_3 & 2469 & 0.0823000 \\
+fatura\_valor\_4 & 2622 & 0.0874000 \\
+fatura\_valor\_5 & 2725 & 0.0908333 \\
+fatura\_valor\_6 & 2693 & 0.0897667 \\
+idade & 272 & 0.0090667 \\
+limite\_credito & 167 & 0.0055667 \\
+pagto\_valor\_1 & 2745 & 0.0915000 \\
+pagto\_valor\_2 & 2714 & 0.0904667 \\
+pagto\_valor\_3 & 2598 & 0.0866000 \\
+pagto\_valor\_4 & 2994 & 0.0998000 \\
+pagto\_valor\_5 & 2945 & 0.0981667 \\
+pagto\_valor\_6 & 2958 & 0.0986000 \\
+
+\end{longtable}
+
+}
+
+Os resultados da detecção de outliers
+(Tabela~\ref{tbl-outliers-default}) pelo critério do IQR indicam um
+padrão bastante consistente com a natureza dos dados financeiros
+analisados. Observa-se que as variáveis relacionadas ao histórico de
+atraso de pagamento (\texttt{atraso\_pagto\_*}) apresentam as maiores
+proporções de outliers, variando aproximadamente entre 9,9\% e 14,7\%
+das observações. Esse comportamento é esperado, uma vez que essas
+variáveis são discretas e assimétricas por construção, refletindo
+estados de atraso que podem se concentrar em valores extremos (como
+atrasos elevados em determinados meses).
+
+As variáveis de valores de fatura (\texttt{fatura\_valor\_*}) e de
+pagamento (\texttt{pagto\_valor\_*}) também apresentam proporções
+relevantes de outliers, em torno de 8\% a 9\%. Isso é típico em dados
+financeiros de crédito, nos quais distribuições são fortemente
+assimétricas à direita, com uma pequena parcela de clientes concentrando
+valores elevados de consumo e pagamento. Nesse contexto, esses
+``outliers'' não necessariamente representam erros ou anomalias, mas sim
+a própria heterogeneidade do comportamento financeiro da população.
+
+Em contraste, variáveis como idade e limite de crédito apresentam
+proporções muito baixas de outliers (inferiores a 1\%), sugerindo
+distribuições mais estáveis e próximas de um comportamento
+aproximadamente simétrico ou moderadamente disperso. Esse resultado
+reforça a importância de interpretar outliers sob uma perspectiva
+contextual: em dados de crédito, valores extremos frequentemente
+carregam informação relevante sobre risco e capacidade financeira, não
+devendo ser removidos automaticamente sem análise substantiva.
 
 \subsubsection{{[}REVISÃO-1{]} Separação
 treino/teste}\label{revisuxe3o-1-separauxe7uxe3o-treinoteste}
 
-O conjunto de dados foi dividido aleatoriamente em subconjuntos de
+Os conjuntos de dados foram divididos aleatoriamente em subconjuntos de
 treino (75\%) e teste (25\%), utilizando amostragem estratificada em
-relação à variável resposta (loan\_status). Essa estratégia assegura que
-a proporção de observações pertencentes a cada classe seja preservada em
-ambos os subconjuntos.
+relação às variáveis resposta. Essa estratégia assegura que a proporção
+de observações pertencentes a cada classe seja preservada em ambos os
+subconjuntos.
 
 O ajuste do modelo foi realizado exclusivamente com o conjunto de
 treino, enquanto o conjunto de teste foi reservado para a avaliação do
@@ -1370,270 +2022,9 @@ Frequentista}\label{revisuxe3o-1-modelo-frequentista}
 estatísticas do
 modelo}\label{revisuxe3o-1-avaliauxe7uxe3o-do-ajuste-e-propriedades-estatuxedsticas-do-modelo}
 
-{
-
-\begin{longtable}[]{@{}lr@{}}
-
-\caption{\label{tbl-ajuste-modelo}Medidas de ajuste do modelo de
-regressão logística}
-
-\tabularnewline
-
-\toprule\noalign{}
-Medida & Valor \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Null deviance & 4185.873 \\
-Residual deviance & 1384.101 \\
-Δ Deviance (LR) & 2801.773 \\
-gl (diferença) & 11.000 \\
-p-valor (teste qui-quadrado) & 0.000 \\
-AIC & 1408.101 \\
-BIC & 1480.880 \\
-Número de iterações (Fisher scoring) & 7.000 \\
-
-\end{longtable}
-
-}
-
 O modelo de regressão logística foi estimado por máxima verossimilhança,
 tendo como variável resposta o status do empréstimo e como variáveis
 explicativas os atributos socioeconômicos e financeiros do solicitante.
-
-A Tabela~\ref{tbl-ajuste-modelo} possui metricas de ajuste do modelo. O
-algoritmo de Fisher scoring convergiu após 7 iterações, indicando
-estabilidade na estimação dos parâmetros do modelo. É possível observar
-que o modelo apresentou redução substancial da deviance, passando de
-4185.9 no modelo nulo para 1384.1 no modelo ajustado, com critério de
-informação de Akaike (AIC) igual a 1408.1, indicando que a inclusão das
-variáveis explicativas contribui significativamente para a explicação da
-variável resposta.
-
-Adicionalmente, foi calculado o Critério de Informação Bayesiano (BIC),
-cujo valor foi de 1480.9. O BIC impõe uma penalização mais severa à
-complexidade do modelo do que o AIC, sendo particularmente informativo
-em amostras de maior dimensão. O valor obtido sugere que a especificação
-adotada mantém um equilíbrio adequado entre qualidade de ajuste e
-parcimônia, reforçando a robustez do modelo sob um critério mais
-conservador.
-
-O teste da razão de verossimilhança confirmou que o modelo ajustado
-apresenta desempenho estatisticamente superior ao modelo sem covariáveis
-(\(\chi^2 = 2801.8, \; df = 11, \; p < 0{,}001\)), evidenciando que o
-conjunto de variáveis explicativas contribui de forma significativa para
-a modelagem da probabilidade de aprovação do empréstimo.
-
-\begin{table}
-
-\caption{\label{tbl-logit-freq-1}Estimativas do modelo de regressão
-logística}
-
-\centering{
-
-\begin{tabular}{lrrrrr}
-\toprule
-Variável & Beta & StdErr & z & p-valor & OddsRatio\\
-\midrule
-(Intercept) & -1.83 & 0.14 & -13.32 & 0.00 & 0.16\\
-no\_of\_dependents & 0.08 & 0.07 & 1.12 & 0.26 & 1.08\\
-income\_annum & 1.73 & 0.29 & 5.90 & 0.00 & 5.62\\
-loan\_amount & -1.44 & 0.19 & -7.50 & 0.00 & 0.24\\
-loan\_term & 0.90 & 0.07 & 11.93 & 0.00 & 2.46\\
-\addlinespace
-cibil\_score & -4.28 & 0.17 & -25.37 & 0.00 & 0.01\\
-residential\_assets\_value & -0.01 & 0.09 & -0.14 & 0.89 & 0.99\\
-commercial\_assets\_value & -0.04 & 0.09 & -0.48 & 0.63 & 0.96\\
-luxury\_assets\_value & -0.19 & 0.18 & -1.02 & 0.31 & 0.83\\
-bank\_asset\_value & -0.19 & 0.13 & -1.47 & 0.14 & 0.83\\
-\addlinespace
-`education\_Not Graduate` & 0.06 & 0.14 & 0.47 & 0.64 & 1.07\\
-self\_employed\_Yes & -0.09 & 0.14 & -0.68 & 0.50 & 0.91\\
-\bottomrule
-\end{tabular}
-
-}
-
-\end{table}%
-
-A Tabela~\ref{tbl-logit-freq-1} apresenta as estimativas dos
-coeficientes, erros-padrão, estatísticas z e respectivos
-valores-p.~Entre as variáveis analisadas, \texttt{income\_annum},
-\texttt{loan\_amount}, \texttt{loan\_term} e \texttt{cibil\_score}
-mostraram-se estatisticamente significativas ao nível de 1\%. O
-coeficiente (Coluna Beta da tabela) associado à renda anual
-(\texttt{income\_annum}) é positivo, indicando que maiores níveis de
-renda aumentam a probabilidade de aprovação do empréstimo, mantendo-se
-as demais variáveis constantes. Em contrapartida, o valor solicitado
-(\texttt{loan\_amount}) apresenta coeficiente negativo, sugerindo que
-empréstimos de maior montante estão associados a uma menor probabilidade
-de aprovação, refletindo maior percepção de risco por parte da
-instituição financeira.
-
-O prazo do empréstimo (\texttt{loan\_term}) possui coeficiente positivo
-e estatisticamente significativo, indicando que prazos mais longos
-tendem a aumentar a chance de aprovação, possivelmente por reduzirem o
-valor das parcelas e, consequentemente, o risco de inadimplência. A
-variável \texttt{cibil\_score} destaca-se como o preditor mais relevante
-do modelo, apresentando coeficiente negativo de grande magnitude e
-elevada significância estatística. Esse resultado sugere forte
-associação entre o score de crédito e a decisão de concessão, reforçando
-seu papel central na avaliação de risco.
-
-As demais variáveis, incluindo número de dependentes, valores de ativos
-(residenciais, comerciais, de luxo e bancários), nível educacional e
-status de trabalho autônomo, não apresentaram significância estatística
-aos níveis usuais. A ausência de significância estatística dessas
-covariáveis indica que, uma vez controladas as variáveis centrais do
-modelo, sua contribuição marginal para a verossimilhança do modelo é
-limitada, não resultando em melhora estatisticamente detectável na
-capacidade de discriminação do risco de crédito.
-
-O intercepto negativo e estatisticamente significativo reflete a
-probabilidade basal de aprovação quando todas as variáveis explicativas
-estão em seus valores de referência, reforçando a necessidade da
-presença de características financeiras favoráveis para aumentar a
-chance de concessão do crédito.
-
-Como as variáveis quantitativas foram padronizadas, os coeficientes
-estimados e seus respectivos \emph{Odds Ratios} (OR) devem ser
-interpretados como o efeito associado a um aumento de um desvio padrão
-na variável explicativa, mantendo-se as demais constantes. Essa
-transformação permite a comparabilidade direta da magnitude dos efeitos
-entre variáveis originalmente medidas em escalas distintas. Portanto, um
-aumento de um desvio padrão na renda anual está associado a um aumento
-de 5.624 vezes na odds de aprovação do empréstimo, enquanto um aumento
-de um desvio padrão no valor do empréstimo reduz as odds em 0.237 vezes,
-e assim por diante para as demais variáveis.
-
-{
-
-\begin{longtable}[]{@{}llr@{}}
-
-\caption{\label{tbl-vif-freq}Fatores de Inflação de Variância por
-feature}
-
-\tabularnewline
-
-\toprule\noalign{}
-& Variavel & VIF \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-no\_of\_dependents & no\_of\_dependents & 1.01 \\
-income\_annum & income\_annum & 17.97 \\
-loan\_amount & loan\_amount & 7.73 \\
-loan\_term & loan\_term & 1.26 \\
-cibil\_score & cibil\_score & 1.33 \\
-residential\_assets\_value & residential\_assets\_value & 1.69 \\
-commercial\_assets\_value & commercial\_assets\_value & 1.63 \\
-luxury\_assets\_value & luxury\_assets\_value & 7.31 \\
-bank\_asset\_value & bank\_asset\_value & 3.41 \\
-\texttt{education\_Not\ Graduate} & \texttt{education\_Not\ Graduate} &
-1.01 \\
-self\_employed\_Yes & self\_employed\_Yes & 1.01 \\
-
-\end{longtable}
-
-}
-
-A Tabela~\ref{tbl-vif-freq} apresenta os fatores de inflação da
-variância (VIF) para as variáveis explicativas do modelo de regressão
-logística. O VIF quantifica o quanto a variância do estimador de cada
-coeficiente é inflacionada devido à correlação linear com as demais
-covariáveis. Valores próximos de 1 indicam ausência de
-multicolinearidade, enquanto valores acima de 5 sugerem atenção e
-valores superiores a 10 são usualmente interpretados como indicativos de
-multicolinearidade severa.
-
-Observa-se que a maior parte das variáveis apresenta VIFs baixos,
-próximos de 1, indicando fraca dependência linear entre si. Esse é o
-caso, por exemplo, de \texttt{no\_of\_dependents}, \texttt{loan\_term},
-\texttt{cibil\_score}, das variáveis associadas a ativos residenciais e
-comerciais, bem como das variáveis categóricas relacionadas à
-escolaridade e ao status de emprego.
-
-Entretanto, duas variáveis merecem destaque. A variável
-\texttt{income\_annum} apresenta VIF elevado (17,97), caracterizando
-multicolinearidade severa, o que indica forte correlação linear com
-outras covariáveis do modelo. Esse resultado já havia sido observado na
-análise de correlação de pearson (ver Figura~\ref{fig-correlacao}), na
-qual \texttt{income\_annum} apresentou alta correlação com
-\texttt{loan\_amount} e com variáveis patrimoniais. Além disso, as
-variáveis loan\_amount (VIF = 7,73) e luxury\_assets\_value (VIF = 7,31)
-exibem multicolinearidade moderada, acima do limiar usual de 5,
-sugerindo a presença de sobreposição parcial de informação explicativa
-no modelo.
-
-\red {podemos remover essas features em uma outra versão do modelo, só teriamos que repetir os resultados, é valido?}
-
-\begin{figure}
-
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-residuals-freq-1.pdf}}
-
-}
-
-\caption{\label{fig-residuals-freq}Gráficos de diagnóstico de resíduos
-do modelo de regressão logística}
-
-\end{figure}%
-
-A análise de diagnóstico é uma etapa crucial para validar a robustez do
-modelo de regressão logística e identificar possíveis observações
-influentes que possam enviesar as estimativas de crédito. A Figura
-Figura~\ref{fig-residuals-freq} apresenta os gráficos de diagnóstico
-gerados para o modelo final. Embora a regressão logística não
-pressuponha a normalidade dos resíduos, uma vez que a variável
-dependente segue uma distribuição binomial e os parâmetros são estimados
-via Máxima Verossimilhança,a análise dos resíduos de Pearson e resíduos
-de desvio permite avaliar a qualidade do ajuste.
-
-O gráfico \texttt{Residuals\ vs\ Fitted} mostra a dispersão dos resíduos
-de Pearson em relação aos valores preditos. Observa-se uma concentração
-de resíduos próximos de zero, o que é esperado, todavia, a presença de
-pontos isolados com valores de resíduos extremamente altos
-(especialmente os casos 675, 2404 e 3059) indica que o modelo apresenta
-dificuldades em classificar corretamente determinados perfis de
-tomadores de empréstimo.
-
-No grafico \texttt{Q-Q\ Residuals}, o desvio observado nas caudas do
-gráfico Quantil-Quantil não deve ser interpretado como uma violação de
-pressuposto, mas sim como um indicativo de que a distribuição dos erros
-do modelo possui ``caudas pesadas''. Isso reforça a existência de
-outliers ou casos em que a probabilidade prevista pelo modelo diverge
-drasticamente do desfecho real da aprovação.
-
-Diferente dos modelos lineares clássicos, a regressão logística não
-assume a homocedasticidade dos resíduos, uma vez que a variância em uma
-distribuição binomial é intrinsecamente dependente da probabilidade de
-ocorrência do evento. Contudo, a análise do gráfico Scale-Location
-(Figura~\ref{fig-residuals-freq}) permanece relevante para identificar
-possíveis problemas de superdispersão ou má especificação do modelo. No
-presente estudo, a dispersão observada sugere que, embora a
-heterocedasticidade seja um traço inerente ao método, a presença de
-observações com resíduos padronizados elevados indica que a
-variabilidade dos dados de aprovação de crédito pode não estar sendo
-totalmente capturada pelas variáveis independentes selecionadas.
-
-O gráfico \texttt{Residuals\ vs\ Leverage} é fundamental para
-identificar observações que possuem alto ``poder de alavancagem''. O
-ponto 675 destaca-se significativamente por apresentar um resíduo de
-Pearson padronizado superior a 80. Embora a distância de Cook não
-indique que este ponto esteja isolado fora dos limites críticos usuais,
-sua magnitude residual sugere que ele é um caso atípico.
-
-A instabilidade observada nos resíduos (Figura~\ref{fig-residuals-freq})
-e a presença de valores discrepantes podem estar associadas à existência
-de multicolinearidade entre as variáveis independentes. Variáveis
-altamente correlacionadas tendem a inflar a variância dos estimadores,
-dificultando a convergência do modelo e resultando em previsões menos
-robustas para perfis de crédito específicos.
-
-\red{Bom, podemos remover as feats mais correlacionadas ou não... e aí repetiriamos a análise ou nem chegamos a avaliar o desempenho desse modelo, seguindo apenas com o outro...}
 
 \paragraph{{[}REVISÃO-1{]} Desempenho
 preditivo}\label{revisuxe3o-1-desempenho-preditivo}
@@ -1642,189 +2033,24 @@ preditivo}\label{revisuxe3o-1-desempenho-preditivo}
 probabilidades
 estimadas}\label{revisuxe3o-1-avaliauxe7uxe3o-do-classificador-a-partir-das-probabilidades-estimadas}
 
-\begin{figure}
+para o default: Em particular, a ROC-AUC é útil por avaliar a capacidade
+do modelo em ordenar corretamente observações positivas e negativas,
+sendo menos sensível ao desbalanceamento de classes. No entanto, ela
+ainda não captura diretamente assimetrias entre erros do tipo falso
+positivo e falso negativo em termos práticos.
 
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-ROC-freq-1.pdf}}
-
-}
-
-\caption{\label{fig-ROC-freq}Curvas ROC para os conjuntos de treino e
-teste}
-
-\end{figure}%
-
-A capacidade discriminatória do modelo foi avaliada por meio da Área sob
-a Curva ROC (ROC-AUC) (Figura~\ref{fig-ROC-freq}), métrica amplamente
-utilizada em problemas de classificação binária por ser independente da
-escolha de um limiar de decisão e por avaliar diretamente a qualidade
-das probabilidades estimadas. A AUC pode ser interpretada como a
-probabilidade de que o modelo atribua uma probabilidade maior a uma
-observação pertencente à classe positiva do que a uma observação da
-classe negativa, escolhidas aleatoriamente. Valores de AUC próximos de 1
-indicam excelente poder discriminatório, enquanto valores próximos de
-0,5 sugerem desempenho equivalente ao acaso.
-
-Os resultados indicam AUC = 0.97 no conjunto de treino e AUC = 0.97 no
-conjunto de teste. A proximidade entre esses valores sugere que o modelo
-apresenta excelente capacidade de discriminação, mantendo desempenho
-consistente fora da amostra utilizada para estimação dos parâmetros.Além
-disso, a ausência de queda relevante da AUC do treino para o teste
-indica baixo indício de sobreajuste (\emph{overfitting}), reforçando a
-robustez do modelo no que diz respeito à ordenação correta das
-probabilidades preditas. Esse comportamento é particularmente relevante
-no contexto da análise de risco de crédito, em que a correta
-hierarquização dos indivíduos segundo o risco é mais importante do que
-decisões baseadas em um único ponto de corte.
-
-\begin{figure}
-
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-PR-freq-1.pdf}}
-
-}
-
-\caption{\label{fig-PR-freq}Curvas Precision-Recall para os conjuntos de
-treino e teste}
-
-\end{figure}%
-
-Complementarmente à análise por meio da curva ROC, avaliou-se o
-desempenho do modelo utilizando a curva Precision--Recall
-(PR)(Figura~\ref{fig-PR-freq}), a qual é particularmente informativa em
-contextos de classes desbalanceadas ou quando o interesse principal está
-na qualidade das previsões da classe positiva. Enquanto a curva ROC
-avalia a relação entre sensibilidade e especificidade, a curva
-Precision--Recall enfatiza o compromisso entre precisão (precision), a
-proporção de observações corretamente classificadas como positivas entre
-todas as classificadas como positivas, e recall (sensibilidade), a
-proporção de positivos corretamente identificados. Dessa forma, a
-AUC--PR fornece uma medida mais direta da utilidade prática das
-probabilidades estimadas quando o custo de falsos positivos é relevante,
-como no contexto de concessão de crédito.
-
-A área sob a curva Precision--Recall foi calculada separadamente para os
-conjuntos de treino e teste, resultando em AUC--PR = 0.94 no conjunto de
-treino e AUC--PR = 0.951 no conjunto de teste. Esses valores elevados
-indicam que o modelo apresenta alta capacidade de manter níveis
-simultaneamente elevados de precisão e revocação, mesmo quando se exige
-maior rigor na identificação da classe positiva.
-
-De forma consistente com os resultados observados na curva ROC, a
-similaridade entre as AUC--PR dos conjuntos de treino e teste sugere boa
-capacidade de generalização e estabilidade do modelo fora da amostra de
-estimação. Ademais, o desempenho superior na métrica Precision--Recall
-reforça a adequação do modelo para aplicações em risco de crédito, nas
-quais decisões baseadas em probabilidades bem calibradas são preferíveis
-à simples classificação binária.
-
-\begin{figure}
-
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{monografia_files/figure-pdf/fig-SE-freq-1.pdf}}
-
-}
-
-\caption{\label{fig-SE-freq}Curvas Sensibilidade-Especificidade em
-função do limiar de decisão}
-
-\end{figure}%
-
-A escolha do limiar de corte da probabilidade foi baseada na análise
-conjunta da sensibilidade e da especificidade do classificador, coomo
-podemos ver na Figura~\ref{fig-SE-freq}. Para isso, foram avaliados os
-valores dessas métricas ao longo de todo o intervalo de limiares
-possíveis, construindo-se curvas de sensibilidade e especificidade em
-função do limiar de decisão.
-
-O ponto de corte ótimo foi definido a partir da maximização do índice de
-Youden (Youden (1950)), que busca simultaneamente maximizar a taxa de
-verdadeiros positivos e a taxa de verdadeiros negativos. Esse critério
-fornece um equilíbrio entre erros de classificação dos dois tipos,
-evitando a adoção arbitrária do valor padrão de 0,5.
-
-O limiar selecionado (0.275) foi então utilizado para a construção da
-matriz de confusão e para o cálculo das métricas de desempenho no
-conjunto de teste.
+Assim, métricas como balanced acurácia, F1-score e Matthews Correlation
+Coefficient (MCC) são particularmente relevantes neste contexto. A
+balanced acurácia corrige o viés da acurácia tradicional ao considerar
+igualmente sensibilidade e especificidade; o F1-score enfatiza o
+equilíbrio entre precisão e recall da classe minoritária; e o MCC
+fornece uma medida global mais robusta, especialmente adequada para
+cenários com forte desbalanceamento, por incorporar todos os elementos
+da matriz de confusão de forma simétrica.
 
 \subparagraph{{[}REVISÃO-1{]} Avaliação do desempenho classificatório
 sob limiar de
 decisão}\label{revisuxe3o-1-avaliauxe7uxe3o-do-desempenho-classificatuxf3rio-sob-limiar-de-decisuxe3o}
-
-Após a definição do limiar de decisão, as previsões probabilísticas
-foram convertidas em classes, permitindo a construção das matrizes de
-confusão para os conjuntos de treino e teste
-(Tabela~\ref{tbl-confusao}).
-
-\begin{longtable}[t]{lcccc}
-
-\caption{\label{tbl-confusao}Matrizes de confusão do modelo de regressão
-logística (treino e teste)}
-
-\tabularnewline
-
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Treino (classe prevista)} & \multicolumn{2}{c}{Teste (classe prevista)} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-Classe real & 0 & 1 & 0 & 1\\
-\midrule
-0 & 1756 & 35 & 555 & 15\\
-1 & 254 & 1136 & 75 & 415\\
-\bottomrule
-
-\end{longtable}
-
-\begin{table}
-
-\caption{\label{tbl-metricas-freq}Métricas de desempenho do modelo de
-regressão logística para os conjuntos de treino e teste}
-
-\centering{
-
-\begin{tabular}{lrrrrrrr}
-\toprule
-Conjunto & Accuracy & Precision & Recall & Specificity & F1 & AUC\_ROC & AUC\_PR\\
-\midrule
-Treino & 0.91 & 0.82 & 0.97 & 0.87 & 0.89 & 0.97 & 0.94\\
-Teste & 0.92 & 0.85 & 0.97 & 0.88 & 0.90 & 0.97 & 0.95\\
-\bottomrule
-\end{tabular}
-
-}
-
-\end{table}%
-
-A partir dessas matrizes, foram calculadas métricas clássicas de
-desempenho, incluindo acurácia, precisão, sensibilidade, especificidade
-e F1-score, cujos valores estão sumarizados na
-Tabela~\ref{tbl-metricas-freq}. Observa-se desempenho consistente entre
-os conjuntos, com valores semelhantes de acurácia, indicando boa
-capacidade de generalização.
-
-A sensibilidade (recall) é elevada em ambos os conjuntos, o que é
-particularmente desejável no contexto de risco de crédito, pois reduz a
-probabilidade de classificar incorretamente clientes inadimplentes. A
-precisão e o F1-score também apresentam valores altos e estáveis,
-sugerindo um bom equilíbrio entre identificação correta da classe
-positiva e controle de falsos positivos.
-
-As métricas independentes do limiar reforçam esse resultado: a AUC-ROC
-assume valores próximos de 1 tanto no treino quanto no teste,
-evidenciando excelente capacidade discriminatória, enquanto a AUC da
-curva Precision--Recall confirma a robustez do modelo mesmo em um
-cenário de possível desbalanceamento entre classes.
-
-\subsubsection{{[}TBD{]} Modelo Frequentista
-Alternativo}\label{tbd-modelo-frequentista-alternativo}
-
-\blue{se fizer sentido... }
-
-talvez fique longo demais, seria remover as features de income\_annum,
-ou até fazer loan\_amount/income\_annum para a razão e avaliar as
-correlações
 
 \subsubsection{{[}TBD{]} Modelo Bayesiano}\label{tbd-modelo-bayesiano}
 
@@ -1878,15 +2104,20 @@ GREWAL, Rohit. \textbf{Loan Approval Dataset}. Disponível em:
 \textless{}\url{https://www.kaggle.com/datasets/rohitgrewal/loan-approval-dataset}\textgreater.
 Acesso em: 11 mar. 2026.
 
+\bibitem[\citeproctext]{ref-lichman2013uci}
+LICHMAN, M. \textbf{UCI Machine Learning Repository}. University of
+California, Irvine, School of Information; Computer Science;
+\url{http://archive.ics.uci.edu/ml}, 2013.
+
 \bibitem[\citeproctext]{ref-Tukey1977}
 TUKEY, John W. \textbf{Exploratory Data Analysis}. Reading, MA:
 Addison-Wesley, 1977.
 
-\bibitem[\citeproctext]{ref-IndexYouden}
-YOUDEN, W. J.
-\href{https://doi.org/10.1002/1097-0142(1950)3:1\%3C32::AID-CNCR2820030106\%3E3.0.CO;2-3}{Index
-for Rating Diagnostic Tests}. \textbf{Cancer}, v. 3, n. 1, p. 32--35,
-1950.
+\bibitem[\citeproctext]{ref-uci-default-credit}
+YEH, I.-C.; LIEN, C.-H. \textbf{The Default of Credit Card Clients
+Dataset}.
+\url{https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients},
+2009.
 
 \end{CSLReferences}
 

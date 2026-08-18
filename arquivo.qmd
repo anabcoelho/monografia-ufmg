@@ -1,0 +1,1379 @@
+---
+format:
+  html:
+    embed-resources: true
+    toc: true
+    code-fold: false
+    self-contained: true
+jupyter: ir
+
+---
+
+```{r}
+#| vscode: {languageId: r}
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+pkgs <- c(
+  "tidymodels",
+  'glmnet',
+  "rstanarm", 
+  "reticulate",
+  'yardstick'
+)
+instalar <- pkgs[!pkgs %in% installed.packages()[, "Package"]]
+
+if (length(instalar) > 0) {
+  install.packages(instalar)
+}
+library(caret)
+library(tidyverse)
+library("tidymodels")
+library('janitor')
+library('ggcorrplot')
+library(workflowsets)
+library(rstanarm)
+library(glmnet)
+library(reticulate)
+library(ggplot2)
+library(patchwork)
+library(dplyr)
+
+py_config()
+reticulate::py_install(c("pandas", "tabulate", "ipython"))
+
+set.seed(42)
+```
+
+```{r}
+#| vscode: {languageId: r}
+loan <- read_csv("data/Loan/loan_approval_dataset.csv") |>
+  clean_names()
+
+#https://www.kaggle.com/datasets/uciml/default-of-credit-card-clients-dataset
+default <- read_csv("data/default/UCI_Credit_Card.csv")
+```
+
+```{r}
+#| vscode: {languageId: r}
+loan <- loan %>%
+  rename(
+    num_dependentes      = no_of_dependents,
+    escolaridade         = education,
+    autonomo             = self_employed,
+    renda_anual          = income_annum,
+    valor_emprestimo     = loan_amount,
+    prazo_anos           = loan_term,
+    score_credito        = cibil_score,
+    ativos_residenciais  = residential_assets_value,
+    ativos_comerciais    = commercial_assets_value,
+    ativos_luxo          = luxury_assets_value,
+    ativos_bancarios     = bank_asset_value,
+    status    = loan_status
+)
+
+loan <- loan %>%
+  dplyr::select(-loan_id)
+
+loan$status <- ifelse(
+  loan$status %in% c("Approved", 1, "1"),
+  1, 0
+)
+loan$status <- as.factor(loan$status)
+```
+
+```{r}
+#| vscode: {languageId: r}
+default <- default %>%
+  rename(
+    id_cliente = ID,
+    limite_credito = LIMIT_BAL,
+    sexo = SEX,
+    escolaridade = EDUCATION,
+    estado_civil = MARRIAGE,
+    idade = AGE,
+    atraso_pagto_0 = PAY_0,
+    atraso_pagto_2 = PAY_2,
+    atraso_pagto_3 = PAY_3,
+    atraso_pagto_4 = PAY_4,
+    atraso_pagto_5 = PAY_5,
+    atraso_pagto_6 = PAY_6,
+    fatura_valor_1 = BILL_AMT1,
+    fatura_valor_2 = BILL_AMT2,
+    fatura_valor_3 = BILL_AMT3,
+    fatura_valor_4 = BILL_AMT4,
+    fatura_valor_5 = BILL_AMT5,
+    fatura_valor_6 = BILL_AMT6,
+    pagto_valor_1 = PAY_AMT1,
+    pagto_valor_2 = PAY_AMT2,
+    pagto_valor_3 = PAY_AMT3,
+    pagto_valor_4 = PAY_AMT4,
+    pagto_valor_5 = PAY_AMT5,
+    pagto_valor_6 = PAY_AMT6,
+    PD30 = default.payment.next.month
+)
+default <- default %>%
+  dplyr::select(-id_cliente)
+
+default$PD30 <- as.factor(default$PD30)
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(dplyr)
+library(readr)
+library(tibble)
+
+corr <- default %>%
+  select(where(is.numeric)) %>%
+  cor(use = "pairwise.complete.obs")
+
+corr_df <- corr %>%
+  as.data.frame() %>%
+  rownames_to_column("variavel")
+
+write_csv(corr_df, "correlacao.csv")
+```
+
+```{r}
+#| vscode: {languageId: r}
+split_loan <- initial_split(
+  loan,
+  prop   = 0.75,
+  strata = status
+)
+
+train_data_loan <- training(split_loan)
+test_data_loan  <- testing(split_loan)
+
+split_default <- initial_split(
+  default,
+  prop   = 0.75,
+  strata = PD30
+)
+
+train_data_default <- training(split_default)
+test_data_default  <- testing(split_default)
+```
+
+```{r}
+#| vscode: {languageId: r}
+log_glm <- logistic_reg() |>
+  set_engine("glm") |>
+  set_mode("classification")
+#lasso
+log_l1 <- logistic_reg(
+  penalty = tune(),
+  mixture = 1
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+log_l2 <- logistic_reg(
+  penalty = tune(),
+  mixture = 0
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+```
+
+```{r}
+#| vscode: {languageId: r}
+folds <- vfold_cv(train_data_loan, v = 5, strata = status)
+grid <- grid_regular(
+  penalty(range = c(-6, 1)),
+  levels = 20
+)
+metrics <- metric_set(
+  accuracy,
+  roc_auc,
+  f_meas
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+#
+rec_all <- recipe(status ~ ., data = train_data_loan) %>%
+  step_dummy(all_nominal_predictors())
+
+
+rec_def <- recipe(status ~ ., data = train_data_loan) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+rec_score_only <- recipe(
+  status ~ score_credito,
+  data = train_data_loan
+)%>%
+  step_dummy(all_nominal_predictors())
+
+rec_score_prazo <- recipe(
+  status ~ score_credito + prazo_anos,
+  data = train_data_loan
+)%>%
+  step_dummy(all_nominal_predictors())
+
+rec_no_score <- recipe(
+  status ~ .,
+  data = train_data_loan
+) %>%
+  step_dummy(all_nominal_predictors())%>%
+  step_rm(score_credito)
+
+rec_no_corr <- recipe(
+  status ~ .,
+  data = train_data_loan
+) %>%
+  step_dummy(all_nominal_predictors())%>%
+  step_corr(all_numeric_predictors(), threshold = 0.75)
+
+rec_pca <- recipe(
+  status ~ .,
+  data = train_data_loan
+) %>%
+  step_dummy(all_nominal_predictors())%>%
+  step_normalize(all_numeric_predictors()) %>% 
+  step_pca(
+    all_numeric_predictors(),
+    threshold = 0.95
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+wf_logit <- workflow_set(
+  preproc = list(
+    all_features = rec_all,
+    score_only   = rec_score_only,
+    #score_prazo  = rec_score_prazo,
+    no_score     = rec_no_score,
+    no_corr      = rec_no_corr
+    #pca          = rec_pca
+  ),
+  models = list(
+    logit = log_glm
+  )
+)
+
+wf_l1 <- workflow() %>%
+  add_recipe(rec_def) %>%
+  add_model(log_l1)
+
+tuned_l1 <- tune_grid(
+  wf_l1,
+  resamples = folds,
+  grid = grid,
+  metrics = metrics
+)
+
+wf_l2 <- workflow() %>%
+  add_recipe(rec_def) %>%
+  add_model(log_l2)
+
+tuned_l2 <- tune_grid(
+  wf_l2,
+  resamples = folds,
+  grid = grid,
+  metrics = metrics
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+best_l1 <- select_best(tuned_l1, metric = "roc_auc")
+final_l1 <- finalize_workflow(wf_l1, best_l1)
+fit_l1 <- fit(final_l1, train_data_loan)
+
+best_l2 <- select_best(tuned_l2, metric = "roc_auc")
+final_l2 <- finalize_workflow(wf_l2, best_l2)
+fit_l2 <- fit(final_l2, train_data_loan)
+library(broom)
+```
+
+```{r}
+#| vscode: {languageId: r}
+
+
+coef_table <- extract_fit_engine(fit_l1) |>
+  coef(s = best_l1$penalty)
+  coef_table
+```
+
+```{r}
+#| vscode: {languageId: r}
+coef_table <- extract_fit_engine(fit_l2) |>
+  coef(s = best_l2$penalty)
+  coef_table
+```
+
+```{r}
+#| vscode: {languageId: r}
+fits <- wf_logit %>%
+  mutate(
+    fit = purrr::map(
+      info,
+      ~ fit(.x$workflow[[1]], data = train_data_loan)
+    )
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(dplyr)
+library(purrr)
+library(yardstick)
+
+```
+
+```{r}
+#| vscode: {languageId: r}
+preds_loan <- fits %>%
+  mutate(
+    pred_list = map(
+      fit,
+      ~{
+        prob_tbl <- predict(.x, test_data_loan, type = "prob")
+
+        tibble(
+          truth = test_data_loan$status,
+          class = predict(.x, test_data_loan, type = "class")$.pred_class,
+          prob  = prob_tbl$.pred_1
+        )
+      }
+    )
+  ) %>%
+  select(wflow_id, pred_list) %>%
+  tidyr::unnest(pred_list)
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(tibble)
+library(yardstick)
+
+#old version
+
+calc_metrics_from_fit <- function(fit, test_data, truth_col = status) {
+
+  # predições
+  prob_tbl  <- predict(fit, test_data, type = "prob")
+  class_tbl <- predict(fit, test_data, type = "class")
+
+  truth <- test_data[[deparse(substitute(truth_col))]]
+  class <- class_tbl$.pred_class
+  prob  <- prob_tbl$.pred_1
+
+  tibble(
+    accuracy     = accuracy_vec(truth, class),
+    bal_accuracy = bal_accuracy_vec(truth, class),
+
+    roc_auc  = roc_auc_vec(truth, prob, event_level = "second"),
+    log_loss = mn_log_loss_vec(truth, prob),
+    brier    = brier_class_vec(truth, prob),
+
+    sens = sens_vec(truth, class),
+    spec = spec_vec(truth, class),
+
+    precision = precision_vec(truth, class),
+    npv       = npv_vec(truth, class),
+
+    f1 = f_meas_vec(truth, class),
+    f2 = f_meas_vec(truth, class, beta = 2),
+
+    kap = kap_vec(truth, class),
+    mcc = mcc_vec(truth, class),
+
+    gmean = sqrt(
+      sens_vec(truth, class) * spec_vec(truth, class)
+    )
+  )
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+calc_metrics_from_fit <- function(fit, test_data, truth_col = status) {
+
+  # Predições
+  prob_tbl  <- predict(fit, test_data, type = "prob")
+  class_tbl <- predict(fit, test_data, type = "class")
+
+  truth <- test_data[[deparse(substitute(truth_col))]]
+  class <- class_tbl$.pred_class
+
+  # Classe positiva
+  positive_class <- levels(truth)[2]
+
+  # Probabilidade da classe positiva
+  prob <- prob_tbl[[paste0(".pred_", positive_class)]]
+
+  # Resposta em 0/1
+  truth_num <- as.numeric(truth == positive_class)
+
+  # Evita log(0)
+  eps <- 1e-15
+  prob_clip <- pmin(pmax(prob, eps), 1 - eps)
+
+  # Log Loss
+  log_loss <- -mean(
+    truth_num * log(prob_clip) +
+      (1 - truth_num) * log(1 - prob_clip)
+  )
+
+  # Brier Score
+  brier <- mean((prob - truth_num)^2)
+
+  tibble(
+    accuracy     = accuracy_vec(truth, class),
+    bal_accuracy = bal_accuracy_vec(truth, class),
+
+    roc_auc  = roc_auc_vec(truth, prob, event_level = "second"),
+    log_loss = log_loss,
+    brier    = brier,
+
+    sens = sens_vec(truth, class),
+    spec = spec_vec(truth, class),
+
+    precision = precision_vec(truth, class),
+    npv       = npv_vec(truth, class),
+
+    f1 = f_meas_vec(truth, class),
+    f2 = f_meas_vec(truth, class, beta = 2),
+
+    kap = kap_vec(truth, class),
+    mcc = mcc_vec(truth, class),
+
+    gmean = sqrt(
+      sens_vec(truth, class) *
+      spec_vec(truth, class)
+    )
+  )
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_wf <- fits %>%
+  mutate(
+    metrics = purrr::map(
+      fit,
+      ~ calc_metrics_from_fit(
+        fit = .x,
+        test_data = test_data_loan,
+        truth_col = status
+      )
+    )
+  ) %>%
+  select(wflow_id, metrics) %>%
+  tidyr::unnest(metrics)
+
+
+metrics_l1 <- calc_metrics_from_fit(
+  fit = fit_l1,
+  test_data = test_data_loan,
+  truth_col = status
+) %>%
+  mutate(wflow_id = "l1_logit")
+
+metrics_l2 <- calc_metrics_from_fit(
+  fit = fit_l2,
+  test_data = test_data_loan,
+  truth_col = status
+) %>%
+  mutate(wflow_id = "l2_logit")
+
+metrics_table_final_loan <- bind_rows(
+  metrics_wf,
+  metrics_l1,
+  metrics_l2
+)
+metrics_table_final_loan
+```
+
+```{r}
+#| vscode: {languageId: r}
+extract_model_summary <- function(wf_fit) {
+  model_fit <- workflows::extract_fit_parsnip(wf_fit)
+
+  if (inherits(model_fit$fit, "glm")) {
+    return(summary(model_fit$fit))
+  }
+
+  if (inherits(model_fit$fit, "lognet")) {
+    return(model_fit$fit)
+  }
+
+  NULL
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+model_summaries <- fits %>%
+  mutate(
+    summary = purrr::map(fit, extract_model_summary)
+  ) %>%
+  select(wflow_id, summary)
+  
+for (i in seq_len(nrow(model_summaries))) {
+  cat("\n==============================\n")
+  cat("Modelo:", model_summaries$wflow_id[i], "\n")
+  cat("==============================\n\n")
+  print(model_summaries$summary[[i]])
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+fits_vif <- fits %>%
+  dplyr::filter(
+    wflow_id %in% c(
+      "all_features_logit",
+      "no_corr_logit",
+      "no_score_logit",
+      "feat_select_logit"
+    )
+  )
+
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(car)
+
+calc_vif <- function(wf_fit) {
+  wf_fit %>%
+    workflows::extract_fit_parsnip() %>%
+    pluck("fit") %>%      # objeto glm
+    car::vif()
+}
+
+vif_results <- fits_vif %>%
+  mutate(
+    vif = purrr::map(fit, calc_vif)
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+vif_tidy <- vif_results %>%
+  select(wflow_id, vif) %>%
+  tidyr::unnest_longer(vif, values_to = "vif") %>%
+  rename(variable = vif_id)
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(dplyr)
+vif_summary <- vif_tidy %>%
+  group_by(wflow_id) %>%
+  summarise(
+    max_vif = max(vif),
+    mean_vif = mean(vif)
+  )
+vif_summary
+```
+
+```{r}
+```
+```{r}
+#| vscode: {languageId: r}
+model_summary <- metrics_table_final_loan %>%
+  left_join(
+    vif_summary %>%
+      group_by(wflow_id) %>%
+      summarise(
+        max_vif = max(max_vif, na.rm = TRUE),
+        mean_vif = mean(mean_vif, na.rm = TRUE)
+      ),
+    by = "wflow_id"
+  )
+model_summary
+```
+
+```{r}
+#| vscode: {languageId: r}
+get_model <- function(wf_fit) {
+  workflows::extract_fit_parsnip(wf_fit)$fit
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+purrr::walk2(
+  fits$fit,
+  fits$wflow_id,
+  ~ {
+    modelo <- get_model(.x)
+
+    par(mfrow = c(2, 2))
+    plot(
+      modelo,
+      pch = 19,
+      col = "blue",
+      main = .y
+    )
+  }
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+glmnet_fit <- fit_l1 %>%
+  extract_fit_engine()
+plot(glmnet_fit, xvar = "lambda", label = TRUE)
+
+coef_l1 <- coef(glmnet_fit, s = glmnet_fit$lambda.min)
+
+sum(coef_l1 != 0)
+```
+
+```{r}
+#| vscode: {languageId: r}
+glmnet_fit <- fit_l2 %>%
+  extract_fit_engine()
+plot(glmnet_fit, xvar = "lambda", label = TRUE)
+
+coef_l2 <- coef(glmnet_fit, s = glmnet_fit$lambda.min)
+
+sum(coef_l2 != 0)
+```
+
+DEFAULT TIME
+
+```{r}
+#| vscode: {languageId: r}
+log_glm <- logistic_reg() |>
+  set_engine("glm") |>
+  set_mode("classification")
+#lasso
+log_l1 <- logistic_reg(
+  penalty = tune(),
+  mixture = 1
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+log_l2 <- logistic_reg(
+  penalty = tune(),
+  mixture = 0
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+folds <- vfold_cv(train_data_default, v = 5, strata = PD30)
+```
+
+```{r}
+#| vscode: {languageId: r}
+#modelo geral
+rec_default  <- recipe(PD30 ~ ., data = train_data_default) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+rec_all  <- recipe(PD30 ~ ., data = train_data_default) %>%
+  step_dummy(all_nominal_predictors()) 
+
+# Removendo alta correlação
+rec_corr <- recipe(
+  PD30 ~ .,
+  data = train_data_default
+) %>% step_dummy(all_nominal_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.7)
+
+#com pca
+rec_pca <- recipe(
+  PD30 ~ .,
+  data = train_data_default
+) %>% step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_pca(all_numeric_predictors(), threshold = 0.95)
+```
+
+```{r}
+#| vscode: {languageId: r}
+wf_logit_default <- workflow_set(
+  preproc = list(
+    all_features = rec_all,
+    no_corr      = rec_corr
+    #pca          = rec_pca
+  ),
+  models = list(
+    logit = log_glm
+  )
+)
+wf_l1 <- workflow() %>%
+  add_recipe(rec_default) %>%
+  add_model(log_l1)
+
+tuned_l1 <- tune_grid(
+  wf_l1,
+  resamples = folds,
+  grid = grid,
+  metrics = metrics
+)
+
+wf_l2 <- workflow() %>%
+  add_recipe(rec_default) %>%
+  add_model(log_l2)
+
+tuned_l2 <- tune_grid(
+  wf_l2,
+  resamples = folds,
+  grid = grid,
+  metrics = metrics
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+best_l1 <- select_best(tuned_l1, metric = "roc_auc")
+final_l1 <- finalize_workflow(wf_l1, best_l1)
+fit_l1 <- fit(final_l1, train_data_default)
+
+best_l2 <- select_best(tuned_l2, metric = "roc_auc")
+final_l2 <- finalize_workflow(wf_l2, best_l2)
+fit_l2 <- fit(final_l2, train_data_default)
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(broom)
+
+coef_table <- extract_fit_engine(fit_l1) |>
+  coef(s = best_l1$penalty)
+  coef_table
+```
+
+```{r}
+#| vscode: {languageId: r}
+coef_table <- extract_fit_engine(fit_l2) |>
+  coef(s = best_l2$penalty)
+  coef_table
+```
+
+```{r}
+#| vscode: {languageId: r}
+fits <- wf_logit_default %>%
+  mutate(
+    fit = purrr::map(
+      info,
+      ~ fit(.x$workflow[[1]], data = train_data_default)
+    )
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(dplyr)
+library(purrr)
+library(yardstick)
+
+preds <- fits %>%
+  mutate(
+    preds = purrr::map(
+      fit,
+      ~{
+        prob_tbl <- predict(.x, test_data_default, type = "prob")
+
+        tibble(
+          truth = test_data_default$PD30,
+          class = predict(.x, test_data_default, type = "class")$.pred_class,
+          prob  = prob_tbl$.pred_1
+        )
+      }
+    )
+  ) %>%
+  select(wflow_id, preds)
+
+preds <- preds %>%
+  tidyr::unnest(preds)
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_wf <- fits %>%
+  mutate(
+    metrics = purrr::map(
+      fit,
+      ~ calc_metrics_from_fit(
+        fit = .x,
+        test_data = test_data_default,
+        truth_col = PD30
+      )
+    )
+  ) %>%
+  select(wflow_id, metrics) %>%
+  tidyr::unnest(metrics)
+
+metrics_l1 <- calc_metrics_from_fit(
+  fit = fit_l1,
+  test_data = test_data_default,
+  truth_col = PD30
+) %>%
+  mutate(wflow_id = "l1_logit")
+  
+metrics_l2 <- calc_metrics_from_fit(
+  fit = fit_l2,
+  test_data = test_data_default,
+  truth_col = PD30
+) %>%
+  mutate(wflow_id = "l2_logit")
+
+metrics_table_final <- bind_rows(
+  metrics_wf,
+  metrics_l1,
+  metrics_l2
+)
+metrics_table_final
+```
+
+```{r}
+#| vscode: {languageId: r}
+model_summaries <- fits %>%
+  mutate(
+    summary = purrr::map(fit, extract_model_summary)
+  ) %>%
+  select(wflow_id, summary)
+  
+for (i in seq_len(nrow(model_summaries))) {
+  cat("\n==============================\n")
+  cat("Modelo:", model_summaries$wflow_id[i], "\n")
+  cat("==============================\n\n")
+  print(model_summaries$summary[[i]])
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_table_final
+```
+
+```{r}
+#| vscode: {languageId: r}
+fits_vif <- fits %>%
+  dplyr::filter(
+    wflow_id %in% c(
+      "all_features_logit",
+      "no_corr_logit"
+    )
+  )
+
+vif_results <- fits_vif %>%
+  mutate(
+    vif = purrr::map(fit, calc_vif)
+  )
+vif_tidy <- vif_results %>%
+  select(wflow_id, vif) %>%
+  tidyr::unnest_longer(vif, values_to = "vif") %>%
+  rename(variable = vif_id)
+
+vif_summary <- vif_tidy %>%
+  group_by(wflow_id) %>%
+  summarise(
+    max_vif = max(vif),
+    mean_vif = mean(vif)
+  )
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(dplyr)
+
+model_summary <- metrics_table_final %>%
+  left_join(
+    vif_summary %>%
+      group_by(wflow_id) %>%
+      summarise(
+        max_vif = max(max_vif, na.rm = TRUE),
+        mean_vif = mean(mean_vif, na.rm = TRUE)
+      ),
+    by = "wflow_id"
+  )
+model_summary
+```
+
+```{r}
+#| vscode: {languageId: r}
+get_model <- function(wf_fit) {
+  workflows::extract_fit_parsnip(wf_fit)$fit
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+purrr::walk2(
+  fits$fit,
+  fits$wflow_id,
+  ~ {
+    modelo <- get_model(.x)
+
+    par(mfrow = c(2, 2))
+    plot(
+      modelo,
+      pch = 19,
+      col = "blue",
+      main = .y
+    )
+  }
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+glmnet_fit <- fit_l1 %>%
+  extract_fit_engine()
+plot(glmnet_fit, xvar = "lambda", label = TRUE)
+
+coef_l1 <- coef(glmnet_fit, s = glmnet_fit$lambda.min)
+
+sum(coef_l1 != 0)
+```
+
+```{r}
+#| vscode: {languageId: r}
+glmnet_fit <- fit_l2 %>%
+  extract_fit_engine()
+plot(glmnet_fit, xvar = "lambda", label = TRUE)
+
+coef_l2 <- coef(glmnet_fit, s = glmnet_fit$lambda.min)
+
+sum(coef_l2 != 0)
+```
+
+
+```{r}
+#| vscode: {languageId: r}
+install.packages("Rtools")
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(rstanarm)
+```
+
+```{r}
+#| vscode: {languageId: r}
+rec_score <- recipe(status ~ score_credito, data = train_data_loan) %>%
+  step_normalize(score_credito)
+rec_prep <- prep(rec_score)
+
+train_bayes <- bake(
+  rec_prep,
+  new_data = NULL
+)
+
+test_bayes <- bake(
+  rec_prep,
+  new_data = test_data_loan
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+# Não informativa
+prior_noninformative <- normal(location = 0, scale = 10, autoscale = FALSE)
+
+fit_p1 <- stan_glm(
+  status ~ score_credito,
+  data = train_bayes,
+  family = binomial(link = "logit"),
+  prior = normal(0, 10),
+  prior_intercept = normal(0, 10),
+  chains = 4,
+  iter = 4000,
+  seed = 123
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+#Regularizadora fraca
+prior_weak <- normal(location = 0, scale = 2.5, autoscale = FALSE)
+
+fit_p2 <- stan_glm(
+  status ~ score_credito,
+  data = train_bayes,
+  family = binomial(link = "logit"),
+  prior = normal(0, 2.5),
+  prior_intercept = normal(0, 5),
+  chains = 4,
+  iter = 4000,
+  seed = 123
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+#Informativa
+prior_informative <- normal(location = 0.5, scale = 0.25, autoscale = FALSE)
+
+fit_p3 <- stan_glm(
+  status ~ score_credito,
+  data = train_bayes,
+  family = binomial(link = "logit"),
+  prior = normal(0.5, 0.25),
+  prior_intercept = normal(0, 2.5),
+  chains = 4,
+  iter = 4000,
+  seed = 123
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(yardstick)
+ 
+pred_p1 <- posterior_epred(fit_p1, newdata = test_bayes) %>% colMeans()
+pred_p2 <- posterior_epred(fit_p2, newdata = test_bayes) %>% colMeans()
+pred_p3 <- posterior_epred(fit_p3, newdata = test_bayes) %>% colMeans()
+```
+
+```{r}
+#| vscode: {languageId: r}
+calc_metrics_bay <- function(truth, class, prob) {
+
+  tibble(
+    accuracy     = accuracy_vec(truth, class),
+    bal_accuracy = bal_accuracy_vec(truth, class),
+
+    roc_auc  = roc_auc_vec(truth, prob, event_level = "second"),
+    log_loss = mn_log_loss_vec(truth, prob),
+
+    sens = sens_vec(truth, class),
+    spec = spec_vec(truth, class),
+
+    precision = precision_vec(truth, class),
+    npv       = npv_vec(truth, class),
+
+    f1 = f_meas_vec(truth, class),
+    f2 = f_meas_vec(truth, class, beta = 2),
+
+    kap = kap_vec(truth, class),
+    mcc = mcc_vec(truth, class),
+
+    gmean = sqrt(
+      sens_vec(truth, class) *
+      spec_vec(truth, class)
+    )
+  )
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+calc_metrics_bayes <- function(fit, test_data, model_name) {
+  
+  # Probabilidade posterior média
+  prob <- posterior_epred(
+    fit,
+    newdata = test_data
+  ) %>%
+    colMeans()
+  
+  # Classificação
+  class <- ifelse(
+    prob >= 0.5,
+    "1",
+    "0"
+  ) %>%
+    factor(
+      levels = levels(test_data$status)
+    )
+  
+  # Verdade
+  truth <- test_data$status
+  
+  calc_metrics_bay(
+    truth = truth,
+    class = class,
+    prob = prob
+  ) %>%
+    mutate(
+      wflow_id = model_name
+    )
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_p1 <- calc_metrics_bayes(
+  fit = fit_p1,
+  test_data = test_bayes,
+  model_name = "bayes_prior_1"
+)
+
+metrics_p2 <- calc_metrics_bayes(
+  fit = fit_p2,
+  test_data = test_bayes,
+  model_name = "bayes_prior_2"
+)
+
+metrics_p3 <- calc_metrics_bayes(
+  fit = fit_p3,
+  test_data = test_bayes,
+  model_name = "bayes_prior_3"
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_table_loan_all <- bind_rows(
+  metrics_table_final_loan,
+  metrics_p1,
+  metrics_p2,
+  metrics_p3
+)
+metrics_table_loan_all
+```
+
+```{r}
+#| vscode: {languageId: r}
+posterior_interval(fit_p1)
+posterior_interval(fit_p3)
+```
+
+```{r}
+#| vscode: {languageId: r}
+prob_p1 <- posterior_epred(
+  fit_p1,
+  newdata = test_data_loan
+) %>%
+  colMeans()
+
+
+pred_p1 <- tibble(
+  truth = test_data_loan$status,
+  class = ifelse(prob_p1 >= 0.5, "1", "0"),
+  prob = prob_p1
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+summary(fit_p1)
+```
+
+```{r}
+#| vscode: {languageId: r}
+library(recipes)
+
+rec_default <- recipe(PD30 ~ ., data = train_data_default) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+rec_prep <- prep(rec_default)
+```
+
+```{r}
+#| vscode: {languageId: r}
+train_bayes <- bake(
+  rec_prep,
+  new_data = NULL
+)
+
+test_bayes <- bake(
+  rec_prep,
+  new_data = test_data_default
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+fit_or_load <- function(path, fit_expr) {
+
+  if (file.exists(path)) {
+
+    message("Modelo carregado de: ", path)
+    return(readRDS(path))
+
+  }
+
+  message("Treinando modelo...")
+
+  fit <- eval.parent(substitute(fit_expr))
+
+  saveRDS(fit, path)
+
+  message("Modelo salvo em: ", path)
+
+  fit
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+dir.create("models", showWarnings = FALSE)
+```
+
+```{r}
+#| vscode: {languageId: r}
+fit_normal <- fit_or_load(
+  "models/fit_prior_normal.rds",
+  stan_glm(
+  PD30 ~ .,
+  data = train_bayes,
+  family = binomial(link = "logit"),
+
+  prior = normal(
+    location = 0,
+    scale = 1,
+    autoscale = FALSE
+  ),
+
+  prior_intercept = normal(
+    location = 0,
+    scale = 5,
+    autoscale = FALSE
+  ),
+
+  chains = 4,
+  iter = 1000,
+  warmup = 500,
+  seed = 123
+)
+)
+
+```
+
+```{r}
+#| vscode: {languageId: r}
+fit_laplace <- fit_or_load(
+  "models/fit_prior_laplace.rds",
+  stan_glm(
+    PD30 ~ .,
+    data = train_bayes,
+    family = binomial(link = "logit"),
+
+  prior = laplace(
+    location = 0,
+    scale = 1,
+    autoscale = FALSE
+  ),
+
+  prior_intercept = normal(
+    0,
+    5,
+    autoscale = FALSE
+  ),
+
+  chains = 4,
+  iter = 1000,
+  warmup = 500,
+  seed = 123
+)
+)
+
+```
+
+```{r}
+#| vscode: {languageId: r}
+fit_horseshoe <- fit_or_load(
+  "models/fit_prior_horseshoe.rds",
+  stan_glm(
+    PD30 ~ .,
+    data = train_bayes,
+    family = binomial(link = "logit"),
+
+  prior = hs(),
+
+  prior_intercept = normal(
+    0,
+    5,
+    autoscale = FALSE
+  ),
+
+  chains = 4,
+  iter = 1000,
+  warmup = 500,
+  seed = 123
+)
+)
+
+```
+
+```{r}
+#| vscode: {languageId: r}
+pred_hs <- posterior_epred(fit_horseshoe, newdata = test_bayes) %>% colMeans()
+pred_lp <- posterior_epred(fit_laplace, newdata = test_bayes) %>% colMeans()
+pred_norm <- posterior_epred(fit_normal, newdata = test_bayes) %>% colMeans()
+```
+
+```{r}
+#| vscode: {languageId: r}
+calc_metrics_bayes <- function(fit, test_data, model_name) {
+  
+  # Probabilidade posterior média
+  prob <- posterior_epred(
+    fit,
+    newdata = test_data
+  ) %>%
+    colMeans()
+  
+  # Classificação
+  class <- ifelse(
+    prob >= 0.5,
+    "1",
+    "0"
+  ) %>%
+    factor(
+      levels = levels(test_data$PD30)
+    )
+  
+  # Verdade
+  truth <- test_data$PD30
+  
+  calc_metrics_bay(
+    truth = truth,
+    class = class,
+    prob = prob
+  ) %>%
+    mutate(
+      wflow_id = model_name
+    )
+}
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_p1 <- calc_metrics_bayes(
+  fit = fit_horseshoe,
+  test_data = test_bayes,
+  model_name = "bayes_prior_horse"
+)
+
+metrics_p2 <- calc_metrics_bayes(
+  fit = fit_laplace,
+  test_data = test_bayes,
+  model_name = "bayes_prior_l1"
+)
+
+metrics_p3 <- calc_metrics_bayes(
+  fit = fit_normal,
+  test_data = test_bayes,
+  model_name = "bayes_prior_normal"
+)
+```
+
+```{r}
+#| vscode: {languageId: r}
+summary(fit_laplace)
+```
+
+```{r}
+#| vscode: {languageId: r}
+summary(fit_horseshoe)
+```
+
+```{r}
+#| vscode: {languageId: r}
+metrics_table_all <- bind_rows(
+  metrics_table_final,
+  metrics_p1,
+  metrics_p2,
+  metrics_p3,
+
+)
+metrics_table_all
+```
+

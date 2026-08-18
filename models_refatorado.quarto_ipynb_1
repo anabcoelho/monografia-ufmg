@@ -1,0 +1,2058 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "format:\n",
+        "  html:\n",
+        "    embed-resources: true\n",
+        "jupyter: ir\n",
+        "---"
+      ],
+      "id": "f2b1b399"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "pkgs <- c(\n",
+        "  \"tidymodels\",\n",
+        "  'glmnet',\n",
+        "  \"rstanarm\", \n",
+        "  \"reticulate\",\n",
+        "  'yardstick'\n",
+        ")\n",
+        "instalar <- pkgs[!pkgs %in% installed.packages()[, \"Package\"]]\n",
+        "\n",
+        "if (length(instalar) > 0) {\n",
+        "  install.packages(instalar)\n",
+        "}\n",
+        "library(caret)\n",
+        "library(tidyverse)\n",
+        "library(\"tidymodels\")\n",
+        "library('janitor')\n",
+        "library('ggcorrplot')\n",
+        "library(workflowsets)\n",
+        "library(rstanarm)\n",
+        "library(glmnet)\n",
+        "library(reticulate)\n",
+        "library(ggplot2)\n",
+        "library(patchwork)\n",
+        "library(dplyr)\n",
+        "\n",
+        "py_config()\n",
+        "reticulate::py_install(c(\"pandas\", \"tabulate\", \"ipython\"))\n",
+        "\n",
+        "set.seed(42)"
+      ],
+      "id": "71249d31",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "loan <- read_csv(\"data/Loan/loan_approval_dataset.csv\") |>\n",
+        "  clean_names()\n",
+        "\n",
+        "#https://www.kaggle.com/datasets/uciml/default-of-credit-card-clients-dataset\n",
+        "default <- read_csv(\"data/default/UCI_Credit_Card.csv\")"
+      ],
+      "id": "f8c43a47",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "loan <- loan %>%\n",
+        "  rename(\n",
+        "    num_dependentes      = no_of_dependents,\n",
+        "    escolaridade         = education,\n",
+        "    autonomo             = self_employed,\n",
+        "    renda_anual          = income_annum,\n",
+        "    valor_emprestimo     = loan_amount,\n",
+        "    prazo_anos           = loan_term,\n",
+        "    score_credito        = cibil_score,\n",
+        "    ativos_residenciais  = residential_assets_value,\n",
+        "    ativos_comerciais    = commercial_assets_value,\n",
+        "    ativos_luxo          = luxury_assets_value,\n",
+        "    ativos_bancarios     = bank_asset_value,\n",
+        "    status    = loan_status\n",
+        ")\n",
+        "\n",
+        "loan <- loan %>%\n",
+        "  dplyr::select(-loan_id)\n",
+        "\n",
+        "loan$status <- ifelse(\n",
+        "  loan$status %in% c(\"Approved\", 1, \"1\"),\n",
+        "  1, 0\n",
+        ")\n",
+        "loan$status <- as.factor(loan$status)"
+      ],
+      "id": "d9c61fd5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "default <- default %>%\n",
+        "  rename(\n",
+        "    id_cliente = ID,\n",
+        "    limite_credito = LIMIT_BAL,\n",
+        "    sexo = SEX,\n",
+        "    escolaridade = EDUCATION,\n",
+        "    estado_civil = MARRIAGE,\n",
+        "    idade = AGE,\n",
+        "    atraso_pagto_0 = PAY_0,\n",
+        "    atraso_pagto_2 = PAY_2,\n",
+        "    atraso_pagto_3 = PAY_3,\n",
+        "    atraso_pagto_4 = PAY_4,\n",
+        "    atraso_pagto_5 = PAY_5,\n",
+        "    atraso_pagto_6 = PAY_6,\n",
+        "    fatura_valor_1 = BILL_AMT1,\n",
+        "    fatura_valor_2 = BILL_AMT2,\n",
+        "    fatura_valor_3 = BILL_AMT3,\n",
+        "    fatura_valor_4 = BILL_AMT4,\n",
+        "    fatura_valor_5 = BILL_AMT5,\n",
+        "    fatura_valor_6 = BILL_AMT6,\n",
+        "    pagto_valor_1 = PAY_AMT1,\n",
+        "    pagto_valor_2 = PAY_AMT2,\n",
+        "    pagto_valor_3 = PAY_AMT3,\n",
+        "    pagto_valor_4 = PAY_AMT4,\n",
+        "    pagto_valor_5 = PAY_AMT5,\n",
+        "    pagto_valor_6 = PAY_AMT6,\n",
+        "    PD30 = default.payment.next.month\n",
+        ")\n",
+        "default <- default %>%\n",
+        "  dplyr::select(-id_cliente)\n",
+        "\n",
+        "default$PD30 <- as.factor(default$PD30)"
+      ],
+      "id": "49d3338b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(dplyr)\n",
+        "library(readr)\n",
+        "library(tibble)\n",
+        "\n",
+        "corr <- default %>%\n",
+        "  select(where(is.numeric)) %>%\n",
+        "  cor(use = \"pairwise.complete.obs\")\n",
+        "\n",
+        "corr_df <- corr %>%\n",
+        "  as.data.frame() %>%\n",
+        "  rownames_to_column(\"variavel\")\n",
+        "\n",
+        "write_csv(corr_df, \"correlacao.csv\")"
+      ],
+      "id": "d481b360",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "split_loan <- initial_split(\n",
+        "  loan,\n",
+        "  prop   = 0.75,\n",
+        "  strata = status\n",
+        ")\n",
+        "\n",
+        "train_data_loan <- training(split_loan)\n",
+        "test_data_loan  <- testing(split_loan)\n",
+        "\n",
+        "split_default <- initial_split(\n",
+        "  default,\n",
+        "  prop   = 0.75,\n",
+        "  strata = PD30\n",
+        ")\n",
+        "\n",
+        "train_data_default <- training(split_default)\n",
+        "test_data_default  <- testing(split_default)"
+      ],
+      "id": "46259bc3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "log_glm <- logistic_reg() |>\n",
+        "  set_engine(\"glm\") |>\n",
+        "  set_mode(\"classification\")\n",
+        "#lasso\n",
+        "log_l1 <- logistic_reg(\n",
+        "  penalty = tune(),\n",
+        "  mixture = 1\n",
+        ") |>\n",
+        "  set_engine(\"glmnet\") |>\n",
+        "  set_mode(\"classification\")\n",
+        "\n",
+        "log_l2 <- logistic_reg(\n",
+        "  penalty = tune(),\n",
+        "  mixture = 0\n",
+        ") |>\n",
+        "  set_engine(\"glmnet\") |>\n",
+        "  set_mode(\"classification\")"
+      ],
+      "id": "33b15f99",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "folds <- vfold_cv(train_data_loan, v = 5, strata = status)\n",
+        "grid <- grid_regular(\n",
+        "  penalty(range = c(-6, 1)),\n",
+        "  levels = 20\n",
+        ")\n",
+        "metrics <- metric_set(\n",
+        "  accuracy,\n",
+        "  roc_auc,\n",
+        "  f_meas\n",
+        ")"
+      ],
+      "id": "ff3ee9bb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "#\n",
+        "rec_all <- recipe(status ~ ., data = train_data_loan) %>%\n",
+        "  step_dummy(all_nominal_predictors())\n",
+        "\n",
+        "\n",
+        "rec_def <- recipe(status ~ ., data = train_data_loan) %>%\n",
+        "  step_dummy(all_nominal_predictors()) %>%\n",
+        "  step_normalize(all_numeric_predictors())\n",
+        "\n",
+        "rec_score_only <- recipe(\n",
+        "  status ~ score_credito,\n",
+        "  data = train_data_loan\n",
+        ")%>%\n",
+        "  step_dummy(all_nominal_predictors())\n",
+        "\n",
+        "rec_score_prazo <- recipe(\n",
+        "  status ~ score_credito + prazo_anos,\n",
+        "  data = train_data_loan\n",
+        ")%>%\n",
+        "  step_dummy(all_nominal_predictors())\n",
+        "\n",
+        "rec_no_score <- recipe(\n",
+        "  status ~ .,\n",
+        "  data = train_data_loan\n",
+        ") %>%\n",
+        "  step_dummy(all_nominal_predictors())%>%\n",
+        "  step_rm(score_credito)\n",
+        "\n",
+        "rec_no_corr <- recipe(\n",
+        "  status ~ .,\n",
+        "  data = train_data_loan\n",
+        ") %>%\n",
+        "  step_dummy(all_nominal_predictors())%>%\n",
+        "  step_corr(all_numeric_predictors(), threshold = 0.75)\n",
+        "\n",
+        "rec_pca <- recipe(\n",
+        "  status ~ .,\n",
+        "  data = train_data_loan\n",
+        ") %>%\n",
+        "  step_dummy(all_nominal_predictors())%>%\n",
+        "  step_normalize(all_numeric_predictors()) %>% \n",
+        "  step_pca(\n",
+        "    all_numeric_predictors(),\n",
+        "    threshold = 0.95\n",
+        "  )"
+      ],
+      "id": "bdb2e29a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "wf_logit <- workflow_set(\n",
+        "  preproc = list(\n",
+        "    all_features = rec_all,\n",
+        "    score_only   = rec_score_only,\n",
+        "    #score_prazo  = rec_score_prazo,\n",
+        "    no_score     = rec_no_score,\n",
+        "    no_corr      = rec_no_corr\n",
+        "    #pca          = rec_pca\n",
+        "  ),\n",
+        "  models = list(\n",
+        "    logit = log_glm\n",
+        "  )\n",
+        ")\n",
+        "\n",
+        "wf_l1 <- workflow() %>%\n",
+        "  add_recipe(rec_def) %>%\n",
+        "  add_model(log_l1)\n",
+        "\n",
+        "tuned_l1 <- tune_grid(\n",
+        "  wf_l1,\n",
+        "  resamples = folds,\n",
+        "  grid = grid,\n",
+        "  metrics = metrics\n",
+        ")\n",
+        "\n",
+        "wf_l2 <- workflow() %>%\n",
+        "  add_recipe(rec_def) %>%\n",
+        "  add_model(log_l2)\n",
+        "\n",
+        "tuned_l2 <- tune_grid(\n",
+        "  wf_l2,\n",
+        "  resamples = folds,\n",
+        "  grid = grid,\n",
+        "  metrics = metrics\n",
+        ")"
+      ],
+      "id": "ac391ee3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "best_l1 <- select_best(tuned_l1, metric = \"roc_auc\")\n",
+        "final_l1 <- finalize_workflow(wf_l1, best_l1)\n",
+        "fit_l1 <- fit(final_l1, train_data_loan)\n",
+        "\n",
+        "best_l2 <- select_best(tuned_l2, metric = \"roc_auc\")\n",
+        "final_l2 <- finalize_workflow(wf_l2, best_l2)\n",
+        "fit_l2 <- fit(final_l2, train_data_loan)"
+      ],
+      "id": "fc839d11",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(broom)\n",
+        "\n",
+        "coef_table <- extract_fit_engine(fit_l1) |>\n",
+        "  coef(s = best_l1$penalty)\n",
+        "  coef_table"
+      ],
+      "id": "ad0c1b98",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "coef_table <- extract_fit_engine(fit_l2) |>\n",
+        "  coef(s = best_l2$penalty)\n",
+        "  coef_table"
+      ],
+      "id": "b1f65f1b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "fits <- wf_logit %>%\n",
+        "  mutate(\n",
+        "    fit = purrr::map(\n",
+        "      info,\n",
+        "      ~ fit(.x$workflow[[1]], data = train_data_loan)\n",
+        "    )\n",
+        "  )"
+      ],
+      "id": "d55f0cdb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(dplyr)\n",
+        "library(purrr)\n",
+        "library(yardstick)"
+      ],
+      "id": "7cc74ade",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "preds_loan <- fits %>%\n",
+        "  mutate(\n",
+        "    pred_list = map(\n",
+        "      fit,\n",
+        "      ~{\n",
+        "        prob_tbl <- predict(.x, test_data_loan, type = \"prob\")\n",
+        "\n",
+        "        tibble(\n",
+        "          truth = test_data_loan$status,\n",
+        "          class = predict(.x, test_data_loan, type = \"class\")$.pred_class,\n",
+        "          prob  = prob_tbl$.pred_1\n",
+        "        )\n",
+        "      }\n",
+        "    )\n",
+        "  ) %>%\n",
+        "  select(wflow_id, pred_list) %>%\n",
+        "  tidyr::unnest(pred_list)"
+      ],
+      "id": "96b918ce",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(tibble)\n",
+        "library(yardstick)\n",
+        "\n",
+        "#old version\n",
+        "\n",
+        "calc_metrics_from_fit <- function(fit, test_data, truth_col = status) {\n",
+        "\n",
+        "  # predições\n",
+        "  prob_tbl  <- predict(fit, test_data, type = \"prob\")\n",
+        "  class_tbl <- predict(fit, test_data, type = \"class\")\n",
+        "\n",
+        "  truth <- test_data[[deparse(substitute(truth_col))]]\n",
+        "  class <- class_tbl$.pred_class\n",
+        "  prob  <- prob_tbl$.pred_1\n",
+        "\n",
+        "  tibble(\n",
+        "    accuracy     = accuracy_vec(truth, class),\n",
+        "    bal_accuracy = bal_accuracy_vec(truth, class),\n",
+        "\n",
+        "    roc_auc  = roc_auc_vec(truth, prob, event_level = \"second\"),\n",
+        "    log_loss = mn_log_loss_vec(truth, prob),\n",
+        "    brier    = brier_class_vec(truth, prob),\n",
+        "\n",
+        "    sens = sens_vec(truth, class),\n",
+        "    spec = spec_vec(truth, class),\n",
+        "\n",
+        "    precision = precision_vec(truth, class),\n",
+        "    npv       = npv_vec(truth, class),\n",
+        "\n",
+        "    f1 = f_meas_vec(truth, class),\n",
+        "    f2 = f_meas_vec(truth, class, beta = 2),\n",
+        "\n",
+        "    kap = kap_vec(truth, class),\n",
+        "    mcc = mcc_vec(truth, class),\n",
+        "\n",
+        "    gmean = sqrt(\n",
+        "      sens_vec(truth, class) * spec_vec(truth, class)\n",
+        "    )\n",
+        "  )\n",
+        "}"
+      ],
+      "id": "4ff7bfcd",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "calc_metrics_from_fit <- function(fit, test_data, truth_col = status) {\n",
+        "\n",
+        "  # Predições\n",
+        "  prob_tbl  <- predict(fit, test_data, type = \"prob\")\n",
+        "  class_tbl <- predict(fit, test_data, type = \"class\")\n",
+        "\n",
+        "  truth <- test_data[[deparse(substitute(truth_col))]]\n",
+        "  class <- class_tbl$.pred_class\n",
+        "\n",
+        "  # Classe positiva\n",
+        "  positive_class <- levels(truth)[2]\n",
+        "\n",
+        "  # Probabilidade da classe positiva\n",
+        "  prob <- prob_tbl[[paste0(\".pred_\", positive_class)]]\n",
+        "\n",
+        "  # Resposta em 0/1\n",
+        "  truth_num <- as.numeric(truth == positive_class)\n",
+        "\n",
+        "  # Evita log(0)\n",
+        "  eps <- 1e-15\n",
+        "  prob_clip <- pmin(pmax(prob, eps), 1 - eps)\n",
+        "\n",
+        "  # Log Loss\n",
+        "  log_loss <- -mean(\n",
+        "    truth_num * log(prob_clip) +\n",
+        "      (1 - truth_num) * log(1 - prob_clip)\n",
+        "  )\n",
+        "\n",
+        "  # Brier Score\n",
+        "  brier <- mean((prob - truth_num)^2)\n",
+        "\n",
+        "  tibble(\n",
+        "    accuracy     = accuracy_vec(truth, class),\n",
+        "    bal_accuracy = bal_accuracy_vec(truth, class),\n",
+        "\n",
+        "    roc_auc  = roc_auc_vec(truth, prob, event_level = \"second\"),\n",
+        "    log_loss = log_loss,\n",
+        "    brier    = brier,\n",
+        "\n",
+        "    sens = sens_vec(truth, class),\n",
+        "    spec = spec_vec(truth, class),\n",
+        "\n",
+        "    precision = precision_vec(truth, class),\n",
+        "    npv       = npv_vec(truth, class),\n",
+        "\n",
+        "    f1 = f_meas_vec(truth, class),\n",
+        "    f2 = f_meas_vec(truth, class, beta = 2),\n",
+        "\n",
+        "    kap = kap_vec(truth, class),\n",
+        "    mcc = mcc_vec(truth, class),\n",
+        "\n",
+        "    gmean = sqrt(\n",
+        "      sens_vec(truth, class) *\n",
+        "      spec_vec(truth, class)\n",
+        "    )\n",
+        "  )\n",
+        "}"
+      ],
+      "id": "6936cb15",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_wf <- fits %>%\n",
+        "  mutate(\n",
+        "    metrics = purrr::map(\n",
+        "      fit,\n",
+        "      ~ calc_metrics_from_fit(\n",
+        "        fit = .x,\n",
+        "        test_data = test_data_loan,\n",
+        "        truth_col = status\n",
+        "      )\n",
+        "    )\n",
+        "  ) %>%\n",
+        "  select(wflow_id, metrics) %>%\n",
+        "  tidyr::unnest(metrics)\n",
+        "\n",
+        "\n",
+        "metrics_l1 <- calc_metrics_from_fit(\n",
+        "  fit = fit_l1,\n",
+        "  test_data = test_data_loan,\n",
+        "  truth_col = status\n",
+        ") %>%\n",
+        "  mutate(wflow_id = \"l1_logit\")\n",
+        "\n",
+        "metrics_l2 <- calc_metrics_from_fit(\n",
+        "  fit = fit_l2,\n",
+        "  test_data = test_data_loan,\n",
+        "  truth_col = status\n",
+        ") %>%\n",
+        "  mutate(wflow_id = \"l2_logit\")\n",
+        "\n",
+        "metrics_table_final_loan <- bind_rows(\n",
+        "  metrics_wf,\n",
+        "  metrics_l1,\n",
+        "  metrics_l2\n",
+        ")\n",
+        "metrics_table_final_loan"
+      ],
+      "id": "71228c1d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "extract_model_summary <- function(wf_fit) {\n",
+        "  model_fit <- workflows::extract_fit_parsnip(wf_fit)\n",
+        "\n",
+        "  if (inherits(model_fit$fit, \"glm\")) {\n",
+        "    return(summary(model_fit$fit))\n",
+        "  }\n",
+        "\n",
+        "  if (inherits(model_fit$fit, \"lognet\")) {\n",
+        "    return(model_fit$fit)\n",
+        "  }\n",
+        "\n",
+        "  NULL\n",
+        "}"
+      ],
+      "id": "a4e15299",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "model_summaries <- fits %>%\n",
+        "  mutate(\n",
+        "    summary = purrr::map(fit, extract_model_summary)\n",
+        "  ) %>%\n",
+        "  select(wflow_id, summary)\n",
+        "  \n",
+        "for (i in seq_len(nrow(model_summaries))) {\n",
+        "  cat(\"\\n==============================\\n\")\n",
+        "  cat(\"Modelo:\", model_summaries$wflow_id[i], \"\\n\")\n",
+        "  cat(\"==============================\\n\\n\")\n",
+        "  print(model_summaries$summary[[i]])\n",
+        "}"
+      ],
+      "id": "336c5b57",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "fits_vif <- fits %>%\n",
+        "  dplyr::filter(\n",
+        "    wflow_id %in% c(\n",
+        "      \"all_features_logit\",\n",
+        "      \"no_corr_logit\",\n",
+        "      \"no_score_logit\",\n",
+        "      \"feat_select_logit\"\n",
+        "    )\n",
+        "  )"
+      ],
+      "id": "44cff6ea",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(car)\n",
+        "\n",
+        "calc_vif <- function(wf_fit) {\n",
+        "  wf_fit %>%\n",
+        "    workflows::extract_fit_parsnip() %>%\n",
+        "    pluck(\"fit\") %>%      # objeto glm\n",
+        "    car::vif()\n",
+        "}\n",
+        "\n",
+        "vif_results <- fits_vif %>%\n",
+        "  mutate(\n",
+        "    vif = purrr::map(fit, calc_vif)\n",
+        "  )"
+      ],
+      "id": "95dc54a5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "vif_tidy <- vif_results %>%\n",
+        "  select(wflow_id, vif) %>%\n",
+        "  tidyr::unnest_longer(vif, values_to = \"vif\") %>%\n",
+        "  rename(variable = vif_id)"
+      ],
+      "id": "56243d06",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "vif_summary <- vif_tidy %>%\n",
+        "  group_by(wflow_id) %>%\n",
+        "  summarise(\n",
+        "    max_vif = max(vif),\n",
+        "    mean_vif = mean(vif)\n",
+        "  )\n",
+        "vif_summary"
+      ],
+      "id": "25e6ad23",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(dplyr)\n",
+        "\n",
+        "model_summary <- metrics_table_final_loan %>%\n",
+        "  left_join(\n",
+        "    vif_summary %>%\n",
+        "      group_by(wflow_id) %>%\n",
+        "      summarise(\n",
+        "        max_vif = max(max_vif, na.rm = TRUE),\n",
+        "        mean_vif = mean(mean_vif, na.rm = TRUE)\n",
+        "      ),\n",
+        "    by = \"wflow_id\"\n",
+        "  )\n",
+        "model_summary"
+      ],
+      "id": "5902215c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "get_model <- function(wf_fit) {\n",
+        "  workflows::extract_fit_parsnip(wf_fit)$fit\n",
+        "}"
+      ],
+      "id": "85c56c59",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "purrr::walk2(\n",
+        "  fits$fit,\n",
+        "  fits$wflow_id,\n",
+        "  ~ {\n",
+        "    modelo <- get_model(.x)\n",
+        "\n",
+        "    par(mfrow = c(2, 2))\n",
+        "    plot(\n",
+        "      modelo,\n",
+        "      pch = 19,\n",
+        "      col = \"blue\",\n",
+        "      main = .y\n",
+        "    )\n",
+        "  }\n",
+        ")"
+      ],
+      "id": "59d3fff7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "glmnet_fit <- fit_l1 %>%\n",
+        "  extract_fit_engine()\n",
+        "plot(glmnet_fit, xvar = \"lambda\", label = TRUE)\n",
+        "\n",
+        "coef_l1 <- coef(glmnet_fit, s = glmnet_fit$lambda.min)\n",
+        "\n",
+        "sum(coef_l1 != 0)"
+      ],
+      "id": "0b9f1ddb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "glmnet_fit <- fit_l2 %>%\n",
+        "  extract_fit_engine()\n",
+        "plot(glmnet_fit, xvar = \"lambda\", label = TRUE)\n",
+        "\n",
+        "coef_l2 <- coef(glmnet_fit, s = glmnet_fit$lambda.min)\n",
+        "\n",
+        "sum(coef_l2 != 0)"
+      ],
+      "id": "ac0ea490",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "DEFAULT TIME"
+      ],
+      "id": "bbaa6e08"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "log_glm <- logistic_reg() |>\n",
+        "  set_engine(\"glm\") |>\n",
+        "  set_mode(\"classification\")\n",
+        "#lasso\n",
+        "log_l1 <- logistic_reg(\n",
+        "  penalty = tune(),\n",
+        "  mixture = 1\n",
+        ") |>\n",
+        "  set_engine(\"glmnet\") |>\n",
+        "  set_mode(\"classification\")\n",
+        "\n",
+        "log_l2 <- logistic_reg(\n",
+        "  penalty = tune(),\n",
+        "  mixture = 0\n",
+        ") |>\n",
+        "  set_engine(\"glmnet\") |>\n",
+        "  set_mode(\"classification\")\n",
+        "\n",
+        "folds <- vfold_cv(train_data_default, v = 5, strata = PD30)"
+      ],
+      "id": "7d6255fd",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "#modelo geral\n",
+        "rec_default  <- recipe(PD30 ~ ., data = train_data_default) %>%\n",
+        "  step_dummy(all_nominal_predictors()) %>%\n",
+        "  step_normalize(all_numeric_predictors())\n",
+        "rec_all  <- recipe(PD30 ~ ., data = train_data_default) %>%\n",
+        "  step_dummy(all_nominal_predictors()) \n",
+        "\n",
+        "# Removendo alta correlação\n",
+        "rec_corr <- recipe(\n",
+        "  PD30 ~ .,\n",
+        "  data = train_data_default\n",
+        ") %>% step_dummy(all_nominal_predictors()) %>%\n",
+        "  step_corr(all_numeric_predictors(), threshold = 0.7)\n",
+        "\n",
+        "#com pca\n",
+        "rec_pca <- recipe(\n",
+        "  PD30 ~ .,\n",
+        "  data = train_data_default\n",
+        ") %>% step_dummy(all_nominal_predictors()) %>%\n",
+        "  step_normalize(all_numeric_predictors()) %>%\n",
+        "  step_pca(all_numeric_predictors(), threshold = 0.95)"
+      ],
+      "id": "6c3f7c23",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "wf_logit_default <- workflow_set(\n",
+        "  preproc = list(\n",
+        "    all_features = rec_all,\n",
+        "    no_corr      = rec_corr\n",
+        "    #pca          = rec_pca\n",
+        "  ),\n",
+        "  models = list(\n",
+        "    logit = log_glm\n",
+        "  )\n",
+        ")\n",
+        "wf_l1 <- workflow() %>%\n",
+        "  add_recipe(rec_default) %>%\n",
+        "  add_model(log_l1)\n",
+        "\n",
+        "tuned_l1 <- tune_grid(\n",
+        "  wf_l1,\n",
+        "  resamples = folds,\n",
+        "  grid = grid,\n",
+        "  metrics = metrics\n",
+        ")\n",
+        "\n",
+        "wf_l2 <- workflow() %>%\n",
+        "  add_recipe(rec_default) %>%\n",
+        "  add_model(log_l2)\n",
+        "\n",
+        "tuned_l2 <- tune_grid(\n",
+        "  wf_l2,\n",
+        "  resamples = folds,\n",
+        "  grid = grid,\n",
+        "  metrics = metrics\n",
+        ")"
+      ],
+      "id": "3c3d7b73",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "best_l1 <- select_best(tuned_l1, metric = \"roc_auc\")\n",
+        "final_l1 <- finalize_workflow(wf_l1, best_l1)\n",
+        "fit_l1 <- fit(final_l1, train_data_default)\n",
+        "\n",
+        "best_l2 <- select_best(tuned_l2, metric = \"roc_auc\")\n",
+        "final_l2 <- finalize_workflow(wf_l2, best_l2)\n",
+        "fit_l2 <- fit(final_l2, train_data_default)"
+      ],
+      "id": "0711280c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(broom)\n",
+        "\n",
+        "coef_table <- extract_fit_engine(fit_l1) |>\n",
+        "  coef(s = best_l1$penalty)\n",
+        "  coef_table"
+      ],
+      "id": "9ac7f97a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "coef_table <- extract_fit_engine(fit_l2) |>\n",
+        "  coef(s = best_l2$penalty)\n",
+        "  coef_table"
+      ],
+      "id": "f1ef3a46",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "fits <- wf_logit_default %>%\n",
+        "  mutate(\n",
+        "    fit = purrr::map(\n",
+        "      info,\n",
+        "      ~ fit(.x$workflow[[1]], data = train_data_default)\n",
+        "    )\n",
+        "  )"
+      ],
+      "id": "8cd23f5d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(dplyr)\n",
+        "library(purrr)\n",
+        "library(yardstick)\n",
+        "\n",
+        "preds <- fits %>%\n",
+        "  mutate(\n",
+        "    preds = purrr::map(\n",
+        "      fit,\n",
+        "      ~{\n",
+        "        prob_tbl <- predict(.x, test_data_default, type = \"prob\")\n",
+        "\n",
+        "        tibble(\n",
+        "          truth = test_data_default$PD30,\n",
+        "          class = predict(.x, test_data_default, type = \"class\")$.pred_class,\n",
+        "          prob  = prob_tbl$.pred_1\n",
+        "        )\n",
+        "      }\n",
+        "    )\n",
+        "  ) %>%\n",
+        "  select(wflow_id, preds)\n",
+        "\n",
+        "preds <- preds %>%\n",
+        "  tidyr::unnest(preds)"
+      ],
+      "id": "f77c78c5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_wf <- fits %>%\n",
+        "  mutate(\n",
+        "    metrics = purrr::map(\n",
+        "      fit,\n",
+        "      ~ calc_metrics_from_fit(\n",
+        "        fit = .x,\n",
+        "        test_data = test_data_default,\n",
+        "        truth_col = PD30\n",
+        "      )\n",
+        "    )\n",
+        "  ) %>%\n",
+        "  select(wflow_id, metrics) %>%\n",
+        "  tidyr::unnest(metrics)\n",
+        "\n",
+        "metrics_l1 <- calc_metrics_from_fit(\n",
+        "  fit = fit_l1,\n",
+        "  test_data = test_data_default,\n",
+        "  truth_col = PD30\n",
+        ") %>%\n",
+        "  mutate(wflow_id = \"l1_logit\")\n",
+        "  \n",
+        "metrics_l2 <- calc_metrics_from_fit(\n",
+        "  fit = fit_l2,\n",
+        "  test_data = test_data_default,\n",
+        "  truth_col = PD30\n",
+        ") %>%\n",
+        "  mutate(wflow_id = \"l2_logit\")\n",
+        "\n",
+        "metrics_table_final <- bind_rows(\n",
+        "  metrics_wf,\n",
+        "  metrics_l1,\n",
+        "  metrics_l2\n",
+        ")\n",
+        "metrics_table_final"
+      ],
+      "id": "dc4fc2d9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "model_summaries <- fits %>%\n",
+        "  mutate(\n",
+        "    summary = purrr::map(fit, extract_model_summary)\n",
+        "  ) %>%\n",
+        "  select(wflow_id, summary)\n",
+        "  \n",
+        "for (i in seq_len(nrow(model_summaries))) {\n",
+        "  cat(\"\\n==============================\\n\")\n",
+        "  cat(\"Modelo:\", model_summaries$wflow_id[i], \"\\n\")\n",
+        "  cat(\"==============================\\n\\n\")\n",
+        "  print(model_summaries$summary[[i]])\n",
+        "}"
+      ],
+      "id": "46d02217",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_table_final"
+      ],
+      "id": "3471d2df",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "fits_vif <- fits %>%\n",
+        "  dplyr::filter(\n",
+        "    wflow_id %in% c(\n",
+        "      \"all_features_logit\",\n",
+        "      \"no_corr_logit\"\n",
+        "    )\n",
+        "  )\n",
+        "\n",
+        "vif_results <- fits_vif %>%\n",
+        "  mutate(\n",
+        "    vif = purrr::map(fit, calc_vif)\n",
+        "  )\n",
+        "vif_tidy <- vif_results %>%\n",
+        "  select(wflow_id, vif) %>%\n",
+        "  tidyr::unnest_longer(vif, values_to = \"vif\") %>%\n",
+        "  rename(variable = vif_id)\n",
+        "\n",
+        "vif_summary <- vif_tidy %>%\n",
+        "  group_by(wflow_id) %>%\n",
+        "  summarise(\n",
+        "    max_vif = max(vif),\n",
+        "    mean_vif = mean(vif)\n",
+        "  )"
+      ],
+      "id": "d99b4509",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(dplyr)\n",
+        "\n",
+        "model_summary <- metrics_table_final %>%\n",
+        "  left_join(\n",
+        "    vif_summary %>%\n",
+        "      group_by(wflow_id) %>%\n",
+        "      summarise(\n",
+        "        max_vif = max(max_vif, na.rm = TRUE),\n",
+        "        mean_vif = mean(mean_vif, na.rm = TRUE)\n",
+        "      ),\n",
+        "    by = \"wflow_id\"\n",
+        "  )\n",
+        "model_summary"
+      ],
+      "id": "14f0b703",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "get_model <- function(wf_fit) {\n",
+        "  workflows::extract_fit_parsnip(wf_fit)$fit\n",
+        "}"
+      ],
+      "id": "b5e5411b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "purrr::walk2(\n",
+        "  fits$fit,\n",
+        "  fits$wflow_id,\n",
+        "  ~ {\n",
+        "    modelo <- get_model(.x)\n",
+        "\n",
+        "    par(mfrow = c(2, 2))\n",
+        "    plot(\n",
+        "      modelo,\n",
+        "      pch = 19,\n",
+        "      col = \"blue\",\n",
+        "      main = .y\n",
+        "    )\n",
+        "  }\n",
+        ")"
+      ],
+      "id": "d62491cf",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "glmnet_fit <- fit_l1 %>%\n",
+        "  extract_fit_engine()\n",
+        "plot(glmnet_fit, xvar = \"lambda\", label = TRUE)\n",
+        "\n",
+        "coef_l1 <- coef(glmnet_fit, s = glmnet_fit$lambda.min)\n",
+        "\n",
+        "sum(coef_l1 != 0)"
+      ],
+      "id": "7df31765",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "glmnet_fit <- fit_l2 %>%\n",
+        "  extract_fit_engine()\n",
+        "plot(glmnet_fit, xvar = \"lambda\", label = TRUE)\n",
+        "\n",
+        "coef_l2 <- coef(glmnet_fit, s = glmnet_fit$lambda.min)\n",
+        "\n",
+        "sum(coef_l2 != 0)"
+      ],
+      "id": "a9a98c0b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "install.packages(\"Rtools\")"
+      ],
+      "id": "3fcb137e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(rstanarm)"
+      ],
+      "id": "dd9d4b44",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "rec_score <- recipe(status ~ score_credito, data = train_data_loan) %>%\n",
+        "  step_normalize(score_credito)\n",
+        "rec_prep <- prep(rec_score)\n",
+        "\n",
+        "train_bayes <- bake(\n",
+        "  rec_prep,\n",
+        "  new_data = NULL\n",
+        ")\n",
+        "\n",
+        "test_bayes <- bake(\n",
+        "  rec_prep,\n",
+        "  new_data = test_data_loan\n",
+        ")"
+      ],
+      "id": "16ae5a65",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "# Não informativa\n",
+        "prior_noninformative <- normal(location = 0, scale = 10, autoscale = FALSE)\n",
+        "\n",
+        "fit_p1 <- stan_glm(\n",
+        "  status ~ score_credito,\n",
+        "  data = train_bayes,\n",
+        "  family = binomial(link = \"logit\"),\n",
+        "  prior = normal(0, 10),\n",
+        "  prior_intercept = normal(0, 10),\n",
+        "  chains = 4,\n",
+        "  iter = 4000,\n",
+        "  seed = 123\n",
+        ")"
+      ],
+      "id": "78403944",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "#🔹 Prior 2 — Regularizadora fraca\n",
+        "prior_weak <- normal(location = 0, scale = 2.5, autoscale = FALSE)\n",
+        "\n",
+        "fit_p2 <- stan_glm(\n",
+        "  status ~ score_credito,\n",
+        "  data = train_bayes,\n",
+        "  family = binomial(link = \"logit\"),\n",
+        "  prior = normal(0, 2.5),\n",
+        "  prior_intercept = normal(0, 5),\n",
+        "  chains = 4,\n",
+        "  iter = 4000,\n",
+        "  seed = 123\n",
+        ")"
+      ],
+      "id": "f2314c50",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "#🔹 Prior 3 — Informativa (sem truncamento)\n",
+        "prior_informative <- normal(location = 0.5, scale = 0.25, autoscale = FALSE)\n",
+        "\n",
+        "fit_p3 <- stan_glm(\n",
+        "  status ~ score_credito,\n",
+        "  data = train_bayes,\n",
+        "  family = binomial(link = \"logit\"),\n",
+        "  prior = normal(0.5, 0.25),\n",
+        "  prior_intercept = normal(0, 2.5),\n",
+        "  chains = 4,\n",
+        "  iter = 4000,\n",
+        "  seed = 123\n",
+        ")"
+      ],
+      "id": "ceb2466a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(yardstick)\n",
+        " \n",
+        "pred_p1 <- posterior_epred(fit_p1, newdata = test_bayes) %>% colMeans()\n",
+        "pred_p2 <- posterior_epred(fit_p2, newdata = test_bayes) %>% colMeans()\n",
+        "pred_p3 <- posterior_epred(fit_p3, newdata = test_bayes) %>% colMeans()"
+      ],
+      "id": "91b09328",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "calc_metrics_bay <- function(truth, class, prob) {\n",
+        "\n",
+        "  tibble(\n",
+        "    accuracy     = accuracy_vec(truth, class),\n",
+        "    bal_accuracy = bal_accuracy_vec(truth, class),\n",
+        "\n",
+        "    roc_auc  = roc_auc_vec(truth, prob, event_level = \"second\"),\n",
+        "    log_loss = mn_log_loss_vec(truth, prob),\n",
+        "\n",
+        "    sens = sens_vec(truth, class),\n",
+        "    spec = spec_vec(truth, class),\n",
+        "\n",
+        "    precision = precision_vec(truth, class),\n",
+        "    npv       = npv_vec(truth, class),\n",
+        "\n",
+        "    f1 = f_meas_vec(truth, class),\n",
+        "    f2 = f_meas_vec(truth, class, beta = 2),\n",
+        "\n",
+        "    kap = kap_vec(truth, class),\n",
+        "    mcc = mcc_vec(truth, class),\n",
+        "\n",
+        "    gmean = sqrt(\n",
+        "      sens_vec(truth, class) *\n",
+        "      spec_vec(truth, class)\n",
+        "    )\n",
+        "  )\n",
+        "}"
+      ],
+      "id": "e9710ed0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "calc_metrics_bayes <- function(fit, test_data, model_name) {\n",
+        "  \n",
+        "  # Probabilidade posterior média\n",
+        "  prob <- posterior_epred(\n",
+        "    fit,\n",
+        "    newdata = test_data\n",
+        "  ) %>%\n",
+        "    colMeans()\n",
+        "  \n",
+        "  # Classificação\n",
+        "  class <- ifelse(\n",
+        "    prob >= 0.5,\n",
+        "    \"1\",\n",
+        "    \"0\"\n",
+        "  ) %>%\n",
+        "    factor(\n",
+        "      levels = levels(test_data$status)\n",
+        "    )\n",
+        "  \n",
+        "  # Verdade\n",
+        "  truth <- test_data$status\n",
+        "  \n",
+        "  calc_metrics_bay(\n",
+        "    truth = truth,\n",
+        "    class = class,\n",
+        "    prob = prob\n",
+        "  ) %>%\n",
+        "    mutate(\n",
+        "      wflow_id = model_name\n",
+        "    )\n",
+        "}"
+      ],
+      "id": "bd3fd23e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_p1 <- calc_metrics_bayes(\n",
+        "  fit = fit_p1,\n",
+        "  test_data = test_bayes,\n",
+        "  model_name = \"bayes_prior_1\"\n",
+        ")\n",
+        "\n",
+        "metrics_p2 <- calc_metrics_bayes(\n",
+        "  fit = fit_p2,\n",
+        "  test_data = test_bayes,\n",
+        "  model_name = \"bayes_prior_2\"\n",
+        ")\n",
+        "\n",
+        "metrics_p3 <- calc_metrics_bayes(\n",
+        "  fit = fit_p3,\n",
+        "  test_data = test_bayes,\n",
+        "  model_name = \"bayes_prior_3\"\n",
+        ")"
+      ],
+      "id": "29dadfb8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_table_loan_all <- bind_rows(\n",
+        "  metrics_table_final_loan,\n",
+        "  metrics_p1,\n",
+        "  metrics_p2,\n",
+        "  metrics_p3\n",
+        ")\n",
+        "metrics_table_loan_all"
+      ],
+      "id": "0ed60a42",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "posterior_interval(fit_p1)\n",
+        "posterior_interval(fit_p3)"
+      ],
+      "id": "66461d9a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "prob_p1 <- posterior_epred(\n",
+        "  fit_p1,\n",
+        "  newdata = test_data_loan\n",
+        ") %>%\n",
+        "  colMeans()\n",
+        "\n",
+        "\n",
+        "pred_p1 <- tibble(\n",
+        "  truth = test_data_loan$status,\n",
+        "  class = ifelse(prob_p1 >= 0.5, \"1\", \"0\"),\n",
+        "  prob = prob_p1\n",
+        ")"
+      ],
+      "id": "adc83483",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "summary(fit_p1)"
+      ],
+      "id": "79c857d2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "library(recipes)\n",
+        "\n",
+        "rec_default <- recipe(PD30 ~ ., data = train_data_default) %>%\n",
+        "  step_dummy(all_nominal_predictors()) %>%\n",
+        "  step_normalize(all_numeric_predictors())\n",
+        "rec_prep <- prep(rec_default)"
+      ],
+      "id": "3d05c3eb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "train_bayes <- bake(\n",
+        "  rec_prep,\n",
+        "  new_data = NULL\n",
+        ")\n",
+        "\n",
+        "test_bayes <- bake(\n",
+        "  rec_prep,\n",
+        "  new_data = test_data_default\n",
+        ")"
+      ],
+      "id": "b1c50c25",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "fit_or_load <- function(path, fit_expr) {\n",
+        "\n",
+        "  if (file.exists(path)) {\n",
+        "\n",
+        "    message(\"Modelo carregado de: \", path)\n",
+        "    return(readRDS(path))\n",
+        "\n",
+        "  }\n",
+        "\n",
+        "  message(\"Treinando modelo...\")\n",
+        "\n",
+        "  fit <- eval.parent(substitute(fit_expr))\n",
+        "\n",
+        "  saveRDS(fit, path)\n",
+        "\n",
+        "  message(\"Modelo salvo em: \", path)\n",
+        "\n",
+        "  fit\n",
+        "}"
+      ],
+      "id": "92c6e786",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "dir.create(\"models\", showWarnings = FALSE)"
+      ],
+      "id": "b27e8532",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "fit_normal <- fit_or_load(\n",
+        "  \"models/fit_prior_normal.rds\",\n",
+        "  stan_glm(\n",
+        "  PD30 ~ .,\n",
+        "  data = train_bayes,\n",
+        "  family = binomial(link = \"logit\"),\n",
+        "\n",
+        "  prior = normal(\n",
+        "    location = 0,\n",
+        "    scale = 1,\n",
+        "    autoscale = FALSE\n",
+        "  ),\n",
+        "\n",
+        "  prior_intercept = normal(\n",
+        "    location = 0,\n",
+        "    scale = 5,\n",
+        "    autoscale = FALSE\n",
+        "  ),\n",
+        "\n",
+        "  chains = 4,\n",
+        "  iter = 1000,\n",
+        "  warmup = 500,\n",
+        "  seed = 123\n",
+        ")\n",
+        ")\n",
+        "#Todos os coeficientes recebem contração uniforme."
+      ],
+      "id": "c81f90c5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "fit_laplace <- fit_or_load(\n",
+        "  \"models/fit_prior_laplace.rds\",\n",
+        "  stan_glm(\n",
+        "    PD30 ~ .,\n",
+        "    data = train_bayes,\n",
+        "    family = binomial(link = \"logit\"),\n",
+        "\n",
+        "  prior = laplace(\n",
+        "    location = 0,\n",
+        "    scale = 1,\n",
+        "    autoscale = FALSE\n",
+        "  ),\n",
+        "\n",
+        "  prior_intercept = normal(\n",
+        "    0,\n",
+        "    5,\n",
+        "    autoscale = FALSE\n",
+        "  ),\n",
+        "\n",
+        "  chains = 4,\n",
+        "  iter = 1000,\n",
+        "  warmup = 500,\n",
+        "  seed = 123\n",
+        ")\n",
+        ")\n",
+        "#Todos os coeficientes sofrem contração, porém alguns podem aproximar-se de zero com maior intensidade."
+      ],
+      "id": "464a2267",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "fit_horseshoe <- fit_or_load(\n",
+        "  \"models/fit_prior_horseshoe.rds\",\n",
+        "  stan_glm(\n",
+        "    PD30 ~ .,\n",
+        "    data = train_bayes,\n",
+        "    family = binomial(link = \"logit\"),\n",
+        "\n",
+        "  prior = hs(),\n",
+        "\n",
+        "  prior_intercept = normal(\n",
+        "    0,\n",
+        "    5,\n",
+        "    autoscale = FALSE\n",
+        "  ),\n",
+        "\n",
+        "  chains = 4,\n",
+        "  iter = 1000,\n",
+        "  warmup = 500,\n",
+        "  seed = 123\n",
+        ")\n",
+        ")\n",
+        "#A contração passa a ser adaptativa, preservando grandes efeitos e reduzindo fortemente coeficientes associados a variáveis pouco informativas."
+      ],
+      "id": "a9c2f454",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "pred_hs <- posterior_epred(fit_horseshoe, newdata = test_bayes) %>% colMeans()\n",
+        "pred_lp <- posterior_epred(fit_laplace, newdata = test_bayes) %>% colMeans()\n",
+        "pred_norm <- posterior_epred(fit_normal, newdata = test_bayes) %>% colMeans()"
+      ],
+      "id": "35dfbfa2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "calc_metrics_bayes <- function(fit, test_data, model_name) {\n",
+        "  \n",
+        "  # Probabilidade posterior média\n",
+        "  prob <- posterior_epred(\n",
+        "    fit,\n",
+        "    newdata = test_data\n",
+        "  ) %>%\n",
+        "    colMeans()\n",
+        "  \n",
+        "  # Classificação\n",
+        "  class <- ifelse(\n",
+        "    prob >= 0.5,\n",
+        "    \"1\",\n",
+        "    \"0\"\n",
+        "  ) %>%\n",
+        "    factor(\n",
+        "      levels = levels(test_data$PD30)\n",
+        "    )\n",
+        "  \n",
+        "  # Verdade\n",
+        "  truth <- test_data$PD30\n",
+        "  \n",
+        "  calc_metrics_bay(\n",
+        "    truth = truth,\n",
+        "    class = class,\n",
+        "    prob = prob\n",
+        "  ) %>%\n",
+        "    mutate(\n",
+        "      wflow_id = model_name\n",
+        "    )\n",
+        "}"
+      ],
+      "id": "f4f9d86d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_p1 <- calc_metrics_bayes(\n",
+        "  fit = fit_horseshoe,\n",
+        "  test_data = test_bayes,\n",
+        "  model_name = \"bayes_prior_horse\"\n",
+        ")\n",
+        "\n",
+        "metrics_p2 <- calc_metrics_bayes(\n",
+        "  fit = fit_laplace,\n",
+        "  test_data = test_bayes,\n",
+        "  model_name = \"bayes_prior_l1\"\n",
+        ")\n",
+        "\n",
+        "metrics_p3 <- calc_metrics_bayes(\n",
+        "  fit = fit_normal,\n",
+        "  test_data = test_bayes,\n",
+        "  model_name = \"bayes_prior_normal\"\n",
+        ")"
+      ],
+      "id": "7e8ad21c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "summary(fit_laplace)"
+      ],
+      "id": "9143fe45",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "summary(fit_horseshoe)"
+      ],
+      "id": "0733e830",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "vscode": {
+          "languageId": "r"
+        }
+      },
+      "source": [
+        "metrics_table_all <- bind_rows(\n",
+        "  metrics_table_final,\n",
+        "  metrics_p1,\n",
+        "  metrics_p2,\n",
+        "  metrics_p3,\n",
+        "\n",
+        ")\n",
+        "metrics_table_all"
+      ],
+      "id": "5dd297c7",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "ir",
+      "language": "R",
+      "display_name": "R",
+      "path": "C:\\Users\\T-GAMER\\AppData\\Roaming\\jupyter\\kernels\\ir"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

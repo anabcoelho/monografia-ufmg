@@ -28,3 +28,41 @@
 Anotações aleatórias:
 
 usar kable() para estruturar as tabelas
+
+$$
+\begin{equation}
+U = Q_3 + 1.5 \cdot \mathrm{IQR}
+\label{eq:upper_bound}
+\end{equation}
+$$
+
+Assuma que a probabilidade de sucesso seja dada por $P(Y=1\mid\theta)=\theta$,
+em que $\theta \in [0,1]$ representa o parâmetro desconhecido.
+
+```{r, include=FALSE}
+```
+
+
+#| label: fig-correlacao-default
+#| fig-cap: "Mapa de calor da correlação entre variáveis numéricas do conjunto de dados de crédito"
+#| warning: false
+#| fig-width: 18
+#| fig-height: 12
+#| out-width: "100%"
+#| fig-align: "center"
+
+`
+| Variável                            | Descrição                                                                                                                                                                                                                                 |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id_cliente`                        | Identificador único do cliente.                                                                                                                                                                                                           |
+| `limite_credito`                    | Limite de crédito concedido ao cliente (crédito individual e suplementar).                                                                                                                                                                |
+| `sexo`                              | Sexo do cliente.                                                                                                                                                                                                                          |
+| `escolaridade`                      | Nível de escolaridade.                                                                                                                                                                                                                    |
+| `estado_civil`                      | Estado civil.                                                                                                                                                                                                                             |
+| `idade`                             | Idade do cliente, em anos.                                                                                                                                                                                                                |
+| `atraso_pagto_0` a `atraso_pagto_6` | Histórico do status de atraso nos pagamentos entre abril e setembro de 2005. Valores maiores indicam maior tempo de atraso, enquanto valores negativos representam situações especiais, como pagamento antecipado ou ausência de consumo. |
+| `fatura_valor_1` a `fatura_valor_6` | Valores das faturas mensais do cartão de crédito, referentes ao período de abril a setembro de 2005 (NT dollar).                                                                                                                          |
+| `pagto_valor_1` a `pagto_valor_6`   | Valores pagos mensalmente pelo cliente entre abril e setembro de 2005 (NT dollar).                                                                                                                                                        |
+| `PD30`                              | Indicador binário de inadimplência no mês subsequente (1 = inadimplente; 0 = adimplente).                                                                                                                                                 |
+
+

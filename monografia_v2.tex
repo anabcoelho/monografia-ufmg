@@ -261,7 +261,7 @@
 {\large Belo Horizonte \par}
 
 
-{\large Ago/2026 \par}
+{\large Dez/2026 \par}
 
 \end{titlepage}
 
@@ -290,7 +290,7 @@ Orientador(a): Prof.(a) Dr.(a) Fábio N. Demarqui~
 
 Belo Horizonte  
 
-Ago/2026
+Dez/2026
 \end{center}
 \newpage
 
@@ -301,19 +301,15 @@ Ago/2026
 
 \vspace{1cm}
 
-\textcolor{red}{reavaliar os resumos}
+Este trabalho compara as abordagens de inferência frequentista e bayesiana na modelagem da probabilidade de inadimplência em cartões de crédito, utilizando o conjunto de dados \textit{Default of Credit Card Clients}, composto por 30.000 registros de clientes taiwaneses. Foram ajustados modelos de regressão logística sob as duas perspectivas: quatro especificações frequentistas (modelo completo, sem multicolinearidade, com regularização L1 e L2) e dois modelos bayesianos com distribuições a priori Normal e Laplace, igualadas em variância para controlar a comparação.
 
-Este trabalho tem como objetivo comparar as abordagens de inferência frequentista e bayesiana no contexto de modelos de classificação. O foco principal do estudo está na análise das diferenças conceituais, inferenciais e preditivas entre essas duas abordagens estatísticas, utilizando um conjunto de dados reais como estudo de caso para a aplicação dos modelos.
+Do ponto de vista preditivo, todas as especificações apresentaram desempenho semelhante, com ROC AUC entre 0,714 e 0,717, sugerindo que, em amostras de grande dimensão, a escolha entre as abordagens não determina diferenças relevantes na capacidade discriminativa. A variável de maior impacto foi o histórico de atraso de pagamento (\texttt{atraso\_pagto\_0}), com razão de chances superior a 1,82 nas estimativas frequentistas e 1,93 nas bayesianas padronizadas. A remoção de preditores altamente correlacionados reduziu substancialmente a multicolinearidade (VIF de 41,12 para 1,84) sem comprometer o desempenho preditivo.
 
-Inicialmente, são discutidos os fundamentos teóricos das abordagens frequentista e bayesiana, destacando suas principais características, pressupostos e formas de interpretação dos parâmetros. Em seguida, realiza-se uma análise exploratória dos dados com o objetivo de compreender a estrutura das variáveis e subsidiar a construção dos modelos, sem que a análise dos dados constitua o foco central do trabalho.
-
-Na etapa de modelagem, são ajustados modelos de classificação sob as perspectivas frequentista e bayesiana, permitindo a comparação entre as abordagens quanto ao desempenho preditivo, à interpretação dos coeficientes estimados e à quantificação da incerteza associada às estimativas. A avaliação dos modelos é realizada por meio de métricas adequadas de classificação, possibilitando uma análise sistemática das diferenças e semelhanças entre os métodos.
-
-Por fim, os resultados obtidos evidenciam as vantagens e limitações de cada abordagem no contexto de problemas de classificação binária, contribuindo para uma compreensão mais aprofundada das implicações práticas e metodológicas da escolha entre inferência frequentista e bayesiana em aplicações de análise de risco de crédito e ciência de dados.
+A comparação entre as prioris Normal e Laplace revelou estimativas posteriores praticamente equivalentes, resultado consistente com o teorema de Bernstein-von Mises: com $n = 30.000$, a verossimilhança domina a distribuição posterior, atenuando a influência da priori. A principal diferença entre as abordagens reside na dimensão inferencial: os intervalos de credibilidade bayesianos permitem interpretação probabilística direta sobre os parâmetros, em contraste com os intervalos de confiança frequentistas.
 
 \vspace{1cm}
 
-\noindent\textbf{Palavras-chave:} regressão estatística; inferência frequentista; inferência bayesiana; modelos preditivos; análise de risco de crédito.
+\noindent\textbf{Palavras-chave:} regressão logística; inferência frequentista; inferência bayesiana; risco de crédito; distribuições a priori.
 \newpage
 
 \newpage
@@ -323,11 +319,16 @@ Por fim, os resultados obtidos evidenciam as vantagens e limitações de cada ab
 
 \vspace{1cm}
 
-This study aims to compare frequentist and Bayesian inference approaches in the context of regression models applied to the prediction of 
+This study compares frequentist and Bayesian inference approaches in the modeling of credit card default probability, using the Default of Credit Card Clients dataset, comprising 30,000 records from Taiwanese credit card clients. Logistic regression models were fitted under both perspectives: four frequentist specifications (full model, without multicollinearity, with L1 and L2 regularization) and two Bayesian models with Normal and Laplace prior distributions, matched in variance to enable a controlled comparison.
+
+From a predictive standpoint, all specifications yielded similar performance, with ROC AUC ranging from 0.714 to 0.717, suggesting that, in large samples, the choice between approaches does not lead to relevant differences in discriminative capacity. The most influential predictor was payment delay history (\texttt{atraso\_pagto\_0}), with odds ratios above 1.82 in frequentist estimates and 1.93 in standardized Bayesian estimates. Removal of highly correlated predictors substantially reduced multicollinearity (VIF from 41.12 to 1.84) without compromising predictive performance.
+
+The comparison between Normal and Laplace priors revealed nearly equivalent posterior estimates, consistent with the Bernstein-von Mises theorem: with n = 30,000, the likelihood dominates the posterior distribution, attenuating prior influence. The main distinction between approaches lies in the inferential dimension: Bayesian credibility intervals allow direct probabilistic statements about parameters, in contrast to the repeated-sampling interpretation of frequentist confidence intervals.
+
 
 \vspace{1cm}
 
-\noindent\textbf{Keywords:} frequentist inference; Bayesian inference; regression models; predictive modeling; credit risk analysis.
+\noindent\textbf{Keywords:} logistic regression; frequentist inference; Bayesian inference; credit risk; prior distributions.
 \newpage
 
 \tableofcontents

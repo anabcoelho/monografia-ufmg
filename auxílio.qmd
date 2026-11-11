@@ -1,0 +1,1442 @@
+**Legenda de status do documento**
+
+- **[TBD]** → tópico ainda indefinido; estrutura ou escopo em discussão
+- **[TO DO]** → tópico planejado, ainda não iniciado
+- **[WIP]** → em desenvolvimento
+- **[DRAFT]** → versão preliminar do texto
+- **[CHECK]** → verificação pendente (conceitos, dados, código ou referências)
+- **[REVISÃO]** → versão completa, pronta para avaliação
+  * **[REVISÃO-1]** → para uma primeira versão
+- **[AJUSTAR]** → ajustes finos de redação, figuras ou formatação (após revisão)
+- **[FINAL]** → versão definitiva (após revisão e ajustes finais)
+
+
+
+
+<!--
+Teorema como mecanismo de atualização de crenças
+
+Relação entre:
+priori
+verossimilhança
+posteriori
+Interpretação inferencial, não só matemática
+-->
+
+```{r ,echo = FALSE}
+
+```
+
+## [WIP] Modelagem e Avaliação
+
+### Modelo de Concessão de Empréstimo
+Após a etapa de pré-processamento, o conjunto de dados de concessão de empréstimos foi utilizado para o ajuste de modelos de regressão logística, com o objetivo de estimar a probabilidade de aprovação do empréstimo a partir das características socioeconômicas e financeiras dos solicitantes. A regressão logística foi escolhida por se tratar de um modelo amplamente utilizado em problemas de classificação binária e por permitir a interpretação dos efeitos das variáveis explicativas sobre as chances do evento de interesse por meio das razões de chances (odds ratios). A partir dessa mesma estrutura de modelagem, foram consideradas as abordagens frequentista e Bayesiana, permitindo comparar não apenas o desempenho preditivo, mas também as diferentes formas de estimação e inferência sobre os parâmetros do modelo.
+
+#### Abordagem Frequentista
+
+Inicialmente, adotou-se uma abordagem frequentista, com estimação dos parâmetros via máxima verossimilhança. Essa estratégia fornece um ponto de partida robusto para a análise, permitindo avaliar tanto o poder preditivo quanto a contribuição individual das variáveis explicativas.
+
+Com o intuito de investigar a sensibilidade do modelo à especificação das variáveis e à presença de dependências lineares, foram ajustadas diferentes variações do modelo logístico:
+
+- Modelo completo: inclui todas as variáveis explicativas disponíveis após o pré-processamento, servindo como especificação de referência.
+- Modelo com score de crédito: utiliza exclusivamente a variável de score de crédito como preditor. Essa especificação foi motivada pelos resultados da análise exploratória, na qual o score se destacou como um dos preditores mais informativos, permitindo avaliar seu poder discriminatório isolado.
+- Modelo sem score de crédito: ajustado como exercício contrafactual, com o objetivo de avaliar a capacidade explicativa das demais variáveis na ausência do score, bem como o grau de dependência do modelo em relação a esse preditor dominante.
+- Modelo com regularização L1 (Lasso): incorpora penalização na função de verossimilhança com o objetivo de induzir esparsidade nos coeficientes. Essa abordagem permite mitigar potenciais problemas associados à multicolinearidade e selecionar automaticamente um subconjunto de variáveis relevantes. 
+- Modelo com remoção manual de variáveis altamente correlacionadas: variáveis com correlação absoluta superior a 75% foram excluídas de forma criteriosa, visando reduzir redundância informacional e avaliar o impacto dessa simplificação na estabilidade e no desempenho do modelo.
+\red{ encaixar quais modelos tiveram pardronização}
+
+A comparação entre essas especificações permite avaliar o trade-off entre interpretabilidade, complexidade do modelo e desempenho preditivo, além de fornecer evidências empíricas sobre o papel do score de crédito e da estrutura de correlação das variáveis no processo de decisão de concessão de empréstimos.
+
+Após o pré-processamento, diferentes especificações de modelos de regressão logística foram ajustadas com base em máxima verossimilhança. Todas as especificações propostas foram avaliadas de forma sistemática quanto ao ajuste estatístico e às propriedades inferenciais do modelo, incluindo interpretação dos coeficientes, razões de chances (odds ratios), testes de razão de verossimilhança, critérios de informação (AIC e BIC), diagnóstico de multicolinearidade (VIF) e análise de resíduos.
+
+Com base nessa avaliação abrangente, os modelos foram então comparados quanto ao desempenho preditivo, considerando métricas padronizadas aplicadas de forma consistente a todas as especificações. Essa etapa permitiu identificar modelos com melhor equilíbrio entre qualidade de ajuste, estabilidade estatística, interpretabilidade e desempenho preditivo.
+
+\red{podemos colocar o resultado de todos os modelos em um anexo, para fins de documentação e transparência, mas para discussão de resultados, vamos simplificar.}
+
+```{r settings-modelo,include = FALSE}
+log_glm <- logistic_reg() |>
+  set_engine("glm") |>
+  set_mode("classification")
+#lasso
+log_l1 <- logistic_reg(
+  penalty = tune(),
+  mixture = 1
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+log_l2 <- logistic_reg(
+  penalty = tune(),
+  mixture = 0
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+
+folds <- vfold_cv(train_data_loan, v = 5, strata = status)
+grid <- grid_regular(
+  penalty(range = c(-6, 1)),
+  levels = 20
+)
+metrics <- metric_set(
+  accuracy,
+  roc_auc,
+  f_meas
+)
+```
+
+```{r, include = FALSE}
+#
+rec_all <- recipe(status ~ ., data = train_data_loan) %>%
+  step_dummy(all_nominal_predictors())
+
+
+rec_def <- recipe(status ~ ., data = train_data_loan) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+rec_score_only <- recipe(
+  status ~ score_credito,
+  data = train_data_loan
+)%>%
+  step_dummy(all_nominal_predictors())
+
+rec_no_score <- recipe(
+  status ~ .,
+  data = train_data_loan
+) %>%
+  step_dummy(all_nominal_predictors())%>%
+  step_rm(score_credito)
+
+rec_no_corr <- recipe(
+  status ~ .,
+  data = train_data_loan
+) %>%
+  step_dummy(all_nominal_predictors())%>%
+  step_corr(all_numeric_predictors(), threshold = 0.75)
+
+```
+
+```{r, include = FALSE}
+wf_logit <- workflow_set(
+  preproc = list(
+    all_features = rec_all,
+    score_only   = rec_score_only,
+    no_score     = rec_no_score,
+    no_corr      = rec_no_corr
+  ),
+  models = list(
+    logit = log_glm
+  )
+)
+
+wf_l1 <- workflow() %>%
+  add_recipe(rec_def) %>%
+  add_model(log_l1)
+
+tuned_l1 <- tune_grid(
+  wf_l1,
+  resamples = folds,
+  grid = grid,
+  metrics = metrics
+)
+
+wf_l2 <- workflow() %>%
+  add_recipe(rec_def) %>%
+  add_model(log_l2)
+
+tuned_l2 <- tune_grid(
+  wf_l2,
+  resamples = folds,
+  grid = grid,
+  metrics = metrics
+)
+```
+```{r, include = FALSE}
+best_l1 <- select_best(tuned_l1, metric = "roc_auc")
+final_l1 <- finalize_workflow(wf_l1, best_l1)
+fit_l1 <- fit(final_l1, train_data_loan)
+
+best_l2 <- select_best(tuned_l2, metric = "roc_auc")
+final_l2 <- finalize_workflow(wf_l2, best_l2)
+fit_l2 <- fit(final_l2, train_data_loan)
+```
+
+```{r, include = FALSE}
+#vamos por aqui? 
+
+coef_table <- extract_fit_engine(fit_l1) |>
+  coef(s = best_l1$penalty)
+coef_table <- as.matrix(coef_table)
+knitr::kable(coef_table)
+```
+
+```{r, include = FALSE}
+coef_table <- extract_fit_engine(fit_l2) |>
+  coef(s = best_l2$penalty)
+coef_table <- as.matrix(coef_table)
+knitr::kable(coef_table)
+```
+
+```{r, include = FALSE}
+fits <- wf_logit %>%
+  mutate(
+    fit = purrr::map(
+      info,
+      ~ fit(.x$workflow[[1]], data = train_data_loan)
+    )
+  )
+
+preds_loan <- fits %>%
+  mutate(
+    pred_list = map(
+      fit,
+      ~{
+        prob_tbl <- predict(.x, test_data_loan, type = "prob")
+
+        tibble(
+          truth = test_data_loan$status,
+          class = predict(.x, test_data_loan, type = "class")$.pred_class,
+          prob  = prob_tbl$.pred_1
+        )
+      }
+    )
+  ) %>%
+  select(wflow_id, pred_list) %>%
+  tidyr::unnest(pred_list)
+```
+
+```{r, include=FALSE}
+metrics_wf <- fits %>%
+  mutate(
+    metrics = purrr::map(
+      fit,
+      ~ calc_metrics_from_fit(
+        fit = .x,
+        test_data = test_data_loan,
+        truth_col = status
+      )
+    )
+  ) %>%
+  select(wflow_id, metrics) %>%
+  tidyr::unnest(metrics)
+
+
+metrics_l1 <- calc_metrics_from_fit(
+  fit = fit_l1,
+  test_data = test_data_loan,
+  truth_col = status
+) %>%
+  mutate(wflow_id = "l1_logit")
+
+metrics_l2 <- calc_metrics_from_fit(
+  fit = fit_l2,
+  test_data = test_data_loan,
+  truth_col = status
+) %>%
+  mutate(wflow_id = "l2_logit")
+
+metrics_table_final_loan <- bind_rows(
+  metrics_wf,
+  metrics_l1,
+  metrics_l2
+)
+
+fits_vif <- fits %>%
+  dplyr::filter(
+    wflow_id %in% c(
+      "all_features_logit",
+      "no_corr_logit",
+      "no_score_logit",
+      "feat_select_logit"
+    )
+  )
+
+calc_vif <- function(wf_fit) {
+  wf_fit %>%
+    workflows::extract_fit_parsnip() %>%
+    pluck("fit") %>%      # objeto glm
+    car::vif()
+}
+
+vif_results <- fits_vif %>%
+  mutate(
+    vif = purrr::map(fit, calc_vif)
+  )
+
+vif_tidy <- vif_results %>%
+  select(wflow_id, vif) %>%
+  tidyr::unnest_longer(vif, values_to = "vif") %>%
+  rename(variable = vif_id)
+
+vif_summary <- vif_tidy %>%
+  group_by(wflow_id) %>%
+  summarise(
+    max_vif = max(vif),
+    mean_vif = mean(vif)
+  )
+```
+
+##### Comparação entre modelos
+
+Embora a avaliação do ajuste constitua uma etapa fundamental na construção de modelos de regressão, a comparação entre diferentes especificações deve considerar também sua capacidade de generalização para dados não utilizados durante o treinamento. Dessa forma, antes da análise detalhada dos diagnósticos dos modelos, realizou-se uma comparação de seu desempenho preditivo utilizando o conjunto de teste.
+
+A @tbl-metrics-default apresenta as principais métricas de avaliação obtidas para cada especificação da regressão logística frequentista, incluindo acurácia (*Accuracy*), acurácia balanceada (*Balanced Accuracy*), área sob a curva ROC (*ROC AUC*), perda logarítmica (*Log Loss*), sensibilidade, especificidade, precisão, escore F1, coeficiente de correlação de Matthews (MCC). Quando aplicável, medidas de multicolinearidade por meio do Fator de Inflação da Variância (VIF) foram calculadas, que podemos observar na @tbl-vif-default.
+
+De modo geral, os modelos que incorporaram a variável *score_credito* apresentaram desempenho substancialmente superior ao modelo em que essa variável foi removida. A exclusão do *score_credito* resultou em uma queda acentuada de desempenho em todas as métricas, evidenciando sua elevada capacidade discriminatória para a concessão de empréstimos.
+
+Observa-se ainda que o modelo contendo apenas a variável *score_credito* apresentou desempenho bastante próximo ao modelo completo, com pequena redução nas métricas de classificação, mas utilizando apenas um preditor. Esse resultado sugere que grande parte da informação utilizada para discriminar empréstimos aprovados e reprovados encontra-se concentrada nessa variável, tornando esse modelo particularmente atrativo sob a perspectiva da parcimônia e da interpretabilidade.
+
+Embora o modelo sem variáveis altamente correlacionadas tenha apresentado desempenho ligeiramente superior em algumas métricas, a diferença em relação ao modelo contendo apenas o *score_credito* foi pequena. Considerando a simplicidade da especificação, a facilidade de interpretação dos coeficientes e a proximidade do desempenho preditivo em relação aos modelos mais complexos, optou-se por utilizar o modelo baseado exclusivamente no *score_credito* como principal objeto das análises de interpretação dos parâmetros e dos diagnósticos apresentados nas seções seguintes.
+
+Para fins de apresentação e discussão, optou-se por aprofundar a análise de apenas duas especificações representativas: (i) o modelo completo, por utilizar todas as variáveis disponíveis e permitir a avaliação de aspectos como multicolinearidade e significância dos coeficientes; e (ii) o modelo contendo apenas a variável score_credito, por apresentar desempenho competitivo aliado à elevada parcimônia e facilidade de interpretação. Nas subseções seguintes, são apresentados os diagnósticos e as medidas de qualidade do ajuste desses modelos.
+
+```{r, echo=FALSE}
+#| label: tbl-metrics-default
+#| tbl-cap: "Métricas de desempenho do modelo de regressão logística para prervisão de concessão de empréstimos, avaliadas no conjunto de teste."
+#| echo: false
+#| warning: false 
+model_summary <- metrics_table_final_loan %>%
+  select(
+    wflow_id,
+    accuracy,
+    bal_accuracy,
+    roc_auc,
+    log_loss,
+    sens,
+    spec,
+    precision,
+    f1,
+    mcc
+  )
+  
+model_summary %>%
+  rename(
+    Modelo  = wflow_id,
+    Acc     = accuracy,
+    BAcc  = bal_accuracy,
+    AUC     = roc_auc,
+    LLoss = log_loss,
+    Sens    = sens,
+    Spec    = spec,
+    Prec    = precision,
+    F1      = f1,
+    MCC     = mcc
+  ) %>%
+  kable(digits = 2)
+```
+```{r, echo = FALSE}
+#| label: tbl-vif-default
+#| tbl-cap: "Medidas de multicolinearidade (VIF) para cada especificação do modelo"
+#| echo: false
+#| warning: false 
+vif_summary <- vif_tidy %>%
+  group_by(wflow_id) %>%
+  summarise(
+    max_vif  = max(vif),
+    mean_vif = mean(vif),
+    .groups = "drop"
+  )
+vif_summary %>%
+  rename(
+    Modelo   = wflow_id,
+    `VIF Máx.` = max_vif,
+    `VIF Médio` = mean_vif
+  ) %>%
+  kable(digits = 2)
+```
+
+##### Diagnóstico do modelo completo 
+
+```{r, include = FALSE}
+coef_tables <- fits %>%
+  transmute(
+    wflow_id,
+    coef = map(
+      fit,
+      ~ tidy(extract_fit_parsnip(.x)$fit)
+    )
+  )
+
+coef_all <- coef_tables %>%
+  filter(wflow_id == "all_features_logit") %>%
+  pull(coef) %>%
+  .[[1]]
+
+
+
+coef_all %>%
+  mutate(
+    estimate = round(estimate,4),
+    std.error = round(std.error,4),
+    statistic = round(statistic,2),
+    p.value = scales::pvalue(p.value)
+  ) %>%
+  gt() %>%
+  cols_label(
+    term = "Variável",
+    estimate = "Coeficiente",
+    std.error = "Erro padrão",
+    statistic = "z",
+    p.value = "p-valor"
+  )
+
+coef_all <- coef_all %>%
+  mutate(
+    OR = exp(estimate)
+  )
+
+fit_glm <- fits %>%
+  filter(wflow_id == "all_features_logit") %>%
+  pull(fit) %>%
+  .[[1]] %>%
+  extract_fit_parsnip() %>%
+  pluck("fit")
+```
+
+```{r residuos-default, echo = FALSE}
+#| label: fig-default-residuos
+#| fig-cap: ""
+#| fig-width: 8
+#| fig-height: 8
+#| fig-align: center
+#| out-width: "100%"
+#| 
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+#----------------------------------------------------
+# 1. Resíduos de Deviance
+#----------------------------------------------------
+plot(
+  fitted(fit_glm),
+  residuals(fit_glm, type = "deviance"),
+  pch = 19,
+  col = "steelblue",
+  xlab = "Probabilidade ajustada",
+  ylab = "Resíduo de Deviance",
+  main = "Resíduos de Deviance"
+)
+abline(h = 0, lty = 2, col = "red")
+
+#----------------------------------------------------
+# 2. Resíduos de Pearson
+#----------------------------------------------------
+plot(
+  fitted(fit_glm),
+  residuals(fit_glm, type = "pearson"),
+  pch = 19,
+  col = "steelblue",
+  xlab = "Probabilidade ajustada",
+  ylab = "Resíduo de Pearson",
+  main = "Resíduos de Pearson"
+)
+abline(h = 0, lty = 2, col = "red")
+
+#----------------------------------------------------
+# 3. Distância de Cook
+#----------------------------------------------------
+plot(
+  cooks.distance(fit_glm),
+  type = "h",
+  col = "steelblue",
+  ylab = "Cook's Distance",
+  xlab = "Observação",
+  main = "Distância de Cook"
+)
+
+#----------------------------------------------------
+# 4. Leverage
+#----------------------------------------------------
+plot(
+  hatvalues(fit_glm),
+  type = "h",
+  col = "steelblue",
+  ylab = "Leverage",
+  xlab = "Observação",
+  main = "Leverage"
+)
+
+par(mfrow = c(1,1))
+```
+
+A @fig-default-residuos apresenta os diagnósticos dos resíduos e das medidas de influência do modelo logístico ajustado. O gráfico dos resíduos de Deviance em função das probabilidades ajustadas apresenta a formação de dois ramos característicos da regressão logística, decorrentes da natureza binária da variável resposta. Não foram identificados padrões sistemáticos que indiquem inadequação do modelo, sendo observadas apenas poucas observações com resíduos de maior magnitude, correspondentes a casos em que a probabilidade prevista divergiu substancialmente do valor observado.
+
+Os resíduos de Pearson apresentaram comportamento semelhante ao observado para os resíduos de Deviance. Embora algumas observações apresentem resíduos de elevada magnitude, sua ocorrência é pontual e não evidencia um padrão consistente de falta de ajuste ao longo do intervalo das probabilidades estimadas.
+
+A análise da Distância de Cook não indicou a presença de observações altamente influentes. De maneira geral, valores superiores a 1 são considerados indicativos de influência excessiva sobre o ajuste do modelo. Embora algumas observações apresentem valores relativamente maiores que as demais, todos permaneceram bastante inferiores a esse limite, sugerindo que nenhuma delas exerce influência significativa sobre as estimativas dos coeficientes.
+
+Por fim, os valores de leverage permaneceram baixos ao longo das observações, indicando ausência de casos com combinações incomuns das variáveis explicativas que pudessem comprometer a estabilidade do ajuste.
+```{r, include = FALSE}
+which.min(residuals(fit_glm, type = "pearson"))
+
+sort(residuals(fit_glm, type = "pearson"))[1:10]
+
+which(abs(residuals(fit_glm, type = "pearson")) > 3)
+
+cooks.distance(fit_glm)[2253]
+hatvalues(fit_glm)[2253]
+
+augment(fit_glm) |>
+  slice(2253)
+
+predict(fit_glm, type = "response")[2253]
+```
+```{r, echo = FALSE}
+#| label: tbl-comp-metrics-default
+#| tbl-cap: ""
+#| echo: false
+#| warning: false 
+diag_tbl <-
+glance(fit_glm) %>%
+    transmute(
+        `Null Deviance` = null.deviance,
+        `Residual Deviance` = deviance,
+        AIC,
+        BIC,
+        `Graus de liberdade` = df.residual
+    )
+
+kable(diag_tbl)
+```
+
+A qualidade do ajuste do modelo foi inicialmente avaliada por meio da *Deviance* e dos critérios de informação. O modelo nulo, que considera apenas o intercepto, apresentou **Null Deviance** igual a **4215,13**, enquanto o modelo ajustado apresentou **Residual Deviance** de **1369,65**. Essa expressiva redução da *Deviance* indica que a inclusão das variáveis explicativas proporcionou uma melhora substancial no ajuste em relação ao modelo sem preditores, evidenciando que o conjunto de variáveis é capaz de explicar uma parcela significativa da variabilidade observada na aprovação dos empréstimos.
+
+Como medida complementar de qualidade do ajuste, o modelo apresentou **AIC = 1401,65** e **BIC = 1498,68**. Esses critérios combinam a qualidade do ajuste com uma penalização pela complexidade do modelo, sendo particularmente úteis para a comparação entre modelos candidatos. Em ambos os casos, valores menores indicam melhor equilíbrio entre ajuste e parcimônia. Por fim, o modelo foi ajustado com **3164 graus de liberdade residuais**, correspondentes ao número de observações disponíveis após a estimação dos parâmetros.
+
+
+
+```{r, echo = FALSE}
+#| label: tbl-complete-model-default
+#| tbl-cap: ""
+#| echo: false
+#| warning: false 
+
+coef_all  %>%
+  kable(digits = 4)
+```
+
+A @tbl-complete-model-default apresenta as estimativas dos coeficientes, erros-padrão, estatísticas z e respectivos valores-p. Entre as variáveis analisadas, a renda anual, valor do emprestimo, prazo e score mostraram-se estatisticamente significativas ao nível de 1%. O coeficiente (Coluna estimate da tabela) associado à renda anual é positivo, indicando que maiores níveis de renda aumentam a probabilidade de aprovação do empréstimo, mantendo-se as demais variáveis constantes. Em contrapartida, o valor solicitado apresenta coeficiente negativo, sugerindo que empréstimos de maior montante estão associados a uma menor probabilidade de aprovação, refletindo maior percepção de risco por parte da instituição financeira.
+
+O prazo do empréstimo possui coeficiente positivo e estatisticamente significativo, indicando que prazos mais longos tendem a aumentar a chance de aprovação, possivelmente por reduzirem o valor das parcelas e, consequentemente, o risco de inadimplência. A variável score destaca-se como o preditor mais relevante do modelo, apresentando coeficiente negativo de grande magnitude e elevada significância estatística. Esse resultado sugere forte associação entre o score de crédito e a decisão de concessão, reforçando seu papel central na avaliação de risco.
+
+As demais variáveis, incluindo número de dependentes, valores de ativos (residenciais, comerciais, de luxo e bancários), nível educacional e status de trabalho autônomo, não apresentaram significância estatística aos níveis usuais. A ausência de significância estatística dessas covariáveis indica que, uma vez controladas as variáveis centrais do modelo, sua contribuição marginal para a verossimilhança do modelo é limitada, não resultando em melhora estatisticamente detectável na capacidade de discriminação do risco de crédito.
+
+O intercepto negativo e estatisticamente significativo reflete a probabilidade basal de aprovação quando todas as variáveis explicativas estão em seus valores de referência, reforçando a necessidade da presença de características financeiras favoráveis para aumentar a chance de concessão do crédito.
+
+A interpretação dos coeficientes da regressão logística foi realizada por meio da razão de chances (*Odds Ratio*), obtida pela exponenciação dos coeficientes estimados $(OR=e^\beta)$. Para facilitar a interpretação dos efeitos das variáveis explicativas, a variação percentual nas chances de aprovação foi calculada utilizando a expressão (100(e^\beta-1)). Valores positivos indicam aumento nas chances do evento de interesse, enquanto valores negativos indicam redução, mantendo constantes as demais variáveis do modelo.
+
+Observa-se que o **score de crédito** apresentou coeficiente positivo e estatisticamente significativo $(\beta = 0,0256); (p < 0,001)$. Isso indica que, para cada unidade adicional no *score_credito*, as chances de aprovação do empréstimo aumentam aproximadamente **2,6%**, evidenciando que candidatos com maior pontuação de crédito possuem maior probabilidade de obter aprovação.
+
+Por outro lado, a variável **prazo do empréstimo** apresentou coeficiente negativo e estatisticamente significativo $(\beta = -0,1587); (p < 0,001)$. Nesse caso, cada ano adicional no prazo está associado a uma redução aproximada de **14,7%** nas chances de aprovação do empréstimo, mantendo-se constantes as demais variáveis do modelo.
+
+Entre as demais variáveis, apenas a categoria correspondente a **quatro dependentes** apresentou efeito estatisticamente significativo ao nível de 5% $($(\beta = 0,3617); (p = 0,034)$, indicando um aumento de aproximadamente **43,6%** nas chances de aprovação em relação à categoria de referência. As demais variáveis não apresentaram evidências estatísticas suficientes para rejeitar a hipótese de coeficiente nulo ao nível de significância adotado.
+
+As variáveis monetárias (*renda_anual*, *valor_emprestimo* e ativos patrimoniais) apresentaram coeficientes numericamente muito pequenos em razão da escala em que são medidas. Assim, embora algumas delas tenham apresentado significância estatística, a interpretação direta da razão de chances para um incremento unitário (R$ 1,00) não é informativa, sendo mais apropriada a interpretação para incrementos monetários maiores.
+
+##### Modelo baseado apenas no score
+```{r, include = FALSE}
+coef_score <- coef_tables %>%
+  filter(wflow_id == "score_only_logit") %>%
+  pull(coef) %>%
+  .[[1]]
+
+coef_score %>%
+  mutate(
+    estimate = round(estimate,4),
+    std.error = round(std.error,4),
+    statistic = round(statistic,2),
+    p.value = scales::pvalue(p.value)
+  ) %>%
+  gt() %>%
+  cols_label(
+    term = "Variável",
+    estimate = "Coeficiente",
+    std.error = "Erro padrão",
+    statistic = "z",
+    p.value = "p-valor"
+  )
+
+coef_score <- coef_score %>%
+  mutate(
+    OR = exp(estimate)
+  )
+
+fit_glm <- fits %>%
+  filter(wflow_id == "score_only_logit") %>%
+  pull(fit) %>%
+  .[[1]] %>%
+  extract_fit_parsnip() %>%
+  pluck("fit")
+```
+
+```{r residuos-default-2, echo = FALSE}
+#| label: fig-default-residuos-2
+#| fig-cap: ""
+#| fig-width: 8
+#| fig-height: 8
+#| fig-align: center
+#| out-width: "100%"
+#| 
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+#----------------------------------------------------
+# 1. Resíduos de Deviance
+#----------------------------------------------------
+plot(
+  fitted(fit_glm),
+  residuals(fit_glm, type = "deviance"),
+  pch = 19,
+  col = "steelblue",
+  xlab = "Probabilidade ajustada",
+  ylab = "Resíduo de Deviance",
+  main = "Resíduos de Deviance"
+)
+abline(h = 0, lty = 2, col = "red")
+
+#----------------------------------------------------
+# 2. Resíduos de Pearson
+#----------------------------------------------------
+plot(
+  fitted(fit_glm),
+  residuals(fit_glm, type = "pearson"),
+  pch = 19,
+  col = "steelblue",
+  xlab = "Probabilidade ajustada",
+  ylab = "Resíduo de Pearson",
+  main = "Resíduos de Pearson"
+)
+abline(h = 0, lty = 2, col = "red")
+
+#----------------------------------------------------
+# 3. Distância de Cook
+#----------------------------------------------------
+plot(
+  cooks.distance(fit_glm),
+  type = "h",
+  col = "steelblue",
+  ylab = "Cook's Distance",
+  xlab = "Observação",
+  main = "Distância de Cook"
+)
+
+#----------------------------------------------------
+# 4. Leverage
+#----------------------------------------------------
+plot(
+  hatvalues(fit_glm),
+  type = "h",
+  col = "steelblue",
+  ylab = "Leverage",
+  xlab = "Observação",
+  main = "Leverage"
+)
+
+par(mfrow = c(1,1))
+```
+
+A @fig-default-residuos-2 apresenta os resíduos de Deviance, resíduos de Pearson, Distância de Cook e valores de Leverage para o modelo ajustado.
+
+Os resíduos de Deviance exibem a formação de dois ramos bem definidos, padrão característico da regressão logística quando a variável resposta é binária. Observa-se que a maior parte das observações encontra-se distribuída de forma contínua ao longo desses ramos, sem indícios de padrões sistemáticos que sugiram inadequação da função de ligação logística ou violação importante das suposições do modelo. Algumas observações apresentam resíduos de maior magnitude, concentradas em probabilidades ajustadas próximas de 0 ou 1, indicando casos em que a classificação observada diverge da elevada probabilidade estimada pelo modelo.
+
+Os resíduos de Pearson apresentam comportamento semelhante, com poucos valores extremos associados às mesmas observações identificadas nos resíduos de Deviance. Tais casos correspondem a observações cuja resposta observada difere substancialmente daquela prevista pelo modelo, situação esperada em problemas de classificação binária e que, isoladamente, não caracteriza inadequação do ajuste.
+
+bservam-se ainda algumas observações com resíduos de Pearson de maior magnitude, associadas a probabilidades ajustadas muito próximas dos extremos (0 ou 1). Esses casos correspondem a situações em que o modelo atribui elevada probabilidade a determinado desfecho, mas a resposta observada pertence à classe oposta, resultando em resíduos mais elevados. Em modelos de regressão logística aplicados a problemas de classificação binária, especialmente quando apresentam elevado poder discriminatório, esse comportamento é esperado e representa casos excepcionais cuja classificação não é plenamente explicada pelas variáveis disponíveis. Dessa forma, tais observações não indicam, por si só, inadequação do modelo, mas evidenciam a existência de indivíduos cujo comportamento difere do padrão predominante na amostra
+
+A Distância de Cook evidencia a presença de algumas observações relativamente mais influentes; entretanto, não se observa concentração de influência excessiva em um número reduzido de casos. De forma complementar, os valores de Leverage permanecem baixos e relativamente homogêneos ao longo da amostra, sugerindo ausência de observações com elevado potencial de influência decorrente da configuração das variáveis explicativas.
+
+Em conjunto, os diagnósticos indicam que o modelo apresenta comportamento compatível com o esperado para uma regressão logística binária, não sendo identificadas evidências que justifiquem a exclusão de observações ou a necessidade de modificações estruturais no modelo.
+
+```{r, echo = FALSE}
+#| label: tbl-comp-metrics-default-2
+#| tbl-cap: ""
+#| echo: false
+#| warning: false 
+diag_tbl <-
+glance(fit_glm) %>%
+    transmute(
+        `Null Deviance` = null.deviance,
+        `Residual Deviance` = deviance,
+        AIC,
+        BIC,
+        `Graus de liberdade` = df.residual
+    )
+
+kable(diag_tbl)
+```
+A qualidade do ajuste pode ser avaliada pela redução da Deviance entre o modelo nulo e o modelo ajustado. Na @tbl-comp-metrics-default-2, observa-se uma redução da Null Deviance de 4215,13 para uma Residual Deviance de 1598,10, representando uma expressiva melhora no ajuste em relação ao modelo sem preditores. Essa redução indica que a variável score_credito possui elevada capacidade explicativa para a probabilidade de aprovação do empréstimo.
+
+Os critérios de informação AIC (1602,10) e BIC (1614,23) foram empregados como medidas complementares na avaliação do modelo, conciliando qualidade de ajuste e complexidade por meio da penalização da inclusão de parâmetros adicionais. Esses critérios foram posteriormente utilizados na comparação entre as diferentes especificações de regressão logística consideradas neste trabalho. Em conjunto com a redução da Deviance e os resultados das métricas preditivas, observa-se que o modelo baseado exclusivamente na variável score_credito apresenta um elevado poder explicativo, constituindo uma especificação parcimoniosa e adequada para servir como referência nas comparações realizadas ao longo deste estudo.
+```{r, echo = FALSE}
+#| label: tbl-complete-model-default-2
+#| tbl-cap: ""
+#| echo: false
+#| warning: false 
+
+coef_score  %>%
+  kable(digits = 4)
+kable(coef_score)
+```
+
+O modelo contendo apenas a variável score_credito apresentou coeficientes estatisticamente significativos (p < 0,001), como podemos ver na @tbl-complete-model-default-2, fornecendo evidências de associação entre o score de crédito e a probabilidade de aprovação do empréstimo. O coeficiente estimado foi positivo ($\hat{\beta}=0,0207$), indicando que valores mais elevados de score aumentam o logaritmo das chances (log-odds) de aprovação.
+
+O coeficiente estimado para score_credito foi positivo ($\hat{\beta}=0,0207$), indicando que o aumento do score está associado ao aumento da probabilidade de aprovação. Como a regressão logística é ajustada na escala do logaritmo das chances (log-odds), uma interpretação mais intuitiva pode ser obtida por meio da razão de chances (Odds Ratio).
+
+O Odds Ratio associado ao score é dado por
+
+$$
+OR = e^{0.0207} \approx 1.021
+$$
+
+Isso significa que, para cada aumento de uma unidade no score de crédito, as chances de aprovação aumentam aproximadamente 2,1%, mantendo constantes as demais condições do modelo. Embora o efeito por unidade seja relativamente pequeno, diferenças de dezenas de pontos tornam-se bastante expressivas. Por exemplo, um aumento de 100 pontos no score implica
+
+$$
+OR_{100}=e^{100\times0.0207}\approx7.9
+$$
+
+ou seja, aproximadamente oito vezes maiores chances de aprovação, evidenciando o forte poder discriminatório dessa variável.
+
+O efeito estimado para o score_credito evidencia que essa variável concentra grande parte da capacidade preditiva do problema de aprovação de empréstimos. Esse resultado está em consonância com a etapa de análise exploratória, na qual o score já havia se destacado como o principal fator associado ao desfecho, justificando a investigação de um modelo contendo exclusivamente esse preditor.
+
+Embora o modelo completo apresente desempenho preditivo ligeiramente superior, o ganho observado nas métricas de classificação é relativamente pequeno quando comparado ao aumento da complexidade do modelo. Além disso, a inclusão simultânea das variáveis financeiras introduz problemas de multicolinearidade, evidenciados pelos elevados valores do Variance Inflation Factor (VIF), dificultando a interpretação individual dos coeficientes e aumentando a instabilidade das estimativas.
+
+Nesse contexto, o modelo baseado apenas no score_credito representa uma alternativa mais parcimoniosa, preservando elevado poder discriminatório com apenas um parâmetro explicativo. Essa simplicidade favorece a interpretação dos resultados, reduz a complexidade computacional e facilita sua aplicação prática em processos de concessão de crédito. Por esse motivo, esse modelo foi adotado como principal referência.
+
+#### Abordagem Bayesiana
+```{r , include=FALSE}
+table(train_data_loan$status, useNA = "ifany")
+```
+```{r , include=FALSE}
+# Converter a variável resposta para 0/1
+train_data_loan <- train_data_loan %>%
+  mutate(
+    status = if_else(status == "Aprovado", 1, 0)
+  )
+
+test_data_loan <- test_data_loan %>%
+  mutate(
+    status = if_else(status == "Aprovado", 1, 0)
+  )
+
+
+# Receita
+rec_score <- recipe(
+  status ~ score_credito,
+  data = train_data_loan
+)%>% step_normalize(score_credito)
+
+rec_prep <- prep(rec_score)
+
+
+# Dados para o modelo Bayesiano
+train_bayes <- bake(
+  rec_prep,
+  new_data = NULL
+)
+
+test_bayes <- bake(
+  rec_prep,
+  new_data = test_data_loan
+)
+
+
+```
+
+Diferentemente da abordagem frequentista, a análise bayesiana permite incorporar informações prévias sobre os parâmetros do modelo, possibilitando uma interpretação probabilística das estimativas e das previsões. No contexto da concessão de empréstimos, essa abordagem é particularmente útil para lidar com incertezas e para integrar conhecimento externo, como histórico de crédito ou políticas internas da instituição financeira.
+
+Dado o desempenho observado pelo modelo frequentista contendo exclusivamente a variável score_credito, essa especificação foi utilizada como referência para a análise Bayesiana. A escolha de um único preditor permite avaliar de forma mais direta o efeito da distribuição a priori sobre a estimação do coeficiente, reduzindo a complexidade da análise e facilitando a comparação entre diferentes graus de informação prévia.
+
+##### Padronização do score de crédito
+
+Antes da especificação dos modelos Bayesianos, o `score_credito` foi padronizado de forma a facilitar a definição e a interpretação das distribuições a priori. A transformação foi realizada por meio da centralização e divisão pelo desvio-padrão da variável, resultando em uma variável com média aproximadamente igual a zero e desvio-padrão igual a um. Assim, o preditor utilizado nos modelos Bayesianos pode ser representado por
+
+$$
+Z_{\text{score}} =
+\frac{\text{score}*{\text{credito}}-\overline{\text{score}}}
+{s*{\text{score}}},
+$$
+
+em que $\overline{\text{score}}$ representa a média do `score_credito` no conjunto de treinamento e $s_{\text{score}}$ representa seu desvio-padrão.
+
+A padronização foi adotada principalmente para tornar a escala do coeficiente compatível com a definição das distribuições a priori. Na escala original, o `score_credito` assume valores relativamente elevados, de modo que pequenas variações numéricas no coeficiente podem representar efeitos substancialmente diferentes sobre os log-odds. Além disso, a definição de prioris com diferentes níveis de informação torna-se menos intuitiva quando o preditor está em uma escala de centenas de pontos.
+
+Após a padronização, o coeficiente associado ao score passa a representar o efeito de um aumento de um desvio-padrão no `score_credito`. Essa transformação permite definir as prioris diretamente sobre uma escala padronizada e facilita a comparação entre diferentes graus de informação prévia. Em particular, torna-se mais natural especificar uma priori informativa centrada em um valor positivo, refletindo a expectativa de que maiores níveis de score estejam associados a maior probabilidade de aprovação.
+
+A transformação foi estimada exclusivamente no conjunto de treinamento e posteriormente aplicada ao conjunto de teste utilizando os mesmos parâmetros obtidos no treinamento. Esse procedimento evita que informações provenientes do conjunto de teste sejam incorporadas durante o ajuste do modelo, preservando a separação entre as etapas de treinamento e avaliação.
+
+Com o preditor padronizado, o intercepto também passa a possuir uma interpretação mais conveniente. Como o valor zero do `score_credito` padronizado corresponde aproximadamente à média observada no conjunto de treinamento, o intercepto representa o log-odds de aprovação para um indivíduo com score igual ao valor médio da amostra.
+
+
+##### Especificação das distribuições a priori
+```{r , include=FALSE}
+table(test_bayes$status)
+table(train_data_loan$status, useNA = "ifany")
+```
+
+###### Priori pouco informativa
+```{r p1-score, include=FALSE}
+# Não informativa
+prior_noninformative <- normal(location = 0, scale = 10, autoscale = FALSE)
+
+fit_p1 <- stan_glm(
+  status ~ score_credito,
+  data = train_bayes,
+  family = binomial(link = "logit"),
+  prior = normal(0, 10),
+  prior_intercept = normal(0, 10),
+  chains = 4,
+  iter = 4000,
+  seed = 123
+)
+```
+
+A primeira especificação de prioris utiliza uma distribuição Normal centrada em zero e com elevada dispersão:
+$$
+\beta_{\text{score}} \sim \mathcal{N}(0,10^2).
+$$
+
+Essa especificação atribui elevada incerteza ao efeito do score antes da observação dos dados, permitindo que uma ampla faixa de valores para o coeficiente seja considerada plausível. Dessa forma, o modelo funciona como uma referência para avaliar em que medida os resultados posteriores são determinados principalmente pela informação presente na amostra, com pouca influência de conhecimento prévio específico sobre a magnitude do efeito.
+
+Para o intercepto, foi utilizada uma distribuição igualmente pouco informativa:
+$$
+\beta_{\text{0}} \sim \mathcal{N}(0,10^2).
+$$
+
+###### Priori fracamente regularizadora
+
+```{r p2-score, include=FALSE}
+# Prior 2 — Regularizadora fraca
+prior_weak <- normal(location = 0, scale = 0.05, autoscale = FALSE)
+
+fit_p2 <- stan_glm(
+  status ~ score_credito,
+  data = train_bayes,
+  family = binomial(link = "logit"),
+  prior = normal(0, 2.5),
+  prior_intercept = normal(0, 5),
+  chains = 4,
+  iter = 4000,
+  seed = 123
+)
+```
+
+Na segunda especificação, foi adotada uma distribuição Normal mais concentrada em torno de zero:
+$$
+\beta_{\text{score}} \sim \mathcal{N}(0,2.5^2).
+$$
+
+Em comparação com a primeira especificação, essa priori atribui menor probabilidade a valores extremos do coeficiente, introduzindo uma regularização moderada sem estabelecer uma direção específica para o efeito. Assim, tanto efeitos positivos quanto negativos permanecem possíveis a priori, mas valores de grande magnitude são considerados menos plausíveis.
+
+Essa especificação permite investigar se uma redução na incerteza prévia sobre a magnitude do efeito altera de forma relevante a distribuição posterior do coeficiente associado ao score.
+
+Para o intercepto, foi utilizada uma priori também centrada em zero, porém com menor dispersão:
+$$
+\beta_{\text{0}} \sim \mathcal{N}(0,5^2).
+$$
+
+##### Priori informativa
+
+```{r p3-score, include=FALSE}
+# Prior 3 — Informativa
+# Prior 3 — Informativa
+prior_informative <- normal(
+  location = 0.5,
+  scale = 0.15,
+  autoscale = FALSE
+)
+
+fit_p3 <- stan_glm(
+  status ~ score_credito,
+  data = train_bayes,
+  family = binomial(link = "logit"),
+  prior = normal(0.5, 0.15),
+  prior_intercept = normal(0, 2.5),
+  chains = 4,
+  iter = 4000,
+  seed = 123
+)
+```
+
+Por fim, foi considerada uma priori informativa para o coeficiente associado ao `score_credito`:
+
+$$
+\beta_{\text{score}} \sim \mathcal{N}(0.5,0.15^2).
+$$
+
+Como o `score_credito` foi previamente padronizado, o coeficiente representa a variação nos log-odds de aprovação associada a um aumento de um desvio-padrão no score. A escolha de uma distribuição centrada em 0,5 incorpora conhecimento prévio sobre a relação esperada entre o score de crédito e a aprovação do empréstimo. Valores mais elevados do CIBIL score estão, em geral, associados a um histórico de crédito mais favorável e a menor risco de crédito percebido, sendo, portanto, esperada uma associação positiva entre o score e a probabilidade de aprovação.
+
+A escala de 0,15 estabelece uma concentração moderada em torno do valor central de 0,5, permitindo, entretanto, uma faixa de valores plausíveis para o coeficiente. Dessa forma, a priori incorpora informação sobre a direção e uma magnitude aproximada do efeito, mas não determina previamente o valor do parâmetro, permitindo que a informação observada nos dados também contribua para a distribuição posterior.
+
+Para o intercepto, foi utilizada uma distribuição Normal centrada em zero:
+
+$$
+\beta_0 \sim \mathcal{N}(0,2.5^2).
+$$
+
+Essa especificação permite ampla variação para o intercepto, evitando impor uma hipótese excessivamente restritiva sobre o nível basal de aprovação. Como o `score_credito` foi padronizado, o valor zero do preditor corresponde aproximadamente ao score médio da amostra. Assim, o intercepto pode ser interpretado como o log-odds de aprovação para um indivíduo com score igual à média da amostra.
+
+A utilização das três especificações permite avaliar a sensibilidade dos resultados à quantidade de informação incorporada a priori. A primeira especificação fornece uma referência com elevada incerteza prévia, a segunda introduz uma regularização moderada em torno de zero e a terceira incorpora conhecimento específico sobre a direção e a magnitude esperada do efeito do score. A comparação das distribuições posteriores e do desempenho preditivo permite, portanto, avaliar em que medida as conclusões sobre o efeito do `score_credito` são sustentadas pela informação contida nos dados ou influenciadas pelas diferentes hipóteses estabelecidas a priori.
+
+
+
+```{r priori-graf-cred, echo=FALSE}
+#| label: fig-prior-score
+#| fig-cap: "Diferentes distribuições a priori consideradas para o coeficiente associado ao score de crédito."
+#| warning: false
+#| fig-width: 18
+#| fig-height: 12
+#| out-width: "100%"
+#| fig-align: "center"
+
+
+library(tidyverse)
+
+# Valores de beta para construir as densidades
+beta <- seq(-2, 2, length.out = 4000)
+
+prior_data <- tibble(
+  beta = beta,
+  `Pouco informativa` = dnorm(beta, mean = 0, sd = 10),
+  `Fracamente regularizadora` = dnorm(beta, mean = 0, sd = 2.5),
+  `Informativa` = dnorm(beta, mean = 0.5, sd = 0.15)
+) |>
+  pivot_longer(
+    cols = -beta,
+    names_to = "Prior",
+    values_to = "Densidade"
+  )
+
+ggplot(
+  prior_data,
+  aes(x = beta, y = Densidade, linetype = Prior)
+) +
+  geom_area(
+    aes(fill = Prior),
+    alpha = 0.15,
+    position = "identity"
+  ) +
+  geom_line(linewidth = 1.1) +
+  labs(
+    x = expression(beta[score]),
+    y = "Densidade",
+    fill = "Priori",
+    linetype = "Priori"
+  ) +
+  coord_cartesian(xlim = c(-2, 2)) +
+  theme_minimal(base_size = 18) +
+  theme(
+    axis.text = element_text(size = 14),
+    axis.title = element_text(size = 17),
+    legend.title = element_text(size = 15),
+    legend.text = element_text(size = 14),
+    panel.grid.minor = element_blank()
+  )
+
+```
+
+A @fig-prior-score apresenta as distribuições a priori consideradas para o coeficiente associado ao score_credito. Observa-se que as três especificações representam diferentes graus de informação prévia sobre a magnitude do efeito. A priori pouco informativa, $\mathcal{N}(0,10^2)$, apresenta elevada dispersão, permitindo uma ampla faixa de valores para o coeficiente e exercendo menor restrição sobre a estimação posterior. A priori fracamente regularizadora, $\mathcal{N}(0,2.5^2)$, mantém o centro em zero, mas concentra maior massa de probabilidade em torno de valores próximos a esse ponto, reduzindo a plausibilidade atribuída a efeitos de grande magnitude. Por sua vez, a priori informativa, $\mathcal{N}(0.02,0.01^2)$, apresenta maior concentração em torno de um efeito positivo próximo a $0,02$, incorporando explicitamente a expectativa de uma associação positiva entre o score e a probabilidade de aprovação.
+
+A comparação visual evidencia, portanto, o aumento gradual da informação incorporada nas especificações, desde uma distribuição mais dispersa até uma priori fortemente concentrada em torno de uma magnitude de efeito previamente estabelecida. Essa variação permite avaliar, posteriormente, a sensibilidade das estimativas posteriores às diferentes hipóteses sobre o efeito do score_credito e verificar se as evidências observadas nos dados são suficientemente fortes para conduzir a resultados semelhantes entre as especificações.
+```{r , include=FALSE}
+calc_metrics_bay <- function(truth, class, prob) {
+  
+  truth_num <- as.numeric(as.character(truth))
+  
+  tibble(
+    accuracy = accuracy_vec(truth, class),
+    
+    bal_accuracy = bal_accuracy_vec(truth, class),
+    
+    roc_auc = roc_auc_vec(
+      truth,
+      prob,
+      event_level = "second"
+    ),
+    
+    log_loss = -mean(
+      truth_num * log(prob) +
+        (1 - truth_num) * log(1 - prob)
+    ),
+    
+    sens = sens_vec(truth, class),
+    
+    spec = spec_vec(truth, class),
+    
+    precision = precision_vec(truth, class),
+    
+    f1 = f_meas_vec(truth, class),
+    
+    mcc = mcc_vec(truth, class)
+  )
+}
+
+calc_metrics_bayes <- function(fit, test_data, model_name) {
+  
+  prob <- posterior_epred(
+    fit,
+    newdata = test_data
+  ) %>%
+    colMeans()
+  
+  class <- ifelse(
+    prob >= 0.5,
+    1,
+    0
+  ) %>%
+    factor(levels = c(0, 1))
+  
+  truth <- factor(
+    test_data$status,
+    levels = c(0, 1)
+  )
+  
+  calc_metrics_bay(
+    truth = truth,
+    class = class,
+    prob = prob
+  ) %>%
+    mutate(
+      wflow_id = model_name
+    )
+}
+```
+
+```{r , include=FALSE}
+pred_p1 <- posterior_epred(
+  fit_p1,
+  newdata = test_bayes
+) %>%
+  colMeans()
+
+pred_p2 <- posterior_epred(
+  fit_p2,
+  newdata = test_bayes
+) %>%
+  colMeans()
+
+pred_p3 <- posterior_epred(
+  fit_p3,
+  newdata = test_bayes
+) %>%
+  colMeans()
+
+
+metrics_p1 <- calc_metrics_bayes(
+  fit = fit_p1,
+  test_data = test_bayes,
+  model_name = "pouco_informativa"
+)
+
+metrics_p2 <- calc_metrics_bayes(
+  fit = fit_p2,
+  test_data = test_bayes,
+  model_name = "fracamente_regularizadora"
+)
+
+metrics_p3 <- calc_metrics_bayes(
+  fit = fit_p3,
+  test_data = test_bayes,
+  model_name = "informativa"
+)
+
+metrics_table_loan_all <- bind_rows(
+  metrics_table_final_loan,
+  metrics_p1,
+  metrics_p2,
+  metrics_p3
+)
+```
+
+```{r result-bayes-emprestimo, echo=FALSE}
+#| label: tbl-metricas-modelos
+#| tbl-cap: "Métricas de desempenho preditivo dos modelos frequentistas e Bayesianos avaliados no conjunto de teste."
+#| tbl-colwidths: [20, 10, 12, 10, 10, 10, 10, 12, 10, 10]
+
+kable(
+  metrics_table_loan_all,
+  digits = 4,
+  align = "lccccccccc"
+)
+```
+### Comparação do desempenho preditivo
+
+A Tabela @tbl-metricas-modelos apresenta as métricas de desempenho obtidas no conjunto de teste para as diferentes especificações dos modelos frequentistas e Bayesianos. A avaliação considera medidas de discriminação, como a área sob a curva ROC (ROC AUC), medidas baseadas em classificação, como acurácia, acurácia balanceada, sensibilidade, especificidade, precisão e F1-score, além do log loss e do coeficiente de Matthews (MCC). Como as especificações frequentistas já foram apresentadas e discutidas anteriormente, a análise a seguir concentra-se nos modelos Bayesianos e, principalmente, na sensibilidade de seu desempenho à escolha da distribuição a priori.
+
+Os modelos Bayesianos com as prioris pouco informativa e fracamente regularizadora apresentaram resultados praticamente idênticos em todas as métricas consideradas. Ambos alcançaram acurácia de 0,9142, acurácia balanceada de 0,9046 e ROC AUC de 0,9616. Para as medidas baseadas na classificação, foram obtidos sensibilidade de 0,8653, especificidade de 0,9439, precisão de 0,9036 e F1-score de 0,8841, enquanto o MCC foi de 0,8165. O log loss também foi praticamente o mesmo para as duas especificações, com valor de 0,2472. Esse comportamento indica que, para este conjunto de dados, a ampliação da incerteza a priori para uma distribuição fracamente regularizadora não produziu alterações relevantes nas previsões do modelo.
+
+A priori informativa apresentou comportamento ligeiramente distinto. Embora a ROC AUC tenha permanecido em 0,9616, indicando manutenção da capacidade de discriminação do modelo, houve uma pequena redução nas demais métricas de desempenho. A acurácia passou para 0,9123 e a acurácia balanceada para 0,9017, enquanto a sensibilidade foi reduzida de 0,8653 para 0,8579. O F1-score e o MCC também apresentaram pequenas reduções, passando de 0,8841 para 0,8809 e de 0,8165 para 0,8124, respectivamente. Por outro lado, observou-se um pequeno aumento na especificidade, de 0,9439 para 0,9455, e na precisão, de 0,9036 para 0,9053. Essas diferenças, contudo, são de pequena magnitude.
+
+A principal diferença entre as especificações Bayesianas foi observada no log loss. Enquanto as prioris pouco informativa e fracamente regularizadora produziram valor de 0,2472, a priori informativa resultou em 0,2626. Como valores menores de log loss indicam maior qualidade das probabilidades preditivas, esse resultado sugere que a concentração mais forte da priori em torno de um efeito positivo de magnitude específica não proporcionou melhoria na calibração das probabilidades previstas. Assim, embora a priori informativa incorpore conhecimento prévio sobre a relação esperada entre o score de crédito e a aprovação, essa informação adicional não resultou em ganho de desempenho preditivo neste conjunto de teste.
+
+A comparação com os modelos frequentistas reforça que os modelos Bayesianos baseados exclusivamente no `score_credito` apresentaram desempenho competitivo, embora ligeiramente inferior às especificações frequentistas mais completas. O modelo `score_only_logit`, por exemplo, apresentou ROC AUC de 0,9616, enquanto os modelos Bayesianos com as prioris pouco informativa e fracamente regularizadora alcançaram exatamente o mesmo valor. Entretanto, o modelo frequentista apresentou menor log loss, de 0,2473, enquanto os modelos Bayesianos correspondentes apresentaram valor de 0,2472, diferença praticamente desprezível. Esse resultado evidencia que, para essa especificação simples, a adoção da abordagem Bayesiana não implicou perda relevante de capacidade preditiva.
+
+De maneira geral, os resultados indicam baixa sensibilidade das previsões à escolha entre as prioris pouco informativa e fracamente regularizadora, enquanto a priori informativa produziu pequenas alterações no desempenho, sem benefício preditivo. Esse comportamento sugere que a informação contida nos dados é suficientemente forte para dominar, em grande medida, as diferenças entre as especificações menos restritivas. Ao mesmo tempo, o resultado da priori informativa evidencia que a incorporação de conhecimento prévio mais concentrado deve ser realizada com cautela, uma vez que uma hipótese a priori mais específica não necessariamente conduz a melhores previsões.
+
+Portanto, a comparação das três especificações não deve ser interpretada como uma busca pela priori que maximiza as métricas de teste, mas como uma análise de sensibilidade à quantidade de informação incorporada previamente. Nesse sentido, os resultados fornecem evidências de que as conclusões do modelo são relativamente robustas às prioris pouco informativa e fracamente regularizadora, enquanto uma especificação mais concentrada produz pequenas diferenças no desempenho, sem vantagem preditiva para os dados analisados.
+
+```{r , include=FALSE}
+summary(pred_p1)
+summary(pred_p2)
+summary(pred_p3)
+
+max(abs(pred_p1 - pred_p2))
+max(abs(pred_p1 - pred_p3))
+max(abs(pred_p2 - pred_p3))
+
+mean(abs(pred_p1 - pred_p2))
+mean(abs(pred_p1 - pred_p3))
+mean(abs(pred_p2 - pred_p3))
+```
+
+#### Modelo de Concessão de Empréstimo
+```{r, include=FALSE}
+colSums(is.na(default))
+
+```
+```{r default-frmodel-settings, include=FALSE}
+
+log_glm <- logistic_reg() |>
+  set_engine("glm") |>
+  set_mode("classification")
+#lasso
+log_l1 <- logistic_reg(
+  penalty = tune(),
+  mixture = 1
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+log_l2 <- logistic_reg(
+  penalty = tune(),
+  mixture = 0
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+folds <- vfold_cv(train_data_default, v = 5, strata = PD30)
+
+
+```
+```{r, include=FALSE}
+#modelo geral
+rec_default  <- recipe(PD30 ~ ., data = train_data_default)%>%
+  step_impute_mode(
+    all_nominal_predictors()
+  ) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+rec_all  <- recipe(PD30 ~ ., data = train_data_default)%>%
+  step_impute_mode(
+    all_nominal_predictors()
+  ) %>%
+  step_dummy(all_nominal_predictors()) 
+
+# Removendo alta correlação
+rec_corr <- recipe(
+  PD30 ~ .,
+  data = train_data_default
+) %>%
+  step_impute_mode(
+    all_nominal_predictors()
+  )%>% step_dummy(all_nominal_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.7)
+
+
+wf_logit_default <- workflow_set(
+  preproc = list(
+    all_features = rec_all,
+    no_corr      = rec_corr
+  ),
+  models = list(
+    logit = log_glm
+  )
+)
+
+wf_l1 <- workflow() %>%
+  add_recipe(rec_default) %>%
+  add_model(log_l1)
+
+tuned_l1 <- tune_grid(
+  wf_l1,
+  resamples = folds,
+  grid = grid,
+  metrics = metrics
+)
+
+wf_l2 <- workflow() %>%
+  add_recipe(rec_default) %>%
+  add_model(log_l2)
+
+tuned_l2 <- tune_grid(
+  wf_l2,
+  resamples = folds,
+  grid = grid,
+  metrics = metrics
+)
+show_notes(tuned_l1)
+
+```
+
+
+```{r, include=FALSE}
+best_l1 <- select_best(tuned_l1, metric = "roc_auc")
+final_l1 <- finalize_workflow(wf_l1, best_l1)
+fit_l1 <- fit(final_l1, train_data_default)
+
+best_l2 <- select_best(tuned_l2, metric = "roc_auc")
+final_l2 <- finalize_workflow(wf_l2, best_l2)
+fit_l2 <- fit(final_l2, train_data_default)
+# depende se mostraremos os coefs de L1 e L2
+coef_table <- extract_fit_engine(fit_l1) |>
+  coef(s = best_l1$penalty)
+coef_table
+coef_table <- extract_fit_engine(fit_l2) |>
+  coef(s = best_l2$penalty)
+coef_table
+```
+
+```{r, include=FALSE}
+fits <- wf_logit_default %>%
+  mutate(
+    fit = purrr::map(
+      info,
+      ~ fit(.x$workflow[[1]], data = train_data_default)
+    )
+  )
+
+preds <- fits %>%
+  mutate(
+    preds = purrr::map(
+      fit,
+      ~{
+        prob_tbl <- predict(.x, test_data_default, type = "prob")
+
+        tibble(
+          truth = test_data_default$PD30,
+          class = predict(.x, test_data_default, type = "class")$.pred_class,
+          prob  = prob_tbl$.pred_1
+        )
+      }
+    )
+  ) %>%
+  select(wflow_id, preds)
+
+preds <- preds %>%
+  tidyr::unnest(preds)
+
+metrics_wf <- fits %>%
+  mutate(
+    metrics = purrr::map(
+      fit,
+      ~ calc_metrics_from_fit(
+        fit = .x,
+        test_data = test_data_default,
+        truth_col = PD30
+      )
+    )
+  ) %>%
+  select(wflow_id, metrics) %>%
+  tidyr::unnest(metrics)
+
+metrics_l1 <- calc_metrics_from_fit(
+  fit = fit_l1,
+  test_data = test_data_default,
+  truth_col = PD30
+) %>%
+  mutate(wflow_id = "l1_logit")
+  
+metrics_l2 <- calc_metrics_from_fit(
+  fit = fit_l2,
+  test_data = test_data_default,
+  truth_col = PD30
+) %>%
+  mutate(wflow_id = "l2_logit")
+
+fits_vif <- fits %>%
+  dplyr::filter(
+    wflow_id %in% c(
+      "all_features_logit",
+      "no_corr_logit"
+    )
+  )
+
+metrics_table_final <- bind_rows(
+  metrics_wf,
+  metrics_l1,
+  metrics_l2
+)
+
+vif_results <- fits_vif %>%
+  mutate(
+    vif = purrr::map(fit, calc_vif)
+  )
+vif_tidy <- vif_results %>%
+  select(wflow_id, vif) %>%
+  tidyr::unnest_longer(vif, values_to = "vif") %>%
+  rename(variable = vif_id)
+
+vif_summary <- vif_tidy %>%
+  group_by(wflow_id) %>%
+  summarise(
+    max_vif = max(vif),
+    mean_vif = mean(vif)
+  )
+```
+```{r, echo=FALSE}
+#| label: tbl-metricas-modelos-pd30
+metrics_table_final %>%
+  rename(
+    Modelo  = wflow_id,
+    Acc     = accuracy,
+    BAcc  = bal_accuracy,
+    AUC     = roc_auc,
+    LLoss = log_loss,
+    Sens    = sens,
+    Spec    = spec,
+    Prec    = precision,
+    F1      = f1,
+    MCC     = mcc
+  ) %>%
+  kable(digits = 2)
+```
+```{r, echo=FALSE}
+#| label: tbl-vif-modelos-pd30
+kable(vif_summary, digits = 2, align = "lccccccccc")
+```
+
+A Tabela @tbl-metricas-modelos-pd30 apresenta o desempenho das diferentes especificações da regressão logística para previsão de PD30 no conjunto de teste. O modelo contendo todas as variáveis é utilizado como referência para avaliar os efeitos da remoção de variáveis correlacionadas e da aplicação de regularização por L1 e L2.
+
+De modo geral, os quatro modelos apresentaram desempenhos bastante próximos, com ROC AUC entre 0,7139 e 0,7166 e log loss entre 0,4669 e 0,4676. Esse comportamento indica que as diferentes estratégias de especificação não produziram alterações substanciais na capacidade discriminativa ou na qualidade das probabilidades preditas. O modelo completo apresentou ROC AUC de 0,7166, enquanto os modelos sem variáveis correlacionadas, L1 e L2 apresentaram valores de 0,7139, 0,7164 e 0,7150, respectivamente.
+
+A análise da multicolinearidade, apresentada separadamente na Tabela @tbl-vif-modelos-pd30, evidencia uma diferença importante entre as especificações. O modelo com todas as variáveis apresentou VIF máximo de 39,28 e VIF médio de 7,47, indicando a presença de multicolinearidade elevada entre os preditores. Após a remoção das variáveis identificadas como altamente correlacionadas, o modelo `no_corr_logit` apresentou redução expressiva desses valores, com VIF máximo de 1,86 e VIF médio de 1,24. Dessa forma, a estratégia de remoção de variáveis mostrou-se efetiva para reduzir a redundância entre os preditores.
+
+Os modelos regularizados por L1 e L2 não são avaliados por meio do VIF nesta análise. Embora a presença de correlação entre os preditores continue existindo, as penalizações L1 e L2 atuam diretamente sobre os coeficientes estimados, modificando sua magnitude e, no caso da penalização L1, podendo também produzir coeficientes exatamente iguais a zero. Assim, o objetivo da regularização não é eliminar a multicolinearidade entre as variáveis, mas reduzir seus efeitos sobre a estimação dos coeficientes e controlar a complexidade do modelo. Por essa razão, a avaliação da regularização é realizada por meio do desempenho preditivo e da comparação dos coeficientes, enquanto o VIF é utilizado especificamente para diagnosticar a estrutura de correlação entre os preditores.
+
+O modelo com regularização L1 apresentou desempenho praticamente equivalente ao modelo completo, com ROC AUC de 0,7164 e log loss de 0,4669, sendo este último ligeiramente inferior ao observado no modelo sem regularização (0,4671). O MCC também permaneceu praticamente inalterado, passando de 0,3579 para 0,3584. Esse resultado indica que a penalização L1 não comprometeu a capacidade preditiva do modelo, ao mesmo tempo em que oferece a possibilidade de obter uma especificação mais parcimoniosa por meio da seleção de variáveis.
+
+A remoção das variáveis correlacionadas também produziu resultados muito semelhantes ao modelo completo. Apesar da pequena redução na ROC AUC, de 0,7166 para 0,7139, o modelo `no_corr_logit` apresentou a maior acurácia balanceada (0,6141) e o maior MCC (0,3628) entre as especificações avaliadas. Portanto, a redução substancial da multicolinearidade foi obtida sem perda expressiva de desempenho preditivo. Esse resultado é particularmente relevante para a interpretação dos coeficientes, uma vez que estimativas obtidas em um cenário de menor colinearidade tendem a ser mais estáveis e menos influenciadas pela redundância entre as variáveis explicativas.
+
+Por sua vez, o modelo com regularização L2 apresentou desempenho semelhante em termos de ROC AUC e log loss, com valores de 0,7150 e 0,4670, respectivamente. Entretanto, apresentou a menor acurácia balanceada (0,5996) e o menor MCC (0,3383), além da menor especificidade (0,2188). Apesar de apresentar a maior sensibilidade entre os modelos (0,9803), essa característica foi acompanhada por uma redução na capacidade de identificar corretamente os indivíduos pertencentes à classe negativa. Assim, a regularização L2 não apresentou vantagem preditiva clara neste conjunto de dados.
+
+Um aspecto comum às quatro especificações é a elevada sensibilidade, próxima de 0,98, acompanhada por especificidades consideravelmente menores, entre 0,2188 e 0,2514. Esse comportamento indica que os modelos apresentam elevada capacidade de identificar os eventos de PD30, mas apresentam maior dificuldade na identificação dos não eventos. Consequentemente, a acurácia, próxima de 0,81, deve ser interpretada conjuntamente com métricas que considerem o desempenho em ambas as classes, como a acurácia balanceada, o MCC, a sensibilidade e a especificidade.
+
+Em conjunto, os resultados mostram que a remoção das variáveis correlacionadas foi a estratégia que mais modificou a estrutura do modelo, reduzindo substancialmente a multicolinearidade sem produzir perda relevante de desempenho. A regularização L1, por sua vez, apresentou desempenho praticamente equivalente ao modelo completo e oferece a vantagem adicional de promover parcimônia por meio da seleção de variáveis. Já a penalização L2 não apresentou ganhos evidentes nas métricas consideradas. Dessa forma, as especificações `no_corr_logit` e `l1_logit` tornam-se particularmente relevantes para a etapa seguinte de interpretação dos coeficientes, permitindo avaliar se a redução da multicolinearidade e a regularização produzem alterações relevantes na magnitude e na importância das variáveis associadas à ocorrência de PD30.
+
+
+Embora todos os modelos tenham sido avaliados quanto ao ajuste, às propriedades estatísticas e ao desempenho preditivo, optou-se por concentrar a discussão detalhada no modelo com regularização L1. A escolha não decorre de uma superioridade preditiva expressiva em relação às demais especificações, uma vez que os modelos `all_features_logit`, `no_corr_logit` e `l1_logit` apresentaram resultados bastante próximos, especialmente em termos de AUC, balanced accuracy e F1. Nesse contexto, a seleção do modelo L1 foi orientada pelo princípio de parcimônia: a penalização L1 permite reduzir ou eliminar coeficientes durante a estimação, promovendo seleção automática de variáveis e, consequentemente, uma especificação potencialmente mais simples e interpretável.
+
+Essa estratégia também evita que a escolha das variáveis seja determinada exclusivamente por um critério arbitrário de correlação, como ocorre no modelo `no_corr_logit`. Embora a remoção prévia de variáveis altamente correlacionadas tenha produzido desempenho semelhante, o procedimento L1 realiza a seleção no contexto do próprio modelo, considerando simultaneamente a contribuição dos preditores para a variável resposta. Dessa forma, o modelo L1 oferece um compromisso entre desempenho preditivo, controle da complexidade e redução da redundância entre os preditores.
+
+A partir dessa escolha, a análise detalhada das propriedades estatísticas, dos coeficientes, das razões de chances, do ajuste e dos diagnósticos será concentrada no modelo L1. Os demais modelos serão utilizados como referências na comparação global de desempenho, permitindo verificar se as conclusões obtidas para o modelo selecionado são consistentes com as diferentes estratégias de especificação avaliadas. Essa abordagem evita a repetição de análises essencialmente equivalentes e, ao mesmo tempo, preserva a avaliação comparativa de todas as alternativas consideradas.
+
+
+L1!
+<!-- 
+- interpretação dos coeficientes
+- Odds Ratios
+- Teste de razão de Verossimilhança
+- AIC e BIC
+- Analise de multiocolinearidade (VIF)
+- Análise de resíduos
+-->
+
+
+
+
+O modelo de regressão logística foi estimado por máxima verossimilhança, tendo como variável resposta o status do empréstimo e como variáveis explicativas os atributos socioeconômicos e financeiros do solicitante.
+
+para o default: 
+Em particular, a ROC-AUC é útil por avaliar a capacidade do modelo em ordenar corretamente observações positivas e negativas, sendo menos sensível ao desbalanceamento de classes. No entanto, ela ainda não captura diretamente assimetrias entre erros do tipo falso positivo e falso negativo em termos práticos.
+
+Assim, métricas como balanced acurácia, F1-score e Matthews Correlation Coefficient (MCC) são particularmente relevantes neste contexto. A balanced acurácia corrige o viés da acurácia tradicional ao considerar igualmente sensibilidade e especificidade; o F1-score enfatiza o equilíbrio entre precisão e recall da classe minoritária; e o MCC fornece uma medida global mais robusta, especialmente adequada para cenários com forte desbalanceamento, por incorporar todos os elementos da matriz de confusão de forma simétrica.
+
+### [TBD] Modelo Bayesiano
+<!-- ========================================================== -->
+
+<!-- Resultados: BAYESIANO -->
+
+<!-- ========================================================== -->
+- Análise de Sensibilidade à Multicolinearidade (já que temos features com correlação elevada) ->avaliação do impacto
+
+\red{Traçar testes que fizemos para os outros modelos}
+temos: 
+- Modelo geral (tudo)
+- Modelo com score (somente)
+- Modelo sem score
+- Resultado da L1 
+- Removendo alta correlação
+
+
+
+paralelo bayesiano:
+- Modelo geral (tudo) -> precisa rodar?
+- Modelo só com score (no emprestimo)
+- L1 (pode ser em ambos)(Horseshoe// Laplace para o bayesiano)
+
+
+<!-- ========================================================== -->
+
+<!-- DISCUSSÃO -->
+
+<!-- ========================================================== -->
+# [TBD] Discussão
+<!--  -->
+- Comparação dos melhores modelos
+- Diferenças conceituais observadas
+- Robustez dos resultados
+- Interpretabilidade
+- Incerteza
+- Aplicabilidade prática 
+
+# [TBD] Conclusão
+
+- Síntese dos resultados
+- Quando usar frequentista vs bayesiano
+- Limitações
+
+Breve explicação do problema, com principais resultados e propostas futuras
+
+# Referências
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Inicialmente, adotou-se uma abordagem frequentista, com estimação dos parâmetros via máxima verossimilhança. Essa estratégia fornece um ponto de partida robusto para a análise, permitindo avaliar tanto o poder preditivo quanto a contribuição individual das variáveis explicativas.
+
+Com o intuito de investigar a sensibilidade do modelo à especificação das variáveis e à presença de dependências lineares, foram ajustadas diferentes variações do modelo logístico:
+
+- **Modelo completo:** inclui todas as variáveis explicativas disponíveis após o pré-processamento, servindo como especificação de referência para as comparações.
+
+- **Modelo com remoção manual de variáveis altamente correlacionadas:** variáveis com correlação absoluta superior a 75% foram excluídas de forma criteriosa, visando reduzir a redundância informacional e avaliar o impacto dessa simplificação na estabilidade e no desempenho do modelo.
+
+- **Modelo com regularização L1 (Lasso):** incorpora uma penalização baseada na soma dos valores absolutos dos coeficientes, favorecendo a redução de sua magnitude e podendo levar alguns deles a valores exatamente iguais a zero. Dessa forma, além de controlar a complexidade do modelo, essa abordagem pode promover uma seleção implícita de variáveis.
+
+- **Modelo com regularização L2 (Ridge):** utiliza uma penalização baseada na soma dos quadrados dos coeficientes, promovendo sua redução em direção a zero, mas sem anulá-los. Seu objetivo é controlar a magnitude dos parâmetros e reduzir a sensibilidade do modelo a variáveis explicativas correlacionadas.
+
+Quanto ao pré-processamento, a padronização das variáveis numéricas foi aplicada aos modelos com regularização L1 e L2, uma vez que a penalização depende da magnitude dos coeficientes e, portanto, é sensível à escala das variáveis. Nos modelos sem regularização, a padronização não foi aplicada, preservando-se as escalas originais para facilitar a interpretação dos coeficientes.
+
+A comparação entre essas especificações permite avaliar o trade-off entre interpretabilidade, complexidade do modelo e desempenho preditivo, além de fornecer evidências empíricas sobre o papel do score de crédito e da estrutura de correlação das variáveis no processo de decisão de concessão de empréstimos.
+
+Após o pré-processamento, diferentes especificações de modelos de regressão logística foram ajustadas com base em máxima verossimilhança. Todas as especificações propostas foram avaliadas de forma sistemática quanto ao ajuste estatístico e às propriedades inferenciais do modelo, incluindo interpretação dos coeficientes, razões de chances (odds ratios), testes de razão de verossimilhança, critérios de informação (AIC e BIC), diagnóstico de multicolinearidade (VIF) e análise de resíduos.
+
+A comparação das estatísticas de ajuste foi realizada apenas para os modelos de regressão logística não penalizados (Completo e Sem multicolinearidade), uma vez que ambos foram estimados pelo método tradicional de máxima verossimilhança, permitindo a obtenção e a interpretação direta de medidas como a deviance residual, o AIC e o BIC. Os modelos Lasso (L1) e Ridge (L2), por sua vez, incorporam penalizações sobre os coeficientes e são estimados por meio do pacote glmnet, de modo que os critérios tradicionais de informação não são diretamente equivalentes aos calculados para os modelos não penalizados. Por essa razão, a comparação desses modelos foi conduzida principalmente com base nas métricas de desempenho preditivo.
+
+Conforme apresentado na Tabela @tbl-diagnosticos-glm-pd30, o modelo Completo apresentou menor deviance residual (20.797,50) em relação ao modelo Sem multicolinearidade (20.848,41), além de menores valores de AIC (20.855,50 contra 20.890,41). Esses resultados indicam um melhor ajuste do modelo completo segundo essas medidas. Em contrapartida, o modelo Sem multicolinearidade apresentou menor BIC (21.058,85 contra 21.088,11), favorecendo a especificação mais parcimoniosa, que também possui oito graus de liberdade residuais adicionais, correspondentes a uma estrutura com oito parâmetros a menos.
+
+De modo geral, os resultados apontam para um equilíbrio entre qualidade de ajuste e parcimônia: enquanto o modelo Completo é favorecido pela deviance residual e pelo AIC, o modelo Sem multicolinearidade apresenta vantagem segundo o BIC. Essas diferenças são consideradas em conjunto com os resultados das métricas preditivas, apresentados a seguir.
+
+A @tbl-metricas-modelos-pd30 apresenta o desempenho das diferentes especificações da regressão logística para a previsão de PD30 no conjunto de teste. O modelo contendo todas as variáveis é utilizado como referência para avaliar os efeitos da remoção de variáveis correlacionadas e da aplicação das penalizações L1 e L2.

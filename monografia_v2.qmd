@@ -473,7 +473,7 @@ A comparação entre essas perspectivas é particularmente relevante em problema
 
 Diante dessas considerações, este trabalho investiga a aplicação de modelos de regressão logística à previsão de inadimplência em cartões de crédito, sob as perspectivas frequentista e bayesiana. Para isso, utiliza-se a base de dados *Default of Credit Card Clients*, que reúne informações de 30.000 clientes e contempla características demográficas, limite de crédito, valores de faturas e histórico de pagamentos. A variável resposta, denominada `PD30`, identifica a ocorrência de inadimplência no mês subsequente, caracterizando um problema de classificação binária.
 
-A questão que orienta a pesquisa é: **em que medida as abordagens frequentista e bayesiana produzem resultados distintos na estimação, interpretação e previsão da inadimplência em cartões de crédito, e como diferentes distribuições a priori influenciam os resultados da inferência bayesiana?**
+A questão que orienta a pesquisa é: em que medida as abordagens frequentista e bayesiana produzem resultados distintos na estimação, interpretação e previsão da inadimplência em cartões de crédito, e como diferentes distribuições a priori influenciam os resultados da inferência bayesiana?
 
 Assim, o objetivo geral deste trabalho é comparar as abordagens frequentista e bayesiana na modelagem da inadimplência em cartões de crédito por meio da regressão logística, considerando aspectos inferenciais e preditivos.
 

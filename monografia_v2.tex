@@ -3117,7 +3117,7 @@ A análise do VIF (Tabela~\ref{tbl-vif-modelos-pd30}) evidencia uma
 diferença mais pronunciada entre as especificações: o modelo completo
 apresentou VIF máximo de 41,12 e médio de 7,80, enquanto o modelo sem
 multicolinearidade reduziu esses valores para 1,84 e 1,24,
-respectivamente --- redução substancial sem alteração relevante no
+respectivamente redução substancial sem alteração relevante no
 desempenho preditivo. Os modelos regularizados L1 e L2 não são avaliados
 por VIF porque a regularização atua sobre os coeficientes durante a
 estimação, não sobre a estrutura de correlação dos preditores; assim,
@@ -3345,7 +3345,7 @@ crédito apresentam coeficientes numericamente pequenos pelo fato de
 essas variáveis serem medidas em escala monetária, na qual uma unidade
 representa variação relativamente pequena. Os coeficientes arredondados
 a quatro casas decimais aparecem como 0,0000 e ORs como 1,0000, sem que
-isso implique ausência de efeito --- a interpretação adequada considera
+isso implique ausência de efeito, a interpretação adequada considera
 variações economicamente relevantes na escala original. Nesse grupo,
 \texttt{fatura\_valor\_1}, \texttt{pagto\_valor\_1},
 \texttt{pagto\_valor\_2}, \texttt{pagto\_valor\_4} e
@@ -4117,12 +4117,12 @@ impacto do desbalanceamento da variável resposta.
 
 A predominância de falsos negativos em relação aos falsos positivos
 indica que os classificadores tendem a subestimar o risco de
-inadimplência --- clientes que efetivamente inadimplirão são
-classificados como não inadimplentes, o que pode resultar em concessão
-indevida de crédito. A adoção do modelo bayesiano não modificou
-substancialmente esse padrão. A definição de um ponto de corte adequado,
-considerando os custos relativos de cada tipo de erro e os objetivos
-institucionais, é retomada na Discussão.
+inadimplência, clientes que efetivamente inadimplirão são classificados
+como não inadimplentes, o que pode resultar em concessão indevida de
+crédito. A adoção do modelo bayesiano não modificou substancialmente
+esse padrão. A definição de um ponto de corte adequado, considerando os
+custos relativos de cada tipo de erro e os objetivos institucionais, é
+retomada na Discussão.
 
 \begin{verbatim}
   Real Predito Freq                       Modelo
@@ -4369,7 +4369,7 @@ abordagem de estimação adotada. A vantagem da regularização bayesiana
 reside menos na eliminação da estrutura de dependência entre os
 preditores do que na possibilidade de quantificar explicitamente a
 incerteza remanescente sobre os coeficientes mesmo em presença de alta
-correlação --- o que pode ser particularmente útil quando a remoção de
+correlação, o que pode ser particularmente útil quando a remoção de
 variáveis não é viável por razões substantivas ou quando se deseja
 preservar a estrutura original do modelo.
 

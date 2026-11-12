@@ -337,38 +337,35 @@ The comparison between Normal and Laplace priors revealed nearly equivalent post
 \section{Introdução}\label{introduuxe7uxe3o}
 
 A atividade de concessão de crédito envolve decisões tomadas sob
-incerteza, nas quais existe sempre a possibilidade de que o tomador não
-cumpra integralmente suas obrigações financeiras. Esse descumprimento
-pode manifestar-se na forma de atrasos, pagamentos parciais ou
-inadimplência total, e está frequentemente associado a mudanças
-inesperadas nas condições econômicas ou financeiras do indivíduo, como
-perda de renda, instabilidade profissional ou choques temporários de
-liquidez. Mesmo tomadores com histórico financeiro consistente não estão
-imunes a esse tipo de risco ao longo do tempo.
+incerteza, uma vez que existe sempre a possibilidade de que o tomador
+não cumpra integralmente suas obrigações financeiras. Esse
+descumprimento pode manifestar-se na forma de atrasos, pagamentos
+parciais ou inadimplência total, estando frequentemente associado a
+mudanças inesperadas nas condições econômicas ou financeiras do
+indivíduo, como perda de renda, instabilidade profissional ou choques
+temporários de liquidez. Mesmo tomadores com histórico financeiro
+consistente não estão imunes a esse tipo de risco ao longo do tempo.
 
 A avaliação do risco de crédito é, portanto, um componente central da
-gestão financeira das instituições que operam no mercado de empréstimos
-e concessão de crédito. Do ponto de vista operacional, essa avaliação
-subsidia decisões relacionadas à aprovação ou rejeição de propostas de
-crédito, bem como à definição de condições contratuais compatíveis com o
-nível de risco assumido. Em uma perspectiva mais ampla, a estimativa da
-probabilidade de inadimplência em nível agregado permite antecipar
-perdas potenciais e orientar estratégias de alocação de capital,
-fundamentais para a estabilidade financeira das instituições. Uma
-concentração excessiva de inadimplência pode comprometer a solvência de
-intermediários financeiros, tornando indispensável a adoção de
-mecanismos preventivos de controle e monitoramento do risco.
+gestão financeira das instituições que operam no mercado de empréstimos.
+Essa avaliação subsidia decisões relacionadas à aprovação ou rejeição de
+propostas, bem como à definição de condições contratuais compatíveis com
+o nível de risco assumido. Em uma perspectiva mais ampla, a estimativa
+da probabilidade de inadimplência permite antecipar perdas potenciais e
+orientar estratégias de alocação de capital. Uma concentração excessiva
+de inadimplência pode comprometer a solvência das instituições
+financeiras, tornando indispensáveis mecanismos preventivos de controle
+e monitoramento do risco.
 
 Nesse cenário, modelos estatísticos têm sido amplamente empregados como
 ferramentas para quantificar o risco de crédito a partir de informações
 observáveis sobre os tomadores. Ao relacionar características
 socioeconômicas, financeiras e comportamentais com a ocorrência de
 inadimplência, esses modelos permitem estimar probabilidades individuais
-de default e identificar padrões relevantes para a gestão do portfólio
-de crédito. Além de contribuir para a redução de perdas esperadas, tais
-modelos oferecem suporte à tomada de decisão baseada em evidências,
-reforçando a eficiência e a consistência das políticas de concessão de
-crédito.
+de default e identificar padrões relevantes para a gestão das carteiras
+de crédito. Dessa forma, oferecem suporte à tomada de decisão baseada em
+evidências, contribuindo para a eficiência e a consistência das
+políticas de concessão de crédito.
 
 \subsection{Probabilidade de Inadimplência
 (PD)}\label{probabilidade-de-inadimpluxeancia-pd}
@@ -381,16 +378,13 @@ de tempo específico. Essa medida é conhecida como
 \texttt{Probability\ of\ Default} (PD) e constitui um dos pilares
 centrais da gestão moderna de risco de crédito.
 
-A PD representa a probabilidade de que um contrato de crédito apresente
-um evento de default definido previamente, como atraso superior a um
-determinado número de dias ou a incapacidade total de honrar os
-pagamentos. Ao contrário de abordagens puramente classificatórias, a
-modelagem da PD fornece uma escala contínua de risco, permitindo ordenar
-tomadores de acordo com sua propensão ao default e estabelecer políticas
-diferenciadas de concessão, precificação e monitoramento. Essa
-característica torna a PD particularmente relevante tanto para decisões
-individuais, como a aprovação de um empréstimo, quanto para avaliações
-agregadas do risco da carteira.
+A PD representa a probabilidade de ocorrência de um evento de default
+previamente definido, como um atraso superior a determinado número de
+dias ou a incapacidade de honrar os pagamentos. Diferentemente de
+abordagens puramente classificatórias, sua modelagem fornece uma medida
+contínua de risco, permitindo ordenar os tomadores segundo sua propensão
+à inadimplência e estabelecer políticas diferenciadas de concessão,
+precificação e monitoramento.
 
 \subsection{Regressão Logística na Modelagem do Risco de
 Crédito}\label{regressuxe3o-loguxedstica-na-modelagem-do-risco-de-cruxe9dito}
@@ -420,24 +414,24 @@ A estimação dos parâmetros de um modelo de regressão logística pode ser
 realizada sob diferentes perspectivas inferenciais, entre as quais se
 destacam as abordagens frequentista e bayesiana. Embora ambas utilizem a
 informação contida nos dados para produzir estimativas e avaliar a
-incerteza associada aos parâmetros, elas se fundamentam em
-interpretações distintas da probabilidade e do processo de inferência.
+incerteza associada aos parâmetros, fundamentam-se em interpretações
+distintas da probabilidade e do processo de inferência.
 
 Na perspectiva frequentista, os parâmetros são tratados como quantidades
-fixas estimadas por máxima verossimilhança, com a incerteza expressa por
-intervalos de confiança; na bayesiana, são variáveis aleatórias, e a
-inferência combina a verossimilhança com distribuições a priori para
-produzir distribuições a posteriori. Os fundamentos e as diferenças
-conceituais entre essas perspectivas são discutidos em detalhe no
-Referencial Teórico.
+fixas, estimadas por máxima verossimilhança, com a incerteza expressa
+por intervalos de confiança. Na abordagem bayesiana, por sua vez, os
+parâmetros são tratados como variáveis aleatórias, e a inferência
+combina a verossimilhança com distribuições a priori para produzir
+distribuições a posteriori. Os fundamentos e as diferenças conceituais
+entre essas perspectivas são discutidos em detalhe no Referencial
+Teórico.
 
-A comparação entre essas perspectivas é particularmente relevante em
+A comparação entre essas abordagens é particularmente relevante em
 problemas de risco de crédito, nos quais a qualidade das estimativas e a
 quantificação da incerteza podem influenciar a interpretação dos fatores
 associados à inadimplência. Além disso, a abordagem bayesiana permite
-investigar o efeito de diferentes especificações de distribuições a
-priori sobre os parâmetros estimados, introduzindo uma dimensão
-adicional à análise comparativa.
+investigar como diferentes especificações de distribuições a priori
+afetam os resultados da inferência.
 
 \subsection{Delimitação e Objetivos do
 Estudo}\label{delimitauxe7uxe3o-e-objetivos-do-estudo}
@@ -448,15 +442,15 @@ crédito, sob as perspectivas frequentista e bayesiana. Para isso,
 utiliza-se a base de dados \emph{Default of Credit Card Clients}, que
 reúne informações de 30.000 clientes e contempla características
 demográficas, limite de crédito, valores de faturas e histórico de
-pagamentos. A variável resposta, denominada \texttt{PD30}, identifica a
+pagamentos. A variável resposta, denominada \emph{PD30}, identifica a
 ocorrência de inadimplência no mês subsequente, caracterizando um
 problema de classificação binária.
 
-A questão que orienta a pesquisa é: \textbf{em que medida as abordagens
+A questão que orienta a pesquisa é: em que medida as abordagens
 frequentista e bayesiana produzem resultados distintos na estimação,
 interpretação e previsão da inadimplência em cartões de crédito, e como
 diferentes distribuições a priori influenciam os resultados da
-inferência bayesiana?}
+inferência bayesiana?
 
 Assim, o objetivo geral deste trabalho é comparar as abordagens
 frequentista e bayesiana na modelagem da inadimplência em cartões de
@@ -472,71 +466,60 @@ Estatística}\label{fundamentos-de-probabilidade-e-inferuxeancia-estatuxedstica}
 Probabilidade}\label{variuxe1veis-aleatuxf3rias-e-distribuiuxe7uxf5es-de-probabilidade}
 
 A formalização da incerteza em experimentos aleatórios ocorre por meio
-de variáveis aleatórias, que representam os resultados de um espaço
-amostral em uma escala numérica. Essa estrutura fundamenta o tratamento
-quantitativo de dados e a construção de modelos de probabilidade,
-servindo de base para a inferência estatística e machine learning.
+de variáveis aleatórias, que associam os resultados de um espaço
+amostral a valores numéricos. Essa estrutura fundamenta o tratamento
+quantitativo dos fenômenos aleatórios e a construção de modelos de
+probabilidade, servindo de base para a inferência estatística.
 
 As variáveis aleatórias são classificadas em discretas ou contínuas, a
-depender da natureza de seu suporte. As discretas assumem valores em
-conjuntos finitos ou enumeráveis, como a decisão de aprovação de crédito
-ou o número de ocorrências de inadimplência. Já as contínuas podem
-assumir qualquer valor em intervalos reais, como a renda dos
-proponentes. A incerteza inerente a essas variáveis é formalizada por
+depender da natureza de seus valores possíveis. As discretas assumem
+valores em conjuntos finitos ou enumeráveis, como a decisão de aprovação
+de crédito ou o número de ocorrências de inadimplência. Já as contínuas
+podem assumir valores em intervalos reais, como a renda dos proponentes,
+frequentemente tratada como uma variável contínua em modelos
+estatísticos. A incerteza associada a essas variáveis é representada por
 distribuições de probabilidade: no domínio discreto, pela função de
 massa de probabilidade e, no contínuo, pela função densidade de
-probabilidade. Tais funções não apenas sintetizam a natureza
-probabilística das variáveis, mas viabilizam o cálculo de medidas
-fundamentais, como esperança, variância e probabilidades condicionais,
-elementos centrais para a modelagem de risco. A escolha apropriada de
-distribuições de probabilidade é fundamental para capturar a
-variabilidade dos dados observados e para a construção de modelos
-inferenciais capazes de quantificar a incerteza associada às previsões.
+probabilidade. Essas funções permitem caracterizar o comportamento
+probabilístico das variáveis e calcular medidas fundamentais, como
+esperança, variância e probabilidades condicionais, essenciais à
+modelagem estatística.
 
 \subsubsection{Inferência
 Estatística}\label{inferuxeancia-estatuxedstica}
 
 A inferência estatística reúne os métodos que permitem extrair
-conclusões sobre uma população ampla a partir de uma amostra reduzida.
-Na prática, quando não é viável analisar cada indivíduo ou produto de um
-grupo inteiro, utilizamos os dados amostrais para realizar estimativas e
-previsões, fundamentadas em modelos que conectam o que observamos aos
-parâmetros que desejamos descobrir.
+conclusões sobre uma população a partir de informações obtidas em uma
+amostra. Quando não é viável observar todos os elementos de uma
+população, os dados amostrais são utilizados para estimar parâmetros
+desconhecidos, testar hipóteses e realizar previsões sobre o fenômeno
+estudado.
 
-O elemento central desse processo é a aceitação da incerteza. Como os
-dados estão sujeitos a variações e erros de medição, a inferência
-utiliza estruturas probabilísticas para descrever o comportamento da
-população (o conjunto total de elementos) com base na amostra, que é o
-subconjunto efetivamente analisado. Como a população é quase sempre
-muito maior que a amostra, as conclusões obtidas não são certezas
-absolutas, mas sim afirmações probabilísticas. O processo consiste em
-utilizar uma amostra aleatória para testar o modelo estatístico que
-representa a população, acompanhando cada conclusão de uma medida que
-quantifica o seu grau de confiabilidade. Esse caminho envolve escolher
-um modelo adequado para o fenômeno e deduzir informações sobre seus
-parâmetros desconhecidos.
+O elemento central desse processo é o reconhecimento da incerteza
+associada às conclusões obtidas. Como diferentes amostras podem produzir
+resultados distintos, a inferência estatística utiliza modelos
+probabilísticos para quantificar a variabilidade amostral e avaliar a
+incerteza das estimativas. Dessa forma, as conclusões não representam
+certezas absolutas, mas resultados condicionados às informações
+disponíveis e às hipóteses assumidas pelo modelo estatístico.
 
 \subsubsection{Interpretações da
 probabilidade}\label{interpretauxe7uxf5es-da-probabilidade}
 
 A noção de probabilidade ocupa um papel central na inferência
 estatística, sendo a base para quantificar e interpretar a incerteza.
-Atualmente, essa análise é conduzida por dois grandes paradigmas, o
-frequentista e o bayesiano, que se distinguem essencialmente na
-interpretação do conceito de probabilidade e no tratamento da incerteza
-dos parâmetros.
+Nesse contexto, destacam-se dois grandes paradigmas: o frequentista e o
+bayesiano, que se distinguem essencialmente pela interpretação do
+conceito de probabilidade e pelo tratamento da incerteza dos parâmetros.
 
-Na abordagem frequentista, tradicionalmente associada à estatística
-clássica, a probabilidade é entendida a partir da repetição de um
-experimento sob as mesmas condições. Dentro dessa visão, a probabilidade
-é vista como uma característica objetiva do processo que gera os dados,
-e não como algo que depende do observador. Os dados coletados são
-tratados como realizações aleatórias, enquanto os parâmetros do modelo
-estatístico que descreve a população são considerados valores fixos,
-ainda que desconhecidos. Assim, a incorporação de novas observações não
-altera diretamente o conceito de probabilidade, mas contribui para
-estimativas mais precisas desses parâmetros por meio de métodos
-inferenciais.
+Na abordagem frequentista, a probabilidade é interpretada a partir da
+frequência relativa de ocorrência de um evento em um grande número de
+repetições de um experimento sob condições equivalentes. Nessa
+perspectiva, a probabilidade é uma característica do processo que gera
+os dados, enquanto os parâmetros do modelo estatístico são considerados
+valores fixos, embora desconhecidos. Os dados, por sua vez, são tratados
+como realizações de variáveis aleatórias, e a inferência busca obter
+informações sobre os parâmetros a partir dessas observações.
 
 Já na abordagem bayesiana, a probabilidade assume um papel mais amplo,
 sendo interpretada como um grau de crença ou plausibilidade em uma
@@ -547,17 +530,18 @@ desconhecidos são tratados como variáveis aleatórias, cuja incerteza é
 descrita por distribuições de probabilidade. O conhecimento prévio pode
 ser incorporado por meio de distribuições a priori e, à medida que novos
 dados são observados, esse conhecimento é atualizado de forma
-sistemática pelo teorema de Bayes, resultando em uma distribuição a
+sistemática pelo Teorema de Bayes, resultando em uma distribuição a
 posteriori que combina informação prévia e evidência empírica.
 
 \subsubsection{Teorema de Bayes}\label{sec-teorema-bayes}
 
 O Teorema de Bayes constitui o fundamento da inferência bayesiana,
-estabelecendo uma regra para atualizar o conhecimento sobre um parâmetro
-desconhecido à medida que novas evidências são observadas.
-Diferentemente da abordagem frequentista, na qual os parâmetros são
-considerados fixos, a inferência bayesiana representa a incerteza sobre
-esses parâmetros por meio de distribuições de probabilidade.
+estabelecendo uma regra para atualizar a distribuição de probabilidade
+associada a um parâmetro desconhecido à medida que novas evidências são
+observadas. Diferentemente da abordagem frequentista, na qual os
+parâmetros são considerados fixos, a inferência bayesiana representa a
+incerteza sobre esses parâmetros por meio de distribuições de
+probabilidade.
 
 Matematicamente, o Teorema de Bayes é expresso por:
 
@@ -585,7 +569,7 @@ em que:
   antes da observação dos dados;
 \item
   \(p(y)\) é a \textbf{distribuição marginal dos dados}, também
-  denominada evidência, dada por
+  denominada evidência, dada por:
 \end{itemize}
 
 \begin{equation}
@@ -593,8 +577,10 @@ p(y)=\int p(y\mid\theta)p(\theta)\,d\theta,
 \label{eq:evidence}
 \end{equation}
 
-a qual garante que a distribuição a posteriori seja devidamente
-normalizada, isto é, que sua integral seja igual a um.
+considerando parâmetros contínuos. Para parâmetros discretos, a integral
+é substituída por um somatório. Esse termo garante que a distribuição a
+posteriori seja devidamente normalizada, isto é, que sua integral (ou
+soma, no caso discreto) seja igual a um.
 
 Em termos conceituais, o Teorema de Bayes estabelece que a distribuição
 a posteriori é proporcional ao produto entre a verossimilhança e a
@@ -606,32 +592,33 @@ p(\theta \mid y) \propto p(y \mid \theta)\,p(\theta),
 \end{equation}
 
 visto que o termo \(p(y)\) não depende do parâmetro \(\theta\). Na
-prática, essa forma proporcional é frequentemente utilizada em métodos
-computacionais de inferência, como os algoritmos de Monte Carlo via
-Cadeias de Markov (MCMC), nos quais não é necessário calcular
-explicitamente a constante de normalização.
+prática, essa representação proporcional é frequentemente utilizada em
+métodos computacionais de inferência, como os algoritmos de Monte Carlo
+via Cadeias de Markov (MCMC), que permitem obter amostras da
+distribuição a posteriori sem a necessidade de calcular explicitamente
+sua constante de normalização.
 
 \subsection{Regressão Logística
 Frequentista}\label{regressuxe3o-loguxedstica-frequentista}
 
 Seja \(Y\) a variável resposta, assumindo valor \(Y = 1\) quando ocorre
-inadimplência e \(Y = 0\) caso contrário. O objetivo do modelo consiste
-em estimar a probabilidade condicional de ocorrência desse evento,
-representada por \(P(Y = 1 \mid \theta)\), em que \(\theta\) denota a
-probabilidade de inadimplência associada a um determinado tomador.
-Assumindo que \(Y\) segue uma distribuição de Bernoulli, tem-se que
+inadimplência e \(Y = 0\) caso contrário. O objetivo consiste em estimar
+a probabilidade condicional de ocorrência desse evento, representada por
+\(P(Y = 1 \mid \theta)\), em que \(\theta\) denota a probabilidade de
+inadimplência associada a um determinado tomador. Assumindo que \(Y\)
+segue uma distribuição de Bernoulli, tem-se que
 \(P(Y = 1 \mid \theta) = \theta\), enquanto a probabilidade de não
 ocorrência do evento é dada por \(P(Y = 0 \mid \theta) = 1 - \theta\).
 Dessa forma, o parâmetro \(\theta\) corresponde diretamente à
-Probabilidade de Inadimplência (PD), principal quantidade de interesse
-na modelagem de risco de crédito.
+probabilidade de inadimplência, principal quantidade de interesse na
+modelagem de risco de crédito.
 
 Diversos modelos podem ser utilizados para estimar essa probabilidade em
 função das características observadas dos tomadores. Neste trabalho,
 será empregada a regressão logística, por se tratar de um dos modelos
 mais difundidos para problemas de resposta binária, oferecendo
 estimativas probabilísticas de fácil interpretação e ampla aplicação em
-modelos de credit scoring.
+modelos de \emph{credit scoring}.
 
 \subsubsection{Formulação do modelo}\label{formulauxe7uxe3o-do-modelo}
 
@@ -642,19 +629,17 @@ probabilidade para toda a população, admite-se que cada observação \(i\)
 possui sua própria probabilidade de inadimplência, denotada por
 \(\theta_i\). Dessa forma,
 
-\begin{equation}
-Y_i \mid \theta_i \sim \mathrm{Bernoulli}(\theta_i),
-\label{eq:bernoulli_model}
-\end{equation}
+\begin{equation}\protect\phantomsection\label{eq-bernoulli-model}{
+Y_i \mid \theta_i \sim \mathrm{Bernoulli}(\theta_i).
+}\end{equation}
 
 onde
 
-\begin{equation}
+\begin{equation}\protect\phantomsection\label{eq-bernoulli-prob}{
 P(Y_i = 1 \mid \theta_i) = \theta_i
 \qquad \text{e} \qquad
 P(Y_i = 0 \mid \theta_i) = 1 - \theta_i.
-\label{eq:bernoulli_prob}
-\end{equation}
+}\end{equation}
 
 O objetivo da regressão logística é modelar a probabilidade \(\theta_i\)
 em função das variáveis explicativas. Entretanto, como probabilidades
@@ -665,32 +650,35 @@ transforma a probabilidade em uma quantidade definida em toda a reta
 real. Na regressão logística, essa transformação é realizada pela função
 logit, definida por
 
-\begin{equation}
-\theta = \log\left(\frac{\theta}{1 - \theta}\right).
-\label{eq:logit}
-\end{equation}
+\begin{equation}\protect\phantomsection\label{eq-logit}{
+\operatorname{logit}(\theta_i) = \log\left(\frac{\theta_i}{1-\theta_i}\right).
+}\end{equation}
 
 A equação acima descreve a transformação da probabilidade para a escala
-dos logaritmos das chances (log-odds). Como o objetivo do modelo é
-estimar probabilidades, após modelar essa quantidade como uma função
-linear das variáveis explicativas aplica-se a transformação inversa da
-função logit, denominada função logística (ou função sigmoide). Enquanto
-a função logit transforma probabilidades em valores pertencentes à reta
-real, a função logística realiza o processo inverso, convertendo o
-preditor linear em uma probabilidade restrita ao intervalo (0,1). Assim,
-definindo o preditor linear como
+dos logaritmos das chances (\emph{log-odds}). Na regressão logística,
+essa quantidade é modelada como uma função linear das variáveis
+explicativas. Como o objetivo é estimar probabilidades, aplica-se, em
+seguida, a transformação inversa da função logit, denominada função
+logística (ou função sigmoide). Enquanto a função logit transforma
+probabilidades em valores pertencentes à reta real, a função logística
+realiza o processo inverso, convertendo o preditor linear em uma
+probabilidade restrita ao intervalo \((0,1)\). Assim, definindo o
+preditor linear como
+
 \begin{equation}\protect\phantomsection\label{eq-preditor-linear}{
-\eta_i=\beta_0+\beta_1x_{i1}+\cdots+\beta_px_{ip}
+\eta_i = \beta_0 + \beta_1x_{i1} + \cdots + \beta_px_{ip}.
 }\end{equation}
 
 em que \(\beta_0\) representa o intercepto do modelo e \(\beta_j\)
 (\(j=1,\ldots,p\)) corresponde ao coeficiente associado à variável
 explicativa \(x_{ij}\). Dessa forma, o preditor linear resume, em um
-único valor, o efeito conjunto de todas as covariáveis sobre a resposta.
-Então a probabilidade de ocorrência do evento é dada por
+único valor, a contribuição conjunta de todas as covariáveis para a
+resposta.
+
+A probabilidade de ocorrência do evento é, então, dada por
 
 \begin{equation}\protect\phantomsection\label{eq-funcao-logistica}{
-\theta_i=\frac{1}{1+\exp(-\eta_i)}.
+\theta_i = \frac{1}{1+\exp(-\eta_i)}.
 }\end{equation}
 
 A Figura~\ref{fig-function-logitica} ilustra o comportamento da função
@@ -716,8 +704,10 @@ com uma única variável preditora (\(\beta_0 = 0\) e \(\beta_1 = 1\)).}
 
 \subsubsection{Interpretação dos coeficientes}\label{sec-interpre-coefs}
 
-Como exemplo, considere o seguinte modelo de crédito: \[
-\eta = -3 + 0.04 \cdot \text{Score} - 0.8 \cdot \text{Atraso} + 0.2 \cdot \text{Renda}.
+Como exemplo, considere o seguinte modelo de crédito:
+
+\[
+\eta = -3 - 0.04 \cdot \text{Score} + 0.8 \cdot \text{Atraso} + 0.2 \cdot \text{Renda}.
 \]
 
 Para um determinado solicitante, a substituição dos valores observados
@@ -738,69 +728,63 @@ Uma das principais vantagens da regressão logística é a possibilidade de
 interpretar o efeito das variáveis explicativas sobre o risco do evento
 de interesse. Considerando o preditor linear apresentado na
 Equação~\ref{eq-preditor-linear}, cada coeficiente \(\beta_j\)
-representa a variação esperada no logaritmo das chances
-(\emph{log-odds}) associada ao aumento de uma unidade da variável
-\(x_j\), mantendo as demais variáveis constantes.
+representa a variação no logaritmo das chances (\emph{log-odds})
+associada ao aumento de uma unidade da variável \(x_j\), mantendo as
+demais variáveis constantes.
 
 No modelo apresentado anteriormente, o coeficiente associado à variável
-\textbf{Score} é igual a \(0.04\). Isso significa que, para cada aumento
-de uma unidade no Score, o preditor linear \(\eta\) aumenta em \(0.04\),
-desde que as demais variáveis permaneçam constantes. De forma análoga,
-cada atraso adicional reduz o preditor linear em \(0.8\) unidades.
+\textbf{Score} é igual a \(-0.04\). Isso significa que, para cada
+aumento de uma unidade no Score, o preditor linear \(\eta\) diminui em
+\(0.04\), desde que as demais variáveis permaneçam constantes. De forma
+análoga, cada atraso adicional aumenta o preditor linear em \(0.8\)
+unidades.
 
 Como a função logística é crescente, coeficientes positivos aumentam a
 probabilidade estimada do evento, enquanto coeficientes negativos a
-reduzem. Entretanto, esse efeito não corresponde a um aumento constante
-da probabilidade. Um mesmo incremento em \(\eta\) pode produzir
-variações distintas em \(\theta\), dependendo da região da curva
-logística em que a observação se encontra.
+reduzem. Entretanto, esse efeito não corresponde a uma variação
+constante da probabilidade, pois a relação entre o preditor linear e a
+probabilidade é não linear.
 
 Para ilustrar esse comportamento, considere novamente o solicitante para
 o qual foi obtido \(\eta = 1.5\). A probabilidade estimada de
 inadimplência é dada por
 
 \[
-\theta=\frac{1}{1+\exp(-1.5)}\approx0.818.
+\theta = \frac{1}{1+\exp(-1.5)} \approx 0.818.
 \]
 
 Suponha agora que o Score desse solicitante aumente em uma unidade. Como
-o coeficiente associado ao Score é igual a \(0.04\), o novo preditor
+o coeficiente associado ao Score é igual a \(-0.04\), o novo preditor
 linear passa a ser
 
 \[
-\eta' = 1.5 + 0.04 = 1.54.
+\eta' = 1.5 - 0.04 = 1.46.
 \]
 
 Aplicando novamente a função logística,
 
 \[
-\theta'=\frac{1}{1+\exp(-1.54)}\approx0.824.
+\theta' = \frac{1}{1+\exp(-1.46)} \approx 0.812.
 \]
 
-Observa-se que o aumento de uma unidade no Score elevou a probabilidade
-estimada de aproximadamente \(81.8\%\) para \(82.4\%\). Esse resultado
-decorre do fato de que a função logística é estritamente crescente:
-sempre que o coeficiente de uma variável é positivo, um aumento nessa
-variável produz um valor maior para o preditor linear \(\eta\), o que,
-por sua vez, resulta em uma probabilidade também maior. De forma
-análoga, quando o coeficiente é negativo, um aumento na variável reduz o
-valor de \(\eta\) e, consequentemente, a probabilidade estimada.
-
-É importante destacar, entretanto, que o efeito de uma unidade adicional
-em uma variável não corresponde a um aumento fixo na probabilidade. Como
-a transformação entre \(\eta\) e \(\theta\) é não linear, um mesmo
-incremento no preditor linear pode produzir variações diferentes na
-probabilidade. Em geral, mudanças em \(\eta\) têm maior impacto quando a
-probabilidade está próxima de \(0.5\) e menor efeito quando ela já se
-aproxima de \(0\) ou de \(1\).
+Observa-se que o aumento de uma unidade no Score reduziu a probabilidade
+estimada de inadimplência de aproximadamente \(81.8\%\) para \(81.2\%\).
+Esse resultado ilustra como o sinal do coeficiente determina a direção
+da associação entre a variável explicativa e a probabilidade estimada do
+evento. A magnitude dessa variação, por sua vez, depende da região da
+curva logística em que a observação se encontra: alterações no preditor
+linear tendem a produzir maiores variações na probabilidade quando esta
+está próxima de \(0.5\), e menores variações quando se aproxima de \(0\)
+ou de \(1\).
 
 \subsubsection{Função de verossimilhança e estimação por máxima
 verossimilhança}\label{funuxe7uxe3o-de-verossimilhanuxe7a-e-estimauxe7uxe3o-por-muxe1xima-verossimilhanuxe7a}
 
 Na abordagem frequentista, os parâmetros da regressão logística são
-estimados por meio do método de \textbf{máxima verossimilhança}. O
-método procura encontrar o conjunto de parâmetros que torna os dados
-observados mais prováveis segundo o modelo assumido.
+estimados por meio do método de máxima verossimilhança. Esse método
+consiste em encontrar o conjunto de parâmetros que maximiza a
+verossimilhança dos dados observados, considerando o modelo
+probabilístico especificado.
 
 Considerando uma variável resposta binária \(Y_i\), com \(Y_i=1\)
 representando a ocorrência do evento de interesse (por exemplo,
@@ -808,91 +792,77 @@ inadimplência), assume-se que cada observação segue uma distribuição
 Bernoulli:
 
 \begin{equation}\protect\phantomsection\label{eq-bernoulli-logistica}{
-Y_i \sim Bernoulli(p_i)
+Y_i \sim \operatorname{Bernoulli}(\theta_i).
 }\end{equation}
 
-onde \(p_i\) representa a probabilidade de ocorrência do evento para o
-indivíduo \(i\), estimada pela função logística apresentada na
+onde \(\theta_i\) representa a probabilidade de ocorrência do evento
+para o indivíduo \(i\), estimada pela função logística apresentada na
 Equação~\ref{eq-funcao-logistica}.
 
-Sob a premissa de que as observações são estatisticamente independentes,
-a probabilidade conjunta de observar todo o conjunto de dados da
-variável resposta é obtida pelo produto de suas probabilidades
-individuais. Essa expressão matemática define a função de
-verossimilhança \((L(\beta \mid y, X))\) do modelo. Na prática, ela
-quantifica a plausibilidade de um vetor de coeficientes \((\beta)\) (as
-inclinações da reta ou do hiperplano de regressão) ter gerado os valores
-observados de \((y)\), dado o conhecimento prévio das variáveis
-explicativas \((X)\). Podendo ser expressa por:
+Sob a hipótese de independência entre as observações, a função de
+verossimilhança é definida pelo produto das probabilidades individuais:
 
 \begin{equation}\protect\phantomsection\label{eq-verossimilhanca-logistica}{
-L(\beta \mid y, X)=\prod_{i=1}^{n}p_i^{y_i}(1-p_i)^{1-y_i}
+L(\beta \mid y, X)=\prod_{i=1}^{n}\theta_i^{y_i}(1-\theta_i)^{1-y_i}
 }\end{equation}
 
 A estimação por máxima verossimilhança consiste em encontrar o vetor de
 parâmetros \(\beta\) que maximiza essa função:
 
 \begin{equation}\protect\phantomsection\label{eq-mle-logistica}{
-\hat{\beta}=\arg\max_{\beta}L(\beta \mid y, X)
+\hat{\beta} =
+\arg\max_{\beta} L(\beta \mid y, X).
 }\end{equation}
 
 Em outras palavras, os coeficientes estimados são aqueles que tornam os
 dados observados mais compatíveis com o modelo probabilístico definido.
 
-Na prática, entretanto, a otimização é realizada utilizando o
-\textbf{logaritmo da função de verossimilhança}, denominado
-log-verossimilhança:
+Na prática, utiliza-se o logaritmo da função de verossimilhança,
+denominado log-verossimilhança:
 
 \begin{equation}\protect\phantomsection\label{eq-log-verossimilhanca}{
-\ell(\beta)=\log L(\beta \mid y, X)
+\ell(\beta)=\log L(\beta \mid y, X).
 }\end{equation}
 
-A utilização da log-verossimilhança não altera o ponto de máximo da
-função original, pois o logaritmo é uma transformação monotônica
-crescente. Portanto, maximizar a verossimilhança é equivalente a
-maximizar sua versão logarítmica.
-
-Além disso, a transformação apresenta vantagens computacionais
-importantes. Como a função de verossimilhança envolve o produto de
-muitas probabilidades menores que um, a multiplicação de diversos termos
-pode gerar valores numericamente próximos de zero, causando problemas de
-precisão computacional. Ao aplicar o logaritmo, o produto é convertido
-em uma soma:
+Como o logaritmo é uma função monotônica crescente, sua aplicação não
+altera o ponto de máximo. Além disso, transforma o produto de
+probabilidades em uma soma, o que facilita a otimização e evita
+problemas numéricos decorrentes da multiplicação de valores muito
+pequenos:
 
 \begin{equation}\protect\phantomsection\label{eq-log-verossimilhanca-expandida}{
-\ell(\beta)=\sum_{i=1}^{n}
-\left[y_i\log(p_i)+(1-y_i)\log(1-p_i)\right]
+\ell(\beta) =
+\sum_{i=1}^{n}
+\left[
+y_i\log(\theta_i)
++
+(1-y_i)\log(1-\theta_i)
+\right].
 }\end{equation}
 
 Essa forma é mais estável numericamente e facilita os procedimentos de
 otimização utilizados para encontrar os parâmetros do modelo.
 
-É importante destacar que a função de verossimilhança possui papel
-central tanto na abordagem frequentista quanto na abordagem Bayesiana. A
-diferença fundamental está na forma como as informações são combinadas.
-No método frequentista, a verossimilhança é utilizada diretamente para
-obter uma estimativa pontual dos parâmetros, enquanto na abordagem
-Bayesiana ela é combinada com uma distribuição a priori por meio do
-teorema de Bayes, resultando na distribuição posterior dos parâmetros.
+A função de verossimilhança também desempenha papel central na
+inferência Bayesiana, na qual é combinada com a distribuição a priori
+por meio do Teorema de Bayes para obter a distribuição a posteriori dos
+parâmetros. Assim, embora ambas as abordagens utilizem a mesma função,
+diferem na forma como a informação é incorporada à inferência.
 
-No contexto frequentista, após a estimação dos coeficientes, a incerteza
-dos parâmetros é geralmente avaliada por meio de testes de hipótese e
-intervalos de confiança. Os testes permitem avaliar, por exemplo, se
-determinada variável explicativa apresenta evidência estatística de
-associação com o evento de interesse, enquanto os intervalos de
-confiança fornecem uma faixa de valores plausíveis para os coeficientes
-estimados.
+Na abordagem frequentista, a incerteza dos parâmetros é avaliada por
+meio de testes de hipótese e intervalos de confiança. Esses
+procedimentos permitem investigar a associação entre as variáveis
+explicativas e o evento de interesse, além de quantificar a incerteza
+das estimativas.
 
-Apesar de sua ampla utilização, a abordagem frequentista apresenta
-algumas limitações. A interpretação dos resultados depende de
-propriedades assintóticas dos estimadores, ou seja, da aproximação dos
-resultados quando o tamanho da amostra aumenta. Além disso, os
-intervalos de confiança e testes de hipótese possuem interpretação
-baseada no procedimento de amostragem repetida, o que pode ser menos
-intuitivo em problemas aplicados. Em situações com poucos dados, alta
-dimensionalidade ou presença de forte regularização, essas propriedades
-podem ser menos adequadas, motivando a utilização de abordagens
-alternativas, como a modelagem Bayesiana.
+Entretanto, a interpretação frequentista fundamenta-se no comportamento
+dos estimadores em amostragens repetidas, não permitindo atribuir
+diretamente probabilidades aos valores dos parâmetros. Além disso, em
+determinadas situações, como amostras pequenas ou modelos com muitos
+parâmetros, a estimação pode apresentar instabilidade. A abordagem
+Bayesiana oferece uma perspectiva alternativa, permitindo incorporar
+informações prévias e representar a incerteza dos parâmetros por meio de
+distribuições a posteriori.
 
 \subsubsection{Diagnóstico e qualidade do
 ajuste}\label{diagnuxf3stico-e-qualidade-do-ajuste}
@@ -906,19 +876,19 @@ concorrentes.
 
 \paragraph{Análise de resíduos}\label{anuxe1lise-de-resuxedduos}
 
-Embora a regressão logística não apresente resíduos normalmente
-distribuídos como na regressão linear, diferentes medidas de resíduos
-podem ser utilizadas para avaliar a adequação do modelo e identificar
-observações potencialmente problemáticas. Como a variável resposta é
-binária, assumindo valores 0 ou 1, enquanto o modelo estima
-probabilidades de ocorrência do evento, os resíduos na regressão
-logística procuram quantificar a discrepância entre o resultado
-observado e a probabilidade estimada para cada observação.
+Embora não se pressuponha que os resíduos da regressão logística sigam
+uma distribuição normal, diferentes medidas podem ser utilizadas para
+avaliar a adequação do modelo e identificar observações potencialmente
+problemáticas. Como a variável resposta é binária, assumindo valores 0
+ou 1, enquanto o modelo estima probabilidades de ocorrência do evento,
+os resíduos na regressão logística procuram quantificar a discrepância
+entre o resultado observado e a probabilidade estimada para cada
+observação.
 
-Valores de resíduos próximos de zero indicam maior compatibilidade entre
-os valores observados e as probabilidades estimadas, enquanto valores
+Valores de resíduos próximos de zero indicam menor discrepância entre os
+valores observados e as probabilidades estimadas, enquanto valores
 absolutos elevados podem indicar observações mal ajustadas ou possíveis
-inconsistências na especificação do modelo. Entretanto, observações
+problemas de ajuste ou especificação do modelo. Entretanto, observações
 discrepantes não devem ser automaticamente removidas, pois podem
 representar tanto erros nos dados quanto indivíduos com características
 incomuns, mas relevantes para o fenômeno estudado. Entre as medidas
@@ -930,29 +900,30 @@ probabilidade estimada pelo modelo, padronizada pelo desvio padrão
 esperado da distribuição Bernoulli:
 
 \begin{equation}\protect\phantomsection\label{eq-residuo-pearson}{
-r_i^P=
-\frac{y_i-p_i}
-{\sqrt{p_i(1-p_i)}}
+r_i^P =
+\frac{y_i-\theta_i}
+{\sqrt{\theta_i(1-\theta_i)}}.
 }\end{equation}
 
-onde \(y_i\) representa o valor observado da variável resposta e \(p_i\)
-corresponde à probabilidade estimada para a observação \(i\). A
-padronização permite comparar observações com diferentes probabilidades
-estimadas, sendo que valores absolutos elevados indicam possíveis
-observações incompatíveis com o ajuste do modelo.
+onde \(y_i\) representa o valor observado da variável resposta e
+\(\theta_i\) corresponde à probabilidade estimada para a observação
+\(i\). A padronização permite comparar observações com diferentes
+probabilidades estimadas, sendo que valores absolutos elevados indicam
+possíveis observações incompatíveis com o ajuste do modelo.
 
-O resíduo de Deviance, por sua vez, avalia a contribuição individual de
-cada observação para a \emph{deviance} total do modelo, medida baseada
-na função de verossimilhança que quantifica a discrepância entre o
-modelo ajustado e um modelo saturado. Assim como no resíduo de Pearson,
-valores elevados indicam observações que apresentam maior discrepância
-em relação às previsões do modelo.
+O resíduo de Deviance, por sua vez, expressa a contribuição individual
+de cada observação para a deviance do modelo, medida baseada na função
+de verossimilhança que quantifica a discrepância entre o modelo ajustado
+e o modelo saturado. Valores absolutos elevados indicam observações cuja
+resposta observada apresenta maior discrepância em relação à previsão do
+modelo.
 
 Enquanto os resíduos avaliam o ajuste individual das observações, a
 distância de Cook procura identificar observações influentes, ou seja,
-aquelas cuja remoção poderia alterar significativamente as estimativas
-dos coeficientes do modelo. Uma observação influente não necessariamente
-representa um erro nos dados, podendo indicar um perfil incomum ou pouco
+aquelas cuja influência sobre o ajuste do modelo pode ser avaliada pela
+alteração nas estimativas dos coeficientes quando são removidas
+individualmente. Uma observação influente não necessariamente representa
+um erro nos dados, podendo indicar um perfil incomum ou pouco
 representado pelas variáveis explicativas. Em aplicações de crédito, por
 exemplo, clientes com características atípicas podem refletir situações
 reais que não devem ser automaticamente excluídas da análise, mas
@@ -987,12 +958,13 @@ pelas demais variáveis do modelo. Assim, valores elevados de \(R_j^2\)
 indicam que \(x_j\) contém informações semelhantes às demais variáveis
 explicativas, resultando em um maior VIF.
 
-Valores de VIF próximos de 1 indicam baixa correlação entre a variável e
-os demais preditores, enquanto valores elevados sugerem maior grau de
-multicolinearidade. Embora não exista um limite universalmente aceito,
-valores superiores a 5 costumam indicar um nível moderado de
-multicolinearidade, ao passo que valores acima de 10 são frequentemente
-considerados evidências de forte multicolinearidade.
+Valores de VIF próximos de 1 indicam baixa ou inexistente de
+multicolinearidade entre a variável e os demais preditores, enquanto
+valores elevados sugerem maior grau de multicolinearidade. Embora não
+exista um limite universalmente aceito, valores superiores a 5 costumam
+indicar um nível moderado de multicolinearidade, ao passo que valores
+acima de 10 são frequentemente considerados evidências de forte
+multicolinearidade.
 
 É importante destacar que a presença de multicolinearidade não implica,
 necessariamente, que o modelo deva ser descartado ou que as variáveis
@@ -1008,65 +980,46 @@ ser mitigada pelas penalizações impostas aos coeficientes.
 \paragraph{Avaliação global do
 ajuste}\label{avaliauxe7uxe3o-global-do-ajuste}
 
-A \texttt{deviance} é uma medida baseada na função de verossimilhança
-que quantifica a discrepância entre o modelo ajustado e o modelo
-saturado, isto é, um modelo que reproduz perfeitamente os dados
-observados. Dessa forma, valores menores de \texttt{deviance} indicam
-menor discrepância entre as probabilidades estimadas pelo modelo e os
-valores observados.
+A deviance é uma medida baseada na verossimilhança que quantifica a
+discrepância entre o modelo ajustado e o modelo saturado, que reproduz
+perfeitamente os dados observados. Valores menores indicam melhor
+ajuste.
 
-Na regressão logística, a \texttt{deviance} é frequentemente utilizada
-para avaliar a contribuição das variáveis explicativas para o ajuste do
-modelo. A saída dos modelos estimados geralmente apresenta dois valores
-principais: a \texttt{Null\ deviance}, correspondente ao ajuste de um
-modelo contendo apenas o intercepto, e a \texttt{Residual\ deviance},
-correspondente ao modelo contendo as variáveis explicativas. Assim, uma
-redução da \texttt{deviance} residual em relação à \texttt{deviance}
-nula indica que a inclusão das variáveis explicativas proporciona uma
-melhora no ajuste em relação ao modelo sem preditores.
+Na regressão logística, são apresentadas duas medidas principais: a Null
+deviance, referente ao modelo contendo apenas o intercepto, e a Residual
+deviance, referente ao modelo com as variáveis explicativas. A redução
+da deviance residual em relação à nula indica melhora no ajuste
+proporcionada pela inclusão dos preditores.
 
-A diferença entre esses dois valores está relacionada ao teste da razão
-de verossimilhança, utilizado para comparar modelos aninhados e avaliar
-se a inclusão de novas variáveis explicativas produz uma melhora
-estatisticamente significativa no ajuste. O teste é baseado na diferença
-entre as log-verossimilhanças dos modelos:
+Essa diferença pode ser avaliada pelo teste da razão de verossimilhança,
+utilizado na comparação de modelos aninhados. Sua estatística é definida
+por:
 
 \begin{equation}\protect\phantomsection\label{eq-lrt}{
-D=
--2
-\left[
+D=-2\left[
 \ell_0-\ell_1
 \right]
 }\end{equation}
 
 onde \(\ell_0\) representa a log-verossimilhança do modelo restrito e
-\(\ell_1\) a log-verossimilhança do modelo completo. Valores maiores da
-estatística \(\chi^2\) indicam uma maior diferença entre os modelos e,
-consequentemente, maior evidência de que o modelo completo apresenta
-melhor ajuste.
+\(\ell_1\) a log-verossimilhança do modelo completo. Sob as condições
+usuais, a estatística segue aproximadamente uma distribuição
+qui-quadrado, cujos graus de liberdade correspondem à diferença entre o
+número de parâmetros dos modelos.
 
-Os graus de liberdade associados às deviances também são relevantes para
-a avaliação do ajuste. Em modelos de regressão logística, os graus de
-liberdade da deviance residual correspondem à diferença entre o número
-de observações e o número de parâmetros estimados, enquanto os da
-deviance nula correspondem ao número de observações menos um,
-considerando que esse modelo contém apenas o intercepto. Na comparação
-entre modelos aninhados, a diferença entre seus graus de liberdade
-representa o número de parâmetros adicionais introduzidos pelo modelo
-mais complexo e determina os graus de liberdade da distribuição
-qui-quadrado utilizada no teste da razão de verossimilhança.
+Os graus de liberdade da deviance residual correspondem à diferença
+entre o número de observações e o número de parâmetros estimados. Na
+deviance nula, correspondem ao número de observações menos um,
+considerando que o modelo contém apenas o intercepto.
 
 \paragraph{Critérios de seleção de
 modelos}\label{crituxe9rios-de-seleuxe7uxe3o-de-modelos}
 
-Critérios como o \texttt{Akaike\ Information\ Criterion} (AIC) e o
-\texttt{Bayesian\ Information\ Criterion} (BIC) são utilizados para
-comparar diferentes especificações de modelo, buscando um equilíbrio
-entre qualidade do ajuste e complexidade. Ambos são baseados na
-log-verossimilhança do modelo, mas incorporam uma penalização pelo
-número de parâmetros estimados, evitando que modelos com maior número de
-variáveis sejam favorecidos apenas por apresentarem melhor ajuste aos
-dados.
+Os critérios \texttt{Akaike\ Information\ Criterion} (AIC) e
+\texttt{Bayesian\ Information\ Criterion} (BIC) permitem comparar
+especificações de modelo considerando simultaneamente a qualidade do
+ajuste e a complexidade, por meio de uma penalização pelo número de
+parâmetros estimados.
 
 O AIC é definido por:
 
@@ -1086,13 +1039,13 @@ onde \(\ell(\hat{\beta})\) representa a log-verossimilhança avaliada nas
 estimativas de máxima verossimilhança, \(k\) corresponde ao número de
 parâmetros estimados e \(n\) representa o tamanho da amostra.
 
-Em ambos os critérios, menores valores indicam modelos preferíveis
-dentro do conjunto analisado. A principal diferença entre eles está na
-penalização aplicada à complexidade: o BIC impõe uma penalização maior
-para modelos com muitos parâmetros, especialmente em amostras grandes,
-enquanto o AIC tende a favorecer modelos com maior capacidade preditiva.
+Em ambos os critérios, menores valores indicam modelos preferíveis entre
+as especificações comparadas. A principal diferença está na penalização
+da complexidade: o BIC penaliza mais fortemente modelos com maior número
+de parâmetros, especialmente em amostras grandes, enquanto o AIC aplica
+uma penalização fixa por parâmetro.
 
-\subsubsection{Assumptions do modelo}\label{assumptions-do-modelo}
+\subsubsection{Pressupostos do modelo}\label{pressupostos-do-modelo}
 
 A regressão logística, assim como outros modelos estatísticos, depende
 de um conjunto de hipóteses que garantem a validade das estimativas e
@@ -1103,35 +1056,21 @@ necessárias para que a relação entre as variáveis explicativas e a
 probabilidade do evento de interesse seja adequadamente representada.
 
 A primeira hipótese está relacionada à independência das observações,
-assumindo que cada indivíduo da amostra representa uma unidade
-independente de informação. No contexto de concessão de crédito, isso
-significa que a probabilidade de inadimplência de um cliente deve ser
-avaliada sem dependência direta das características de outros clientes
-presentes na base de dados.
+assumindo que as respostas dos indivíduos são estatisticamente
+independentes, condicionadas às variáveis explicativas incluídas no
+modelo. No contexto de concessão de crédito, essa hipótese implica que a
+ocorrência de inadimplência de um cliente não deve apresentar
+dependência estatística direta em relação à ocorrência do evento para
+outros clientes da amostra.
 
-Outra hipótese importante é a existência de uma relação aproximadamente
-linear entre as variáveis explicativas e o logaritmo das chances
-(log-odds) do evento. Embora a regressão logística não imponha
-linearidade entre os preditores e a probabilidade diretamente, ela
-assume que a combinação linear das variáveis explicativas é capaz de
-explicar a variação no logit da probabilidade. Dessa forma, efeitos não
+Outra hipótese importante é a existência de uma relação linear entre as
+variáveis explicativas contínuas e o logaritmo das chances (log-odds) do
+evento. Embora a regressão logística não imponha linearidade entre os
+preditores e a probabilidade diretamente, ela assume que o logit da
+probabilidade pode ser representado por uma combinação linear dos
+preditores, conforme a especificação do modelo. Dessa forma, efeitos não
 lineares podem exigir transformações das variáveis, inclusão de termos
 polinomiais ou utilização de outras estruturas de modelagem.
-
-Também é necessário avaliar a presença de multicolinearidade entre as
-variáveis explicativas. Quando variáveis altamente correlacionadas são
-incluídas simultaneamente no modelo, ocorre aumento da variância das
-estimativas dos coeficientes, dificultando a interpretação individual
-dos efeitos. Em modelos de risco de crédito, esse problema pode surgir,
-por exemplo, quando diferentes indicadores financeiros representam
-informações semelhantes sobre o perfil econômico do cliente. Entretanto,
-essa limitação pode ser parcialmente reduzida por meio da utilização de
-métodos de regularização, que introduzem penalizações sobre os
-coeficientes e podem contribuir para a estabilidade das estimativas em
-cenários com alta correlação entre preditores. Dessa forma, embora a
-análise de multicolinearidade permaneça relevante para a compreensão da
-estrutura dos dados, sua influência sobre o desempenho preditivo do
-modelo pode ser mitigada pela abordagem de estimação adotada.
 
 \subsubsection{Regularização e seleção de
 variáveis}\label{regularizauxe7uxe3o-e-seleuxe7uxe3o-de-variuxe1veis}
@@ -1252,42 +1191,15 @@ preditores com menor contribuição para o modelo.
 \subsection{Regressão Logística
 Bayesiana}\label{regressuxe3o-loguxedstica-bayesiana}
 
-Enquanto a regressão logística frequentista trata os coeficientes do
-modelo como parâmetros fixos e desconhecidos, a abordagem Bayesiana
-considera esses parâmetros como variáveis aleatórias. Dessa forma, é
-possível incorporar conhecimento prévio sobre os coeficientes por meio
-de distribuições \texttt{a\ priori}, que representam as crenças
-existentes antes da observação dos dados.
-
-A inferência Bayesiana consiste em combinar essas informações prévias
-com a informação contida na amostra, representada pela função de
-verossimilhança, obtendo-se a distribuição \texttt{a\ posteriori} dos
-parâmetros. Essa distribuição sintetiza o conhecimento atualizado após a
-observação dos dados e constitui a base para todas as inferências
-realizadas no modelo, como estimação dos coeficientes, construção de
-intervalos de credibilidade e obtenção de probabilidades preditivas.
-
-\subsubsection{Formulação do modelo}\label{formulauxe7uxe3o-do-modelo-1}
-
-A estrutura probabilística da regressão logística Bayesiana é a mesma
-apresentada para a regressão logística frequentista. Assume-se que a
-variável resposta segue uma distribuição de Bernoulli e que sua
-probabilidade de ocorrência é relacionada às variáveis explicativas por
-meio da função logística aplicada ao preditor linear.
-
-A principal diferença entre as duas abordagens está na forma como os
-coeficientes do modelo são tratados. Na abordagem frequentista, os
-parâmetros são considerados fixos e desconhecidos, sendo estimados por
-máxima verossimilhança. Já na abordagem Bayesiana, os coeficientes são
-tratados como variáveis aleatórias e sua inferência é realizada por meio
-da distribuição \texttt{a\ posteriori}, obtida pela aplicação do Teorema
-de Bayes, conforme apresentado na Seção~\ref{sec-teorema-bayes}.
-
-Dessa forma, enquanto a abordagem frequentista fornece uma estimativa
-pontual para cada coeficiente, a regressão logística Bayesiana produz
-uma distribuição posterior para cada parâmetro, permitindo quantificar
-diretamente a incerteza associada às estimativas e realizar inferências
-probabilísticas sobre os coeficientes do modelo.
+Enquanto a regressão logística frequentista trata os coeficientes como
+parâmetros fixos e desconhecidos, a abordagem Bayesiana os considera
+variáveis aleatórias, permitindo incorporar informações prévias por meio
+de distribuições \emph{a priori}. Essas informações são combinadas com a
+verossimilhança dos dados observados, resultando na distribuição \emph{a
+posteriori}, que representa o conhecimento atualizado sobre os
+parâmetros e constitui a base para as inferências Bayesianas, como a
+estimação dos coeficientes, a construção de intervalos de credibilidade
+e a obtenção de probabilidades preditivas.
 
 \subsubsection{\texorpdfstring{Escolha de distribuições \emph{a
 priori}}{Escolha de distribuições a priori}}\label{escolha-de-distribuiuxe7uxf5es-a-priori}
@@ -1492,37 +1404,19 @@ distribuição Normal. Como consequência, tende a produzir modelos mais
 parcimoniosos, reduzindo a influência de variáveis com pouca
 contribuição para a resposta e facilitando a interpretação do modelo.
 
-\paragraph{\texorpdfstring{Sensibilidade às distribuições \emph{a
-priori}}{Sensibilidade às distribuições a priori}}\label{sensibilidade-uxe0s-distribuiuxe7uxf5es-a-priori}
-
-Uma etapa importante da modelagem Bayesiana consiste em avaliar a
-sensibilidade dos resultados à escolha das distribuições \emph{a
-priori}. Como a distribuição posterior é obtida pela combinação entre a
-priori e a verossimilhança, diferentes especificações podem produzir
-estimativas distintas, especialmente em situações com amostras reduzidas
-ou baixa quantidade de informação nos dados.
-
-Em geral, quando o conjunto de dados é suficientemente informativo,
-espera-se que pequenas alterações nas distribuições \emph{a priori}
-tenham impacto limitado sobre as estimativas posteriores. Por outro
-lado, diferenças substanciais entre os resultados obtidos com diferentes
-prioris podem indicar que as inferências são fortemente influenciadas
-pelas hipóteses iniciais adotadas.
-
 \subsubsection{\texorpdfstring{Distribuições \emph{a
 posteriori}}{Distribuições a posteriori}}\label{distribuiuxe7uxf5es-a-posteriori}
 
-Na inferência Bayesiana, a distribuição \emph{a posteriori} dos
-parâmetros é obtida pela combinação entre a distribuição \emph{a priori}
-e a função de verossimilhança, conforme estabelecido pelo Teorema de
-Bayes (Seção~\ref{sec-teorema-bayes}). Enquanto a distribuição \emph{a
-priori} representa o conhecimento ou as suposições estabelecidas sobre
-os parâmetros antes da observação dos dados, a verossimilhança incorpora
-a informação fornecida pela amostra observada. Dessa forma, a
-distribuição \emph{a posteriori} expressa o conhecimento atualizado
-sobre os parâmetros após considerar as evidências disponíveis.
+Na inferência Bayesiana, a distribuição a posteriori dos parâmetros é
+obtida pela combinação entre a distribuição a priori e a função de
+verossimilhança, conforme estabelecido pelo Teorema de Bayes
+(Seção~\ref{sec-teorema-bayes}). Enquanto a priori representa o
+conhecimento ou as suposições estabelecidas sobre os parâmetros antes da
+observação dos dados, a verossimilhança incorpora a informação fornecida
+pela amostra. A posteriori expressa, portanto, o conhecimento atualizado
+sobre os parâmetros.
 
-Formalmente, a distribuição \emph{a posteriori} pode ser expressa por:
+Formalmente, essa distribuição pode ser expressa por:
 
 \begin{equation}\protect\phantomsection\label{eq-posterior}{
 p(\beta \mid y, X)
@@ -1534,21 +1428,16 @@ p(y \mid X)
 }
 }\end{equation}
 
-em que \(p(\beta \mid y, X)\) representa a distribuição \emph{a
-posteriori} dos parâmetros; \(p(y \mid X, \beta)\) corresponde à função
-de verossimilhança; \(p(\beta)\) representa a distribuição \emph{a
-priori}; e \(p(y \mid X)\) é a distribuição marginal dos dados, também
-denominada constante de normalização.
+em que \(\beta\) representa o vetor de parâmetros do modelo; \(X\), a
+matriz de variáveis explicativas; e \(y\), o vetor de observações da
+variável resposta. Além disso, \(p(y \mid X, \beta)\) corresponde à
+função de verossimilhança, \(p(\beta)\) à distribuição a priori e
+\(p(y \mid X)\) à distribuição marginal dos dados, também denominada
+constante de normalização.
 
-Neste contexto, \(X\) representa a matriz de variáveis explicativas,
-composta pelas características observadas dos indivíduos, enquanto \(y\)
-corresponde ao vetor de observações da variável resposta. O vetor
-\(\beta\) contém os parâmetros do modelo de regressão logística a serem
-estimados.
-
-Como o denominador não depende dos parâmetros, a distribuição \emph{a
-posteriori} pode ser expressa proporcionalmente ao produto entre a
-verossimilhança e a distribuição \emph{a priori}:
+Como o denominador não depende dos parâmetros, a distribuição a
+posteriori pode ser expressa proporcionalmente ao produto entre a
+verossimilhança e a distribuição a priori:
 
 \begin{equation}\protect\phantomsection\label{eq-posterior-proporcional}{
 p(\beta \mid y, X)
@@ -1557,42 +1446,10 @@ p(y \mid X, \beta)
 p(\beta).
 }\end{equation}
 
-Essa relação evidencia que a inferência Bayesiana não considera apenas a
-informação observada nos dados, mas também as suposições estabelecidas
-previamente sobre os parâmetros. A influência relativa de cada
-componente depende, entre outros fatores, da quantidade de informação
-presente na amostra e da dispersão atribuída às distribuições \emph{a
-priori}.
-
-Na regressão logística, a distribuição \emph{a priori} é especificada
-para os coeficientes do modelo, representados por \(\beta\). Esses
-parâmetros determinam a relação entre as variáveis explicativas e a
-probabilidade de ocorrência do evento de interesse. Antes de observar os
-dados, a distribuição \emph{a priori} estabelece quais valores desses
-coeficientes são considerados mais ou menos plausíveis. Após a
-observação da amostra, a função de verossimilhança incorpora as
-informações fornecidas pelos dados, atribuindo maior suporte aos valores
-dos parâmetros que resultam em probabilidades mais compatíveis com os
-resultados observados.
-
-A distribuição \emph{a posteriori} surge, portanto, da combinação dessas
-duas fontes de informação. Para compreender esse processo, pode-se
-considerar que a distribuição \emph{a priori} representa uma
-distribuição inicial de plausibilidade dos parâmetros, enquanto a
-verossimilhança atua como um mecanismo de atualização, modificando essa
-distribuição de acordo com a evidência empírica. Assim, valores dos
-parâmetros que recebem maior suporte tanto da distribuição \emph{a
-priori} quanto da verossimilhança tendem a apresentar maior concentração
-de probabilidade na distribuição \emph{a posteriori}.
-
-Essa atualização não corresponde simplesmente à substituição da
-distribuição \emph{a priori} pelas estimativas obtidas a partir dos
-dados. Em vez disso, a distribuição \emph{a posteriori} preserva a
-influência da informação prévia, combinando-a com a evidência observada.
-A intensidade dessa influência depende da compatibilidade entre as
-informações fornecidas pela priori e pela verossimilhança, bem como da
-quantidade de informação disponível na amostra e da dispersão atribuída
-à distribuição \emph{a priori}.
+Na regressão logística, essa combinação permite atualizar a informação
+sobre os coeficientes do modelo a partir das evidências observadas. A
+influência da distribuição a priori depende de sua especificação e da
+quantidade de informação disponível nos dados.
 
 \begin{figure}
 
@@ -1608,195 +1465,95 @@ verossimilhança normalizada e distribuição a posteriori.}
 
 \end{figure}%
 
-Para ilustrar o processo de atualização bayesiana, considere um exemplo
-hipotético em que são observadas 25 ocorrências de um determinado evento
-em uma amostra de 30 observações. Suponha, inicialmente, que o
-coeficiente associado a esse evento siga uma distribuição \emph{a
-priori} Normal, com média zero e desvio-padrão igual a 1,5. Essa
-especificação expressa uma expectativa inicial de que o efeito seja
-próximo de zero, embora permita valores positivos e negativos.
+Para ilustrar esse processo, considere um modelo logístico simplificado,
+com um único coeficiente \(\beta\), no qual são observadas 25
+ocorrências de determinado evento em uma amostra de 30 observações.
+Suponha que a distribuição a priori desse coeficiente seja Normal, com
+média zero e desvio-padrão igual a 1,5. Essa especificação expressa uma
+expectativa inicial de que o efeito seja próximo de zero, embora permita
+valores positivos e negativos.
 
-A partir dos dados observados, a função de verossimilhança passa a
-favorecer valores positivos do coeficiente, uma vez que a proporção de
-ocorrências na amostra é relativamente elevada. Ao combinar essa
-informação com a distribuição \emph{a priori}, obtém-se a distribuição
-\emph{a posteriori}, que representa a atualização do conhecimento sobre
-o parâmetro após a observação dos dados.
+A proporção de ocorrências observada faz com que a verossimilhança
+favoreça valores positivos do coeficiente. Ao combiná-la com a
+distribuição a priori, obtém-se a distribuição a posteriori, conforme
+ilustrado na Figura~\ref{fig-atualizacao-bayesiana}. A distribuição
+resultante reflete, assim, tanto a informação prévia quanto as
+evidências fornecidas pela amostra.
 
-Como ilustrado na Figura~\ref{fig-atualizacao-bayesiana}, a distribuição
-\emph{a posteriori} apresenta uma posição intermediária entre a
-distribuição \emph{a priori} e a verossimilhança normalizada. Esse
-resultado evidencia que a inferência bayesiana não considera
-exclusivamente os dados observados, tampouco mantém inalterada a
-expectativa inicial: a distribuição \emph{a posteriori} resulta da
-combinação dessas duas fontes de informação.
+Além de atualizar a informação sobre os parâmetros, a distribuição a
+priori pode afetar a magnitude das estimativas posteriores por meio de
+um mecanismo de regularização denominado shrinkage, que corresponde à
+contração dos coeficientes em direção aos valores favorecidos pela
+priori. No caso de distribuições centradas em zero, esse mecanismo tende
+a favorecer estimativas de menor magnitude. A intensidade da contração
+depende da especificação da priori e da informação fornecida pelos
+dados.
 
-\begin{figure}
-
-\centering{
-
-\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio]{monografia_v2_files/figure-pdf/fig-shrinkage-1.pdf}
-
-}
-
-\caption{\label{fig-shrinkage}Distribuições posteriores e contração das
-estimativas em relação à máxima verossimilhança, sob priors Normal e
-Laplace.}
-
-\end{figure}%
-
-A influência da distribuição \emph{a priori} não se limita à atualização
-da informação sobre os parâmetros, podendo também afetar a magnitude das
-estimativas posteriores por meio de um mecanismo de regularização
-denominado \emph{shrinkage}. Esse fenômeno corresponde à contração dos
-coeficientes em direção aos valores favorecidos pela distribuição
-\emph{a priori}. Quando centrada em zero, essa distribuição tende a
-favorecer estimativas de menor magnitude, sendo a intensidade da
-contração determinada, entre outros fatores, por sua forma e dispersão.
-Conforme ilustrado na Figura~\ref{fig-shrinkage}, a incorporação de
-distribuições \emph{a priori} centradas em zero pode deslocar as
-estimativas posteriores em direção a esse valor, em comparação com a
-estimativa de máxima verossimilhança. Nesse contexto, diferentes
-especificações podem produzir comportamentos distintos: enquanto a
-distribuição Normal promove uma regularização mais suave, a distribuição
-Laplace apresenta maior concentração de probabilidade nas proximidades
-de zero e caudas mais pesadas, podendo favorecer uma contração mais
-acentuada de coeficientes de menor magnitude.
-
-A comparação entre essas distribuições permite investigar como
-diferentes estruturas de informação prévia influenciam as estimativas
-dos parâmetros e a incerteza posterior. Cabe destacar, entretanto, que a
-contração dos coeficientes não implica necessariamente que sejam
-estimados exatamente como zero. Assim, embora a distribuição Laplace
-possa favorecer estimativas próximas de zero, sua utilização como
-distribuição \emph{a priori} não corresponde, por si só, à seleção
-automática de variáveis.
+A comparação entre as prioris Normal e Laplace permite investigar como
+diferentes especificações influenciam as estimativas dos parâmetros e a
+incerteza posterior. Cabe destacar que a contração dos coeficientes não
+implica necessariamente que sejam estimados exatamente como zero,
+tampouco que ocorra seleção automática de variáveis.
 
 \subsubsection{Inferência via MCMC}\label{inferuxeancia-via-mcmc}
 
-Embora a distribuição \emph{a posteriori} seja definida matematicamente
-pela combinação entre a distribuição \emph{a priori} e a função de
-verossimilhança, sua obtenção analítica nem sempre é possível. Em
-modelos de regressão logística com múltiplas variáveis explicativas, a
-integração necessária para determinar a constante de normalização da
-distribuição \emph{a posteriori} geralmente não possui solução fechada.
-Consequentemente, torna-se necessário recorrer a métodos computacionais
-para aproximar essa distribuição.
+Embora a distribuição a posteriori seja definida pela combinação entre a
+distribuição a priori e a função de verossimilhança, sua obtenção
+analítica nem sempre é possível. Em modelos de regressão logística com
+múltiplas variáveis explicativas, a constante de normalização da
+distribuição a posteriori geralmente não possui solução analítica
+fechada. Nesses casos, métodos computacionais permitem aproximar a
+distribuição por meio de amostras simuladas.
 
-Neste trabalho, a inferência Bayesiana é realizada por meio de métodos
-de Monte Carlo via Cadeias de Markov (\emph{Markov Chain Monte Carlo},
-MCMC), implementados pela biblioteca \texttt{rstanarm} do R, que utiliza
-o Stan como mecanismo de estimação. Esses métodos permitem obter
-amostras da distribuição \emph{a posteriori} por meio da construção de
-cadeias de Markov cuja distribuição estacionária corresponde à
-distribuição de interesse.
+Neste trabalho, a inferência Bayesiana é realizada por métodos de Monte
+Carlo via Cadeias de Markov (Markov Chain Monte Carlo, MCMC),
+implementados pela biblioteca rstanarm do R, que utiliza o Stan como
+mecanismo de estimação. Esses métodos geram amostras da distribuição a
+posteriori por meio de cadeias de Markov cuja distribuição estacionária
+corresponde à distribuição de interesse. A partir dessas amostras, podem
+ser calculadas medidas como médias, medianas, desvios padrão, intervalos
+de credibilidade e probabilidades posteriores, permitindo representar a
+incerteza associada aos parâmetros.
 
-Diferentemente da abordagem frequentista, que geralmente apresenta
-estimativas pontuais para os parâmetros, os métodos MCMC permitem
-representar a incerteza associada às estimativas por meio de uma amostra
-da distribuição \emph{a posteriori}. A partir dessas amostras, podem ser
-calculadas medidas como médias, medianas, desvios padrão, intervalos de
-credibilidade e probabilidades posteriores, proporcionando uma descrição
-mais completa da incerteza sobre os parâmetros do modelo.
-
-Na prática, o procedimento utiliza múltiplas cadeias de Markov,
-iniciadas em diferentes valores dos parâmetros. Antes da etapa de
-amostragem utilizada para a inferência, realiza-se um período inicial
-denominado \emph{warm-up}, durante o qual o algoritmo adapta
-determinados parâmetros internos para melhorar a eficiência da
-amostragem. As iterações dessa etapa são descartadas e não são
-utilizadas no cálculo dos resumos da distribuição \emph{a posteriori}.
-
-Após o período de \emph{warm-up}, são geradas as amostras utilizadas
-para representar a distribuição \emph{a posteriori}. A qualidade dessas
-amostras depende da convergência das cadeias e da eficiência com que
-exploram o espaço paramétrico. Por esse motivo, torna-se necessário
-avaliar os resultados por meio de diagnósticos específicos, como o fator
-de redução potencial de escala (\(\hat{R}\)), o tamanho efetivo da
-amostra (ESS), a inspeção gráfica das trajetórias das cadeias e os
-diagnósticos associados ao algoritmo Hamiltoniano de Monte Carlo
-(\emph{Hamiltonian Monte Carlo}, HMC).
-
-Além de permitir que as cadeias alcancem regiões de maior probabilidade
-da distribuição \emph{a posteriori}, essa etapa é utilizada para ajustar
-automaticamente parâmetros internos do algoritmo, como o tamanho do
-passo (\emph{step size}) e a matriz de massa (\emph{mass matrix}),
-tornando a amostragem posterior mais eficiente.
+O procedimento utiliza múltiplas cadeias, iniciadas em diferentes
+valores dos parâmetros. Antes da amostragem utilizada na inferência,
+realiza-se uma etapa denominada warm-up, durante a qual o algoritmo
+adapta parâmetros internos para melhorar a eficiência da simulação.
+Essas iterações são descartadas, e somente as amostras posteriores a
+essa etapa são utilizadas nos resumos da distribuição a posteriori.
 
 Por exemplo, ao executar quatro cadeias com 2.000 iterações cada, sendo
-as primeiras 1.000 destinadas ao \emph{warm-up}, apenas as 1.000
-iterações finais de cada cadeia são utilizadas para a inferência,
-resultando em um total de 4.000 amostras da distribuição \emph{a
-posteriori}.
+as primeiras 1.000 destinadas ao warm-up, obtêm-se 4.000 amostras
+posteriores, utilizadas na inferência. A qualidade dessas amostras deve
+ser avaliada por meio de diagnósticos como o fator de redução potencial
+de escala (\(\hat{R}\)), o tamanho efetivo da amostra (ESS), a inspeção
+gráfica das trajetórias das cadeias e os diagnósticos específicos do
+algoritmo utilizado. Adicionalmente, o erro-padrão de Monte Carlo (Monte
+Carlo Standard Error, MCSE) permite avaliar a precisão numérica das
+estimativas obtidas a partir das amostras simuladas, considerando sua
+quantidade e autocorrelação.
 
-Adicionalmente, a precisão das estimativas obtidas por meio das amostras
-simuladas pode ser avaliada pelo erro-padrão de Monte Carlo (\emph{Monte
-Carlo Standard Error}, MCSE). Essa medida quantifica a incerteza
-numérica decorrente do número finito de amostras utilizadas para
-aproximar as quantidades de interesse da distribuição \emph{a
-posteriori}, considerando também a autocorrelação entre as realizações
-da cadeia. Valores menores de MCSE indicam maior precisão numérica das
-estimativas, embora sua interpretação deva considerar a escala e a
-magnitude da quantidade estimada. Diferentemente do fator \(\hat{R}\),
-que auxilia na avaliação da convergência das cadeias, e do ESS, que
-mensura a quantidade efetiva de informação disponível nas amostras, o
-MCSE permite avaliar a precisão das estimativas Monte Carlo.
+O Stan utiliza, por padrão, o algoritmo No-U-Turn Sampler (NUTS), uma
+extensão adaptativa do método Hamiltonian Monte Carlo (HMC).
+Diferentemente de algoritmos como Metropolis-Hastings, que utilizam
+propostas aleatórias para gerar novos estados da cadeia, o HMC emprega o
+gradiente do logaritmo da distribuição a posteriori para construir
+trajetórias que exploram o espaço paramétrico de maneira mais eficiente.
+Essa estratégia permite produzir amostras menos correlacionadas em
+determinadas condições, favorecendo a exploração de distribuições de
+alta dimensão.
 
-O Stan implementa, por padrão, o algoritmo \emph{No-U-Turn Sampler}
-(NUTS), uma extensão adaptativa do HMC. Ambos pertencem à família MCMC,
-cujo objetivo é gerar amostras da distribuição \emph{a posteriori} dos
-parâmetros.
+O NUTS complementa essa abordagem ao determinar automaticamente o
+comprimento das trajetórias, interrompendo sua expansão quando
+identifica uma tendência de retorno em direção à região inicial. Durante
+o warm-up, o algoritmo também ajusta parâmetros como o tamanho do passo
+(step size) e a matriz de massa (mass matrix), reduzindo a necessidade
+de ajustes manuais.
 
-Em algoritmos clássicos de MCMC, como o Metropolis-Hastings, novas
-propostas são geradas por pequenos deslocamentos aleatórios em torno da
-posição atual da cadeia. Embora esse procedimento seja conceitualmente
-simples, ele tende a explorar a distribuição de forma lenta, produzindo
-amostras altamente correlacionadas e exigindo um grande número de
-iterações para representar adequadamente a distribuição \emph{a
-posteriori}.
-
-O Hamiltonian Monte Carlo busca contornar essa limitação utilizando o
-gradiente do logaritmo da distribuição a posteriori. Essa informação
-indica como a densidade varia localmente e é utilizada para construir
-trajetórias que percorrem a distribuição de maneira eficiente, evitando
-os pequenos movimentos aleatórios característicos de métodos como o
-Metropolis-Hastings. Dessa forma, a cadeia consegue explorar regiões de
-alta probabilidade com deslocamentos mais longos, produzindo amostras
-menos correlacionadas e acelerando a convergência.
-
-Para construir essas trajetórias, o HMC utiliza conceitos da Mecânica
-Hamiltoniana, tratando os parâmetros do modelo como se fossem partículas
-em movimento sob a ação de forças. Embora essa interpretação seja
-física, sua principal utilidade é fornecer um mecanismo eficiente para
-explorar distribuições de alta dimensão preservando suas propriedades
-probabilísticas.
-
-Apesar dessas vantagens, o desempenho do HMC depende da escolha de
-alguns hiperparâmetros, principalmente o tamanho do passo (\emph{step
-size}) e o número de passos utilizados para percorrer cada trajetória.
-Valores inadequados podem tornar a exploração ineficiente ou aumentar
-significativamente o custo computacional.
-
-O algoritmo NUTS (\emph{No-U-Turn Sampler}) elimina grande parte dessa
-dificuldade ao adaptar automaticamente o comprimento das trajetórias
-durante a amostragem. Em vez de definir previamente quantos passos devem
-ser executados, o algoritmo expande a trajetória até identificar que ela
-começou a retornar em direção ao ponto de partida, formando um movimento
-semelhante a um ``U''. Nesse momento, a trajetória é interrompida,
-evitando que o algoritmo desperdice iterações percorrendo repetidamente
-a mesma região da distribuição.
-
-Essa estratégia permite que o Stan explore automaticamente a
-distribuição \emph{a posteriori} de forma eficiente, reduzindo a
-necessidade de ajustes manuais e tornando o método adequado para modelos
-Bayesianos complexos e de alta dimensão.
-
-Ao final da amostragem, obtém-se um conjunto de realizações da
-distribuição \emph{a posteriori} para cada parâmetro do modelo. Essas
-amostras constituem a base para todas as inferências realizadas na
-abordagem Bayesiana, incluindo a estimação dos coeficientes, a
-construção de intervalos de credibilidade e a avaliação da incerteza
-associada às previsões.
+Ao final da amostragem, as realizações obtidas para cada parâmetro
+constituem a base das inferências Bayesianas, incluindo a estimação dos
+coeficientes, a construção de intervalos de credibilidade e a avaliação
+da incerteza associada às previsões.
 
 \paragraph{Diagnóstico da
 convergência}\label{diagnuxf3stico-da-converguxeancia}
@@ -1805,27 +1562,19 @@ Após a obtenção das amostras da distribuição \emph{a posteriori}, é
 necessário verificar se o processo de amostragem convergiu
 adequadamente. A convergência indica que as cadeias de Markov passaram a
 representar a mesma distribuição \emph{a posteriori}, permitindo que as
-inferências realizadas sejam consideradas confiáveis. Entre os
-principais diagnósticos utilizados destacam-se os \emph{traceplots}, o
-fator de redução potencial (\(\hat{R}\)) e o tamanho efetivo da amostra
-(\emph{Effective Sample Size}, ESS).
+inferências realizadas sejam consideradas confiáveis.
 
-Os \emph{traceplots} consistem em gráficos que apresentam os valores
-amostrados para cada parâmetro ao longo das iterações do algoritmo.
-Espera-se que, após o período de \emph{warm-up}, as diferentes cadeias
-apresentem boa mistura (mixing), alternando-se livremente em torno da
-mesma região da distribuição a posteriori. Esse comportamento sugere que
-a cadeia está explorando adequadamente a distribuição \emph{a
-posteriori}. Por outro lado, padrões como tendências persistentes,
-mudanças abruptas ou cadeias que permanecem separadas podem indicar
-problemas de convergência.
+Os \emph{traceplots} apresentam os valores amostrados para cada
+parâmetro ao longo das iterações. Após o \emph{warm-up}, espera-se que
+as cadeias apresentem boa mistura (\emph{mixing}), alternando-se em
+torno de uma mesma região da distribuição \emph{a posteriori}.
+Tendências persistentes, mudanças abruptas ou cadeias separadas podem
+indicar problemas de convergência.
 
-A Figura~\ref{fig-traceplots} ilustra dois comportamentos típicos. À
-esquerda observa-se uma situação de convergência, em que as cadeias
-apresentam boa mistura (mixing) e exploram a mesma região da
-distribuição a posteriori. À direita, as cadeias permanecem separadas e
-apresentam comportamento não estacionário, indicando que a convergência
-ainda não foi atingida.
+A Figura~\ref{fig-traceplots} ilustra esses comportamentos: à esquerda,
+observa-se boa mistura entre as cadeias; à direita, a separação e o
+comportamento não estacionário indicam que a convergência não foi
+atingida.
 
 \begin{figure}
 
@@ -1842,13 +1591,16 @@ separadas, indicando problemas de convergência.}
 
 \end{figure}%
 
-O fator de redução potencial, denotado por (\(\hat{R}\)) e proposto por
-Gelman e Rubin, compara a variabilidade entre diferentes cadeias com a
-variabilidade observada dentro de cada cadeia. Quando todas as cadeias
-convergem para a mesma distribuição, espera-se que essas variabilidades
-sejam semelhantes, resultando em valores de (\(\hat{R}\)) próximos de 1.
-Na prática, valores inferiores a 1,01 são geralmente considerados
-indicativos de boa convergência.
+O fator de redução potencial, denotado por \(\hat{R}\) e originalmente
+proposto por Gelman; Rubin (1992), compara a variabilidade entre
+diferentes cadeias com a variabilidade observada dentro de cada cadeia.
+Quando todas as cadeias convergem para a mesma distribuição, espera-se
+que essas variabilidades sejam semelhantes, resultando em valores de
+\(\hat{R}\) próximos de 1. Versões aprimoradas desse diagnóstico, como a
+proposta por Vehtari et al. (2021), incorporam a normalização por postos
+e são utilizadas nas implementações atuais do Stan. Na prática, valores
+inferiores a 1,01 são geralmente considerados indicativos de boa
+convergência.
 
 Outro diagnóstico importante é o tamanho efetivo da amostra
 (\emph{Effective Sample Size}, ESS). Embora um algoritmo MCMC possa
@@ -1866,10 +1618,6 @@ de energia pelo algoritmo Hamiltoniano, permitindo identificar possíveis
 dificuldades na exploração do espaço paramétrico. Valores reduzidos
 podem indicar problemas na amostragem e a necessidade de investigar a
 parametrização do modelo ou as configurações do algoritmo.
-
-Neste trabalho, esses diagnósticos foram utilizados conjuntamente para
-avaliar a convergência das cadeias e a eficiência da amostragem
-realizada pelo algoritmo NUTS.
 
 \paragraph{Inferência posterior}\label{inferuxeancia-posterior}
 
@@ -3854,7 +3602,7 @@ chances}\label{interpretauxe7uxe3o-dos-coeficientes-e-das-razuxf5es-de-chances}
 
 Na regressão logística, os coeficientes representam a variação no
 logaritmo das chances (\emph{log-odds}) de ocorrência do evento de
-interesse, neste caso, a inadimplência ((PD30 = 1)), associada ao
+interesse, neste caso, a inadimplência (\$PD30 = 1)), associada ao
 aumento de uma unidade no preditor, mantendo-se os demais constantes.
 Como as variáveis explicativas foram padronizadas antes do ajuste dos
 modelos, inclusive as variáveis indicadoras binárias, essa interpretação
@@ -4541,6 +4289,12 @@ CARPENTER, Bob \emph{et al.}
 Programming Language}. \textbf{Journal of Statistical Software}, v. 76,
 n. 1, p. 1--32, 2017.
 
+\bibitem[\citeproctext]{ref-gelman1992inference}
+GELMAN, Andrew; RUBIN, Donald B.
+\href{https://doi.org/10.1214/ss/1177011136}{Inference from Iterative
+Simulation Using Multiple Sequences}. \textbf{Statistical Science}, v.
+7, n. 4, p. 457--472, 1992.
+
 \bibitem[\citeproctext]{ref-goodrich2020rstanarm}
 GOODRICH, Ben \emph{et al.}
 \textbf{\href{https://mc-stan.org/rstanarm/}{rstanarm: Bayesian Applied
@@ -4564,6 +4318,13 @@ Addison-Wesley, 1977.
 \bibitem[\citeproctext]{ref-vandervaart1998}
 VAART, A. W. van der. \textbf{Asymptotic Statistics}. Cambridge:
 Cambridge University Press, 1998.
+
+\bibitem[\citeproctext]{ref-vehtari2021rank}
+VEHTARI, Aki \emph{et al.}
+\href{https://doi.org/10.1214/20-BA1221}{Rank-Normalization, Folding,
+and Localization: An Improved {R-hat} for Assessing Convergence of
+{MCMC} (with Discussion)}. \textbf{Bayesian Analysis}, v. 16, n. 2, p.
+667--718, 2021.
 
 \bibitem[\citeproctext]{ref-uci-default-credit}
 YEH, I.-C.; LIEN, C.-H. \textbf{The Default of Credit Card Clients

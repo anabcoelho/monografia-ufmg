@@ -1621,72 +1621,44 @@ parametrização do modelo ou as configurações do algoritmo.
 
 \paragraph{Inferência posterior}\label{inferuxeancia-posterior}
 
-Uma vez verificada a convergência das cadeias, as amostras geradas pelo
-algoritmo MCMC passam a representar a distribuição \emph{a posteriori}
-de cada parâmetro do modelo. Diferentemente da abordagem frequentista,
-em que a inferência é baseada em uma única estimativa pontual dos
-coeficientes, a abordagem Bayesiana considera toda a distribuição
-posterior, permitindo quantificar diretamente a incerteza associada às
-estimativas.
+Após a avaliação da convergência das cadeias, as amostras geradas pelo
+algoritmo MCMC são utilizadas para resumir a distribuição a posteriori
+de cada parâmetro. Diferentemente da abordagem frequentista, a
+inferência Bayesiana considera toda essa distribuição, permitindo
+quantificar a incerteza associada às estimativas.
 
-Uma medida frequentemente utilizada para resumir essa distribuição é a
-média posterior, obtida pela média das amostras geradas para cada
-parâmetro. Essa quantidade representa o valor esperado do coeficiente
-após a incorporação simultânea das informações provenientes da
-distribuição \emph{a priori} e dos dados observados.
+A distribuição posterior pode ser resumida por medidas como média e
+mediana, além de intervalos de credibilidade. Um intervalo de
+credibilidade de 95\% delimita uma região à qual se atribui
+probabilidade posterior de 95\% de conter o parâmetro, dadas a
+distribuição a priori e as observações disponíveis.
 
-Além da média posterior, é comum apresentar intervalos de credibilidade,
-que descrevem a região da distribuição \emph{a posteriori} onde se
-concentram os valores mais plausíveis para cada parâmetro. Um intervalo
-de credibilidade de 95\% indica que, dadas as distribuições \emph{a
-priori} adotadas e os dados observados, existe uma probabilidade de 95\%
-de que o verdadeiro valor do parâmetro pertença ao intervalo obtido.
-
-Em aplicações práticas, também é comum avaliar se o intervalo de
-credibilidade de um coeficiente contém o valor zero. Quando todo o
-intervalo permanece acima ou abaixo de zero, há evidências de que o
-efeito da variável seja predominantemente positivo ou negativo,
-respectivamente
-
-Essa interpretação difere dos intervalos de confiança utilizados na
-estatística frequentista. Enquanto o intervalo de confiança está
-relacionado ao comportamento do procedimento de estimação em repetições
-hipotéticas do experimento, o intervalo de credibilidade permite fazer
-afirmações probabilísticas diretamente sobre o parâmetro de interesse.
+A posição do intervalo em relação a zero também auxilia na interpretação
+dos coeficientes. Quando todo o intervalo está acima ou abaixo de zero,
+há evidências de um efeito predominantemente positivo ou negativo,
+respectivamente. Essa interpretação difere daquela dos intervalos de
+confiança frequentistas, que não permitem atribuir diretamente
+probabilidades aos valores dos parâmetros.
 
 A interpretação dos coeficientes permanece análoga à da regressão
-logística frequentista. Cada coeficiente representa a variação esperada
-no logaritmo das chances (\emph{log-odds}) associada ao aumento de uma
-unidade da variável explicativa, mantendo-se constantes as demais
-variáveis do modelo.
+logística frequentista: cada coeficiente representa a variação no
+log-odds associada ao aumento de uma unidade na variável explicativa,
+mantendo-se constantes as demais variáveis.
 
 \paragraph{Avaliação do modelo
 Bayesiano}\label{avaliauxe7uxe3o-do-modelo-bayesiano}
 
-Além dos diagnósticos de convergência das cadeias e da interpretação dos
-parâmetros, modelos bayesianos permitem avaliar sua adequação e
-capacidade preditiva por meio de critérios baseados na distribuição
-preditiva posterior.
+A adequação dos modelos Bayesianos pode ser examinada por meio de
+verificações preditivas posteriores (Posterior Predictive Checks, PPC),
+que comparam características dos dados observados com aquelas de
+conjuntos de dados simulados a partir da distribuição preditiva
+posterior.
 
-A verificação preditiva posterior (\emph{Posterior Predictive Check},
-PPC) compara características dos dados observados com aquelas obtidas em
-replicações simuladas a partir do modelo. Essa análise permite avaliar
-se o modelo consegue reproduzir aspectos relevantes dos dados utilizados
-no ajuste.
-
-Outro critério é o \emph{Widely Applicable Information Criterion}
-(WAIC), que estima a capacidade preditiva esperada do modelo,
-considerando a incerteza dos parâmetros e penalizando sua complexidade
-efetiva. O WAIC está relacionado à \emph{Expected Log Predictive
-Density} (ELPD), medida da qualidade preditiva esperada para novas
-observações, cuja estimativa pode ser obtida a partir dos dados
-disponíveis.
-
-Neste trabalho, o PPC é utilizado para avaliar a adequação dos modelos
-bayesianos aos dados observados, enquanto o WAIC é empregado como
-critério complementar de comparação entre diferentes especificações
-bayesianas. Já as métricas tradicionais de classificação permitem
-comparar diretamente os modelos frequentistas e bayesianos.
+Para comparar diferentes especificações, pode-se utilizar o Widely
+Applicable Information Criterion (WAIC), critério que considera a
+qualidade preditiva e penaliza a complexidade efetiva do modelo. Sua
+interpretação está relacionada à Expected Log Predictive Density (ELPD),
+que representa o desempenho preditivo esperado para novas observações.
 
 \subsection{Avaliação de modelos de
 classificação}\label{avaliauxe7uxe3o-de-modelos-de-classificauxe7uxe3o}
@@ -1795,8 +1767,9 @@ Balanced\ Accuracy=
 \frac{Sensitivity+Specificity}{2}
 }\end{equation}
 
-Essa métrica reduz o efeito do desbalanceamento das classes, atribuindo
-a mesma importância ao acerto de ambas.
+Essa métrica atribui o mesmo peso à sensibilidade e à especificidade,
+reduzindo a influência da frequência relativa das classes sobre a
+avaliação do desempenho.
 
 Outra medida amplamente utilizada é o
 \texttt{Matthews\ Correlation\ Coefficient} (MCC), definido por:
@@ -1908,6 +1881,10 @@ sobre o desempenho dos modelos frequentista e bayesiano, permitindo
 comparar o equilíbrio entre a identificação de clientes inadimplentes e
 não inadimplentes.
 
+Cabe destacar que esse critério atribui o mesmo peso à sensibilidade e à
+especificidade, não considerando diretamente os custos associados aos
+diferentes tipos de erro de classificação.
+
 \section{Metodologia}\label{metodologia}
 
 \subsection{Descrição dos Dados}\label{descriuxe7uxe3o-dos-dados}
@@ -1993,12 +1970,10 @@ análise compreendeu a identificação das classes das variáveis, a
 distinção entre atributos numéricos e categóricos e a validação da
 variável resposta quanto à sua natureza e domínio.
 
-Por fim, a presença de valores ausentes foi avaliada por meio da função
-\texttt{is.na()}, com sumarização via \texttt{colSums(is.na())}. Não
-foram identificadas observações faltantes no conjunto de dados,
-eliminando a necessidade de técnicas de imputação e evitando a
-introdução de incerteza adicional ou viés sistemático no processo de
-estimação.
+Por fim, a presença de valores ausentes foi avaliada e nenhuma
+observação faltante foi identificada, eliminando a necessidade de
+técnicas de imputação e evitando a introdução de incerteza adicional ou
+viés sistemático no processo de estimação.
 
 \subsubsection{Outliers}\label{outliers}
 
@@ -2151,7 +2126,7 @@ variáveis específicas e a eliminação de preditores altamente
 correlacionados. A utilização de recipes garante que as transformações
 sejam estimadas exclusivamente a partir do conjunto de treinamento e
 posteriormente aplicadas aos dados de teste, evitando o vazamento de
-informação (data leakage).
+informação.
 
 Os modelos e seus respectivos pré-processamentos foram integrados por
 meio do pacote workflows, permitindo que cada combinação fosse tratada
@@ -2164,14 +2139,14 @@ preditores numéricos com correlação absoluta superior a 0,75, visando
 reduzir problemas associados à multicolinearidade. Além da regressão
 logística clássica, foram avaliadas versões regularizadas utilizando
 penalizações Lasso (L1) e Ridge (L2). Nesses modelos, os hiperparâmetros
-de penalização foram selecionados por meio de busca em grade (grid
-search), utilizando validação cruzada. O pré-processamento dessas
-especificações compreendeu a codificação das variáveis categóricas e a
-normalização dos preditores numéricos. A regularização tem como objetivo
-controlar a magnitude dos coeficientes, reduzir o sobreajuste
-(overfitting) e potencialmente melhorar a capacidade de generalização
-dos modelos, especialmente em cenários com elevado número de preditores
-ou presença de correlação entre variáveis explicativas.
+de penalização foram selecionados por meio de um \emph{grid search},
+utilizando validação cruzada. O pré-processamento dessas especificações
+compreendeu a codificação das variáveis categóricas e a normalização dos
+preditores numéricos. A regularização tem como objetivo controlar a
+magnitude dos coeficientes, reduzir o sobreajuste e potencialmente
+melhorar a capacidade de generalização dos modelos, especialmente em
+cenários com elevado número de preditores ou presença de correlação
+entre variáveis explicativas.
 
 As diferentes especificações foram utilizadas para avaliar o impacto da
 seleção de variáveis e da regularização sobre o desempenho preditivo e a
@@ -2203,11 +2178,11 @@ parâmetros.
 Foram consideradas duas especificações de distribuições a priori para os
 coeficientes das variáveis explicativas: Normal e Laplace, ambas
 centradas em zero e com variância igual a 1. Para a distribuição Normal,
-foi utilizada localização zero e escala 1. Para a distribuição Laplace,
-a escala foi definida como \((1/\sqrt{2})\), de modo a igualar sua
-variância à da distribuição Normal, uma vez que a variância da
-distribuição Laplace é dada por \((2b^2)\), em que \((b)\) representa
-seu parâmetro de escala.
+foram definidos localização igual a zero e desvio-padrão igual a 1. Para
+a distribuição Laplace, o parâmetro de escala foi definido como
+\((1/\sqrt{2})\), de modo a igualar sua variância à da distribuição
+Normal, uma vez que a variância da distribuição Laplace é dada por
+\((2b^2)\), em que \((b)\) representa seu parâmetro de escala.
 
 Para tornar a comparação entre as especificações bayesianas mais
 controlada, foram adotadas distribuições a priori Normal e Laplace com
@@ -2226,9 +2201,7 @@ nível de variabilidade a priori, afetam a inferência sobre os
 coeficientes do modelo.
 
 Para o intercepto, foi mantida a mesma distribuição a priori Normal, com
-localização zero e escala 5, em ambas as especificações. Todas as
-distribuições foram definidas sem ajuste automático de escala
-(\emph{autoscale = FALSE}).
+localização zero e escala 5, em ambas as especificações.
 
 \subsubsection{Métricas de
 avaliação}\label{muxe9tricas-de-avaliauxe7uxe3o}
@@ -2299,10 +2272,7 @@ crédito é de aproximadamente NT\$ 167 mil, com mediana inferior (NT\$
 140 mil), indicando assimetria à direita e a presença de clientes com
 limites substancialmente mais elevados, o que é reforçado pelo alto
 desvio padrão. A idade média dos clientes é de cerca de 35 anos, com
-concentração em adultos jovens e de meia-idade. As variáveis categóricas
-codificadas numericamente, como sexo, escolaridade e estado civil,
-apresentam baixa variabilidade relativa, refletindo uma distribuição
-razoavelmente equilibrada entre suas categorias principais.
+concentração em adultos jovens e de meia-idade.
 
 No que diz respeito ao comportamento de pagamento, as variáveis de
 atraso (\texttt{atraso\_pagto\_0} a \texttt{atraso\_pagto\_6})
@@ -2564,9 +2534,9 @@ analisados. Observa-se que as variáveis relacionadas ao histórico de
 atraso de pagamento (\texttt{atraso\_pagto\_*}) apresentam as maiores
 proporções de outliers, variando aproximadamente entre 9,9\% e 14,7\%
 das observações. Esse comportamento é esperado, uma vez que essas
-variáveis são discretas e assimétricas por construção, refletindo
-estados de atraso que podem se concentrar em valores extremos (como
-atrasos elevados em determinados meses).
+variáveis sãoassimétricas por construção, refletindo estados de atraso
+que podem se concentrar em valores extremos (como atrasos elevados em
+determinados meses e raros pagamentos antecipados).
 
 As variáveis de valores de fatura (\texttt{fatura\_valor\_*}) e de
 pagamento (\texttt{pagto\_valor\_*}) também apresentam proporções
@@ -2652,17 +2622,17 @@ partir das características socioeconômicas e financeiras dos clientes. A
 regressão logística foi escolhida por se tratar de um modelo amplamente
 utilizado em problemas de classificação binária e por permitir a
 interpretação dos efeitos das variáveis explicativas sobre as chances do
-evento de interesse por meio das razões de chances (odds ratios). A
-partir dessa mesma estrutura de modelagem, foram consideradas as
-abordagens frequentista e Bayesiana, permitindo comparar não apenas o
-desempenho preditivo, mas também as diferentes formas de estimação e
-inferência sobre os parâmetros do modelo.
+evento de interesse por meio das razões de chances. A partir dessa mesma
+estrutura de modelagem, foram consideradas as abordagens frequentista e
+Bayesiana, permitindo comparar não apenas o desempenho preditivo, mas
+também as diferentes formas de estimação e inferência sobre os
+parâmetros do modelo.
 
 \subsubsection{Modelagem Frequentista}\label{modelagem-frequentista}
 
 Inicialmente, adotou-se uma abordagem frequentista, com estimação dos
-parâmetros via máxima verossimilhança. Essa estratégia fornece um ponto
-de partida robusto para a análise, permitindo avaliar tanto o poder
+parâmetros via máxima verossimilhança. Essa estratégia fornece uma
+referencia inicial para a análise, permitindo avaliar tanto o poder
 preditivo quanto a contribuição individual das variáveis explicativas.
 
 Com o intuito de investigar a sensibilidade do modelo à especificação
@@ -2707,15 +2677,6 @@ entre interpretabilidade, complexidade do modelo e desempenho preditivo,
 além de fornecer evidências empíricas sobre o papel do score de crédito
 e da estrutura de correlação das variáveis no processo de decisão de
 concessão de empréstimos.
-
-Após o pré-processamento, diferentes especificações de modelos de
-regressão logística foram ajustadas com base em máxima verossimilhança.
-Todas as especificações propostas foram avaliadas de forma sistemática
-quanto ao ajuste estatístico e às propriedades inferenciais do modelo,
-incluindo interpretação dos coeficientes, razões de chances (odds
-ratios), testes de razão de verossimilhança, critérios de informação
-(AIC e BIC), diagnóstico de multicolinearidade (VIF) e análise de
-resíduos.
 
 {
 
@@ -2771,19 +2732,18 @@ razão, a comparação desses modelos foi conduzida principalmente com base
 nas métricas de desempenho preditivo.
 
 Conforme apresentado na Tabela~\ref{tbl-diagnosticos-glm-pd30}, o modelo
-Completo apresentou menor deviance residual em relação ao modelo Sem
-multicolinearidade, além de menores valores de AIC. Esses resultados
-indicam um melhor ajuste do modelo completo segundo essas medidas. Em
-contrapartida, o modelo Sem multicolinearidade apresentou menor BIC,
-favorecendo a especificação mais parcimoniosa, que também possui oito
-graus de liberdade residuais adicionais, correspondentes a uma estrutura
-com oito parâmetros a menos.
+Completo apresentou menor deviance residual e menor AIC em relação ao
+modelo sem multicolinearidade, indicando melhor ajuste segundo essas
+medidas. Em contrapartida, o modelo Sem multicolinearidade apresentou
+menor BIC, favorecendo a especificação mais parcimoniosa, que possui
+oito parâmetros a menos, conforme indicado pela diferença nos graus de
+liberdade residuais.
 
-De modo geral, os resultados apontam para um equilíbrio entre qualidade
-de ajuste e parcimônia: enquanto o modelo Completo é favorecido pela
+De modo geral, os resultados evidenciam um equilíbrio entre qualidade de
+ajuste e parcimônia: enquanto o modelo Completo é favorecido pela
 deviance residual e pelo AIC, o modelo Sem multicolinearidade apresenta
 vantagem segundo o BIC. Essas diferenças são consideradas em conjunto
-com os resultados das métricas preditivas, apresentados a seguir.
+com as métricas de desempenho preditivo.
 
 {
 
@@ -2861,17 +2821,6 @@ As diferenças observadas são pequenas, indicando que a remoção de
 variáveis correlacionadas ou a aplicação das penalizações não produziu
 alterações substanciais na capacidade discriminativa.
 
-A análise do VIF (Tabela~\ref{tbl-vif-modelos-pd30}) evidencia uma
-diferença mais pronunciada entre as especificações: o modelo completo
-apresentou VIF máximo de 41,12 e médio de 7,80, enquanto o modelo sem
-multicolinearidade reduziu esses valores para 1,84 e 1,24,
-respectivamente redução substancial sem alteração relevante no
-desempenho preditivo. Os modelos regularizados L1 e L2 não são avaliados
-por VIF porque a regularização atua sobre os coeficientes durante a
-estimação, não sobre a estrutura de correlação dos preditores; assim,
-são comparados principalmente com base no desempenho preditivo e no
-comportamento dos coeficientes.
-
 Um aspecto comum às quatro especificações é a elevada especificidade
 (entre 0,967 e 0,972) acompanhada por baixa sensibilidade (entre 0,226 e
 0,259). Esse comportamento indica que os modelos identificam
@@ -2880,58 +2829,63 @@ incorretamente parcela expressiva dos inadimplentes, resultado
 consistente com o desbalanceamento da variável resposta e que deve ser
 considerado na interpretação da acurácia global.
 
+A análise do VIF (Tabela~\ref{tbl-vif-modelos-pd30}) evidencia uma
+diferença expressiva entre as especificações não penalizadas: o modelo
+Completo apresentou VIF máximo de 41,12 e médio de 7,80, enquanto o
+modelo Sem multicolinearidade reduziu esses valores para 1,84 e 1,24,
+respectivamente. Essa redução indica menor multicolinearidade entre os
+preditores, sem alteração relevante no desempenho preditivo.
+
+Embora o VIF também possa ser calculado para as especificações
+regularizadas, a comparação entre L1 e L2 foi direcionada principalmente
+ao comportamento dos coeficientes e às métricas de desempenho preditivo.
+
 \paragraph{Comparações de Features L1 vs Remoção de Variáveis
 Correlacionadas}\label{comparauxe7uxf5es-de-features-l1-vs-remouxe7uxe3o-de-variuxe1veis-correlacionadas}
 
 A comparação entre as estratégias de redução da complexidade revelou uma
 sobreposição parcial entre as variáveis excluídas pelo procedimento de
 correlação e aquelas cujos coeficientes foram anulados pela
-regularização L1. Em particular, a variável \texttt{fatura\_valor\_4}
-foi removida em ambas as abordagens. Entretanto, o L1 também anulou o
-coeficiente de \texttt{fatura\_valor\_6}, enquanto o procedimento
-baseado em correlação excluiu outras variáveis, como
-\texttt{atraso\_pagto\_3}, \texttt{atraso\_pagto\_4},
-\texttt{atraso\_pagto\_5} e \texttt{fatura\_valor\_5}.
+regularização L1. Em particular, a variável fatura\_valor\_4 foi
+removida em ambas as abordagens. Entretanto, o L1 também anulou o
+coeficiente de fatura\_valor\_6, enquanto o procedimento baseado em
+correlação excluiu outras variáveis, como atraso\_pagto\_3,
+atraso\_pagto\_4, atraso\_pagto\_5 e fatura\_valor\_5.
 
-Essa sobreposição limitada indica que as estratégias não são
+Essa sobreposição parcial indica que as estratégias não são
 equivalentes: enquanto a remoção por correlação considera a associação
-entre os preditores, a penalização L1 seleciona variáveis com base na
-contribuição conjunta para o ajuste do modelo, condicionada à
-penalização aplicada. Assim, embora ambas possam reduzir a complexidade
-da especificação, seus critérios de seleção produzem conjuntos distintos
-de variáveis.
+entre os preditores, a penalização L1 estima os coeficientes
+considerando simultaneamente o ajuste do modelo e a penalização
+aplicada, podendo reduzir alguns deles exatamente a zero. Assim, embora
+ambas possam reduzir a complexidade da especificação, seus critérios
+produzem conjuntos distintos de variáveis.
 
-\paragraph{Seleção da especificação para a análise
-inferencial}\label{seleuxe7uxe3o-da-especificauxe7uxe3o-para-a-anuxe1lise-inferencial}
+\paragraph{Diagnóstico do modelo sem
+multicolinearidade}\label{diagnuxf3stico-do-modelo-sem-multicolinearidade}
 
-A análise inferencial detalhada será concentrada no modelo sem
-multicolinearidade. Essa escolha não decorre de superioridade preditiva,
-uma vez que os quatro modelos apresentaram métricas bastante próximas,
-mas da combinação entre a redução substancial do VIF (de 41,12 para
-1,84) e a manutenção da estrutura convencional da regressão logística
-estimada por MLE, que viabiliza o uso direto de erros-padrão, intervalos
-de confiança, testes de significância e razões de chances. A menor
-multicolinearidade também reduz a instabilidade das estimativas e
-facilita a interpretação individual dos coeficientes, condição relevante
-para a comparação com a abordagem bayesiana.
+A análise detalhada será concentrada no modelo sem multicolinearidade.
+Essa escolha não decorre de superioridade preditiva, uma vez que os
+quatro modelos apresentaram métricas bastante próximas, mas da redução
+substancial da multicolinearidade (VIF máximo de 41,12 para 1,84), sem
+comprometer o desempenho preditivo. Essa especificação também mantém a
+estrutura convencional da regressão logística estimada por máxima
+verossimilhança (MLE), permitindo aplicar diretamente os procedimentos
+inferenciais usuais e interpretar os coeficientes com menor preocupação
+quanto à instabilidade decorrente da multicolinearidade.
 
-Os modelos L1 e L2 permanecem como referências na avaliação do
-desempenho preditivo. Entretanto, a estimação penalizada não fornece
-erros-padrão convencionais de forma direta, inviabilizando os
-procedimentos inferenciais usuais; além disso, a penalização L1 pode
-anular coeficientes, incorporando seleção de variáveis à estimação. Por
-essas razões, a análise de diagnóstico e interpretação detalhada será
-conduzida com base no modelo sem multicolinearidade, que preserva a
-estrutura completa da regressão logística tradicional.
-
-\paragraph{Diagnóstico do modelo modelo sem
-multicolinearidade}\label{diagnuxf3stico-do-modelo-modelo-sem-multicolinearidade}
+A partir dessa especificação, serão examinados os resíduos, a deviance e
+o teste da razão de verossimilhança, além dos coeficientes estimados,
+respectivos erros-padrão, razões de chances (odds ratios --- OR) e
+valores-p.~Os modelos L1 e L2 serão mantidos na comparação do desempenho
+preditivo, mas não serão aprofundados nessa etapa, pois a estimação
+penalizada não fornece diretamente os erros-padrão e os testes de
+significância convencionais.
 
 \begin{figure}
 
 \centering{
 
-\includegraphics[width=0.75\linewidth,height=\textheight,keepaspectratio]{monografia_v2_files/figure-pdf/fig-default-residuos-1.pdf}
+\includegraphics[width=0.6\linewidth,height=\textheight,keepaspectratio]{monografia_v2_files/figure-pdf/fig-default-residuos-1.pdf}
 
 }
 
@@ -3016,12 +2970,12 @@ corresponde, por si só, à magnitude do efeito prático.
 {
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.3913}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1304}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1449}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1449}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1159}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0725}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.3803}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1268}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1408}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1408}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1127}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0986}}@{}}
 
 \caption{\label{tbl-complete-model-default}Resultados da estimação do
 modelo de regressão logística frequentista}
@@ -3046,27 +3000,32 @@ OR
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-(Intercept) & -0.99 & 0.10 & -9.93 & 0.00 & 0.37 \\
-limite\_credito & 0.00 & 0.00 & -4.03 & 0.00 & 1.00 \\
-idade & 0.01 & 0.00 & 2.70 & 0.01 & 1.01 \\
-atraso\_pagto\_0 & 0.60 & 0.02 & 29.41 & 0.00 & 1.82 \\
-atraso\_pagto\_2 & 0.13 & 0.02 & 6.99 & 0.00 & 1.14 \\
-atraso\_pagto\_6 & 0.08 & 0.02 & 4.41 & 0.00 & 1.08 \\
-fatura\_valor\_1 & 0.00 & 0.00 & -5.67 & 0.00 & 1.00 \\
-pagto\_valor\_1 & 0.00 & 0.00 & -3.74 & 0.00 & 1.00 \\
-pagto\_valor\_2 & 0.00 & 0.00 & -3.93 & 0.00 & 1.00 \\
-pagto\_valor\_3 & 0.00 & 0.00 & -1.32 & 0.19 & 1.00 \\
-pagto\_valor\_4 & 0.00 & 0.00 & -2.97 & 0.00 & 1.00 \\
-pagto\_valor\_5 & 0.00 & 0.00 & -2.31 & 0.02 & 1.00 \\
-pagto\_valor\_6 & 0.00 & 0.00 & -1.94 & 0.05 & 1.00 \\
-sexo\_Feminino & -0.14 & 0.04 & -3.89 & 0.00 & 0.87 \\
-escolaridade\_Universidade & -0.07 & 0.04 & -1.77 & 0.08 & 0.93 \\
-escolaridade\_EnsinoMedio & -0.12 & 0.06 & -2.19 & 0.03 & 0.89 \\
-escolaridade\_Outros & -0.99 & 0.43 & -2.29 & 0.02 & 0.37 \\
-escolaridade\_Desconhecido1 & -1.86 & 0.35 & -5.25 & 0.00 & 0.15 \\
-escolaridade\_Desconhecido2 & 0.03 & 0.45 & 0.08 & 0.94 & 1.03 \\
-estado\_civil\_Solteiro & -0.18 & 0.04 & -4.42 & 0.00 & 0.84 \\
-estado\_civil\_Outros & -0.12 & 0.16 & -0.72 & 0.47 & 0.89 \\
+(Intercept) & -0.9902 & 0.0998 & -9.9261 & 0.0000 & 0.3715 \\
+limite\_credito & 0.0000 & 0.0000 & -4.0252 & 0.0001 & 1.0000 \\
+idade & 0.0058 & 0.0022 & 2.6983 & 0.0070 & 1.0058 \\
+atraso\_pagto\_0 & 0.5984 & 0.0203 & 29.4093 & 0.0000 & 1.8193 \\
+atraso\_pagto\_2 & 0.1348 & 0.0193 & 6.9868 & 0.0000 & 1.1443 \\
+atraso\_pagto\_6 & 0.0779 & 0.0177 & 4.4104 & 0.0000 & 1.0810 \\
+fatura\_valor\_1 & 0.0000 & 0.0000 & -5.6696 & 0.0000 & 1.0000 \\
+pagto\_valor\_1 & 0.0000 & 0.0000 & -3.7367 & 0.0002 & 1.0000 \\
+pagto\_valor\_2 & 0.0000 & 0.0000 & -3.9312 & 0.0001 & 1.0000 \\
+pagto\_valor\_3 & 0.0000 & 0.0000 & -1.3196 & 0.1870 & 1.0000 \\
+pagto\_valor\_4 & 0.0000 & 0.0000 & -2.9735 & 0.0029 & 1.0000 \\
+pagto\_valor\_5 & 0.0000 & 0.0000 & -2.3091 & 0.0209 & 1.0000 \\
+pagto\_valor\_6 & 0.0000 & 0.0000 & -1.9366 & 0.0528 & 1.0000 \\
+sexo\_Feminino & -0.1377 & 0.0354 & -3.8858 & 0.0001 & 0.8714 \\
+escolaridade\_Universidade & -0.0727 & 0.0410 & -1.7728 & 0.0763 &
+0.9299 \\
+escolaridade\_EnsinoMedio & -0.1207 & 0.0550 & -2.1922 & 0.0284 &
+0.8863 \\
+escolaridade\_Outros & -0.9872 & 0.4305 & -2.2934 & 0.0218 & 0.3726 \\
+escolaridade\_Desconhecido1 & -1.8649 & 0.3549 & -5.2545 & 0.0000 &
+0.1549 \\
+escolaridade\_Desconhecido2 & 0.0341 & 0.4463 & 0.0765 & 0.9390 &
+1.0347 \\
+estado\_civil\_Solteiro & -0.1765 & 0.0399 & -4.4224 & 0.0000 &
+0.8382 \\
+estado\_civil\_Outros & -0.1153 & 0.1599 & -0.7212 & 0.4708 & 0.8911 \\
 
 \end{longtable}
 
@@ -3076,7 +3035,7 @@ A Tabela~\ref{tbl-complete-model-default} apresenta os coeficientes
 estimados, erros-padrão, estatísticas de teste, p-valores e razões de
 chances (OR). Entre os preditores avaliados, \texttt{atraso\_pagto\_0}
 destaca-se como a variável de maior impacto positivo, com coeficiente de
-0,5984 e OR de 1,82 --- mantidos os demais preditores constantes, sua
+0,5984 e OR de 1,82, mantidos os demais preditores constantes, sua
 presença está associada a aproximadamente 1,82 vezes as chances de PD30.
 As variáveis \texttt{atraso\_pagto\_2} e \texttt{atraso\_pagto\_6}
 também apresentam associações positivas, embora de menor magnitude.
@@ -3144,11 +3103,11 @@ VIF máximo & VIF médio \\
 }
 
 O diagnóstico de multicolinearidade foi realizado a partir dos fatores
-de inflação da variância (\emph{Variance Inflation Factor}, VIF) dos
-preditores utilizados nas especificações bayesianas. Como os modelos com
-priors Normal e Laplace compartilham a mesma matriz de preditores, os
-valores de VIF são idênticos para ambas as especificações, sendo
-apresentados conjuntamente na Tabela~\ref{tbl-vif-bayes}.
+de VIF dos preditores utilizados nas especificações bayesianas. Como os
+modelos com priors Normal e Laplace compartilham a mesma matriz de
+preditores, os valores de VIF são idênticos para ambas as
+especificações, sendo apresentados conjuntamente na
+Tabela~\ref{tbl-vif-bayes}.
 
 Os resultados revelaram que a multicolinearidade está concentrada
 principalmente nas variáveis referentes aos valores das faturas mensais
@@ -3163,9 +3122,10 @@ entre as variáveis referentes aos valores das faturas, indicando que a
 estrutura de dependência linear entre os preditores permanece nas
 especificações bayesianas. Ressalta-se, entretanto, que o VIF
 caracteriza a estrutura dos preditores, não o efeito da regularização
-sobre as estimativas posteriores. Assim, embora as distribuições a
-priori possam contribuir para estabilizar os coeficientes, não eliminam
-a multicolinearidade identificada.
+sobre as estimativas posteriores. Assim, embora a regularização induzida
+pelas distribuições a priori possa atenuar a instabilidade das
+estimativas, não altera a estrutura de dependência linear identificada
+entre os preditores.
 
 \paragraph{Diagnóstico do modelo
 bayesiano}\label{diagnuxf3stico-do-modelo-bayesiano}
@@ -3205,37 +3165,33 @@ modelo bayesiano com distribuição a priori Normal apresentou resultados
 satisfatórios. Conforme apresentado na
 Tabela~\ref{tbl-diagnostics-normal}, os valores de \(\hat{R}\)
 permaneceram iguais a 1,000, considerando o arredondamento apresentado,
-para todos os parâmetros estimados. Esse resultado indica que não foram
-identificadas diferenças relevantes entre as distribuições amostradas
-pelas quatro cadeias de Markov, fornecendo evidências favoráveis à
-convergência do algoritmo.
+para todos os parâmetros estimados. Esses resultados indicam boa
+concordância entre as quatro cadeias de Markov, fornecendo evidências
+favoráveis à convergência do algoritmo.
 
 Os tamanhos efetivos da amostra (\emph{effective sample size}, ESS)
 também apresentaram valores satisfatórios. Considerando as quatro
 cadeias, os valores entre os coeficientes variaram de 2.448 a 6.648,
-indicando que a autocorrelação entre as amostras sucessivas não
-comprometeu significativamente a eficiência da amostragem. O
-log-posterior apresentou ESS de 1.599, inferior aos valores observados
-para os coeficientes, mas ainda indicando uma quantidade efetiva
-expressiva de amostras. Adicionalmente, os erros-padrão de Monte Carlo
-foram muito pequenos, sugerindo que o erro numérico decorrente da
+indicando uma quantidade efetiva de amostras suficiente para a estimação
+dos parâmetros, mesmo considerando a autocorrelação entre as iterações.
+O log-posterior apresentou ESS de 1.599, também indicando uma quantidade
+efetiva expressiva de amostras. Adicionalmente, os erros-padrão de Monte
+Carlo foram muito pequenos, sugerindo que o erro numérico decorrente da
 simulação teve influência reduzida sobre as estimativas apresentadas.
 
 A avaliação também contemplou diagnósticos específicos do algoritmo HMC,
 responsável pela geração das amostras posteriores. Não foram observadas
-transições divergentes entre as 4.000 iterações posteriores, resultado
+transições divergentes nas 4.000 iterações posteriores, resultado
 importante porque divergências podem indicar dificuldades do algoritmo
 na exploração de determinadas regiões da distribuição posterior e
-comprometer a confiabilidade das estimativas. Da mesma forma, nenhuma
-iteração atingiu a profundidade máxima da árvore de 15 níveis, não
-havendo evidências de saturação desse limite durante a amostragem.
+comprometer a confiabilidade das estimativas. Da mesma forma, não houve
+saturação da profundidade máxima da árvore de 15 níveis, não havendo
+evidências de saturação desse limite durante a amostragem.
 
-Por fim, o E-BFMI não indicou comportamento patológico. Esse indicador
-avalia a eficiência da exploração da distribuição de energia pelo
-algoritmo HMC, sendo utilizado para identificar possíveis dificuldades
-de exploração do espaço posterior. Sua avaliação favorável, em conjunto
-com a ausência de divergências e de saturação da profundidade da árvore,
-reforça a adequação do processo de amostragem.
+Por fim, o E-BFMI não indicou comportamento patológico, sugerindo que o
+algoritmo HMC explorou adequadamente a distribuição de energia. Esse
+resultado, em conjunto com a ausência de divergências e de saturação da
+profundidade da árvore, reforça a adequação do processo de amostragem.
 
 \begin{figure}
 
@@ -3254,7 +3210,8 @@ com priori Normal.}
 A inspeção dos \emph{traceplots} (Figura~\ref{fig-trace-normal}) revelou
 boa sobreposição entre as quatro cadeias, com oscilações estáveis ao
 longo das iterações e ausência de tendências persistentes ou padrões de
-separação, indicando mistura adequada e estacionariedade da amostragem.
+separação, sugerindo mistura adequada e comportamento estacionário das
+cadeias.
 
 \begin{figure}
 
@@ -3271,15 +3228,15 @@ o modelo bayesiano com priori Normal}
 
 A PPC (Figura~\ref{fig-pp-check-normal}) apresentou sobreposição
 satisfatória entre as distribuições observada e replicada para ambas as
-categorias, indicando que o modelo reproduz adequadamente a distribuição
-marginal da variável resposta, incluindo o desbalanceamento entre as
-classes. Essa verificação não atesta a capacidade discriminativa nem a
-qualidade das probabilidades individuais, que serão avaliadas pelas
-métricas de classificação.
+categorias, sugerindo que o modelo reproduz satisfatoriamente a
+distribuição marginal da variável resposta, incluindo o desbalanceamento
+entre as classes. Essa verificação não avalia diretamente a capacidade
+discriminativa nem a qualidade das probabilidades individuais, aspectos
+que serão examinados por meio das métricas de classificação.
 
-Em conjunto, os diagnósticos indicam convergência satisfatória e
-ausência de problemas relevantes no procedimento de amostragem, tornando
-as amostras posteriores adequadas para a análise dos parâmetros e do
+Em conjunto, os diagnósticos fornecem evidências favoráveis à
+convergência e à adequação do processo de amostragem, tornando as
+amostras posteriores apropriadas para a análise dos parâmetros e do
 desempenho preditivo do modelo.
 
 \subparagraph{Priori Laplace}\label{priori-laplace-1}
@@ -3312,28 +3269,25 @@ MCSE do log-posterior & 0.252\\
 
 \end{table}%
 
-A avaliação da convergência do modelo bayesiano com priori Laplace foi
-realizada por meio de diagnósticos numéricos e da verificação do
-comportamento das cadeias de Markov. Conforme apresentado na
+A avaliação da convergência do modelo bayesiano com priori Laplace
+apresentou resultados satisfatórios. Conforme apresentado na
 Tabela~\ref{tbl-diagnostics-laplace}, os valores do fator de redução
 potencial de escala \((\hat{R})\) variaram entre 1,000 e 1,003,
-indicando concordância entre as cadeias e ausência de evidências de
-problemas de convergência. Os tamanhos efetivos da amostra (ESS) dos
-coeficientes variaram entre 2.363 e 5.056, demonstrando que, apesar da
-autocorrelação inerente às amostras obtidas por métodos de Monte Carlo
-via Cadeias de Markov, foi possível obter uma quantidade satisfatória de
-amostras efetivamente independentes para a estimação dos parâmetros.
+indicando boa concordância entre as quatro cadeias. Os tamanhos efetivos
+da amostra (ESS) dos coeficientes variaram entre 2.363 e 5.056,
+indicando quantidade efetiva de amostras satisfatória para a estimação
+dos parâmetros.
 
-O parâmetro associado ao log-posterior apresentou ESS de 855,478 e erro
-padrão de Monte Carlo (MCSE) de 0,252. Embora esses indicadores sejam
-menos favoráveis em comparação aos observados para os coeficientes, não
-constituem, isoladamente, evidências de problemas de convergência,
-devendo ser interpretados em conjunto com os demais diagnósticos.
+O log-posterior apresentou ESS de 855,478 e erro-padrão de Monte Carlo
+(MCSE) de 0,252. Embora o tamanho efetivo seja inferior ao observado
+para os coeficientes, esse resultado não constitui, isoladamente,
+evidência de problemas de convergência, devendo ser considerado em
+conjunto com os demais diagnósticos.
 
 Os diagnósticos específicos do algoritmo HMC não identificaram
 transições divergentes nem saturação da profundidade máxima da árvore de
-amostragem, e o E-BFMI não indicou comportamento patológico, resultados
-análogos aos observados para o modelo com priori Normal.
+amostragem. Além disso, o E-BFMI não indicou comportamento patológico,
+resultados semelhantes aos observados no modelo com priori Normal.
 
 \begin{figure}
 
@@ -3349,12 +3303,11 @@ bayesiano com priori Laplace}
 
 \end{figure}%
 
-A inspeção dos \emph{traceplots} (Figura~\ref{fig-trace-laplace})
-evidenciou comportamento semelhante ao observado para o modelo com
-priori Normal: as quatro cadeias apresentaram boa sobreposição e
-oscilações estáveis ao longo das iterações, sem tendências persistentes
-nem padrões de separação, resultado consistente com os diagnósticos
-numéricos da Tabela~\ref{tbl-diagnostics-laplace}.
+A inspeção dos traceplots (Figura~\ref{fig-trace-laplace}) também
+revelou boa sobreposição entre as quatro cadeias, com oscilações
+estáveis ao longo das iterações e ausência de tendências persistentes ou
+padrões de separação, sugerindo mistura adequada e comportamento
+estacionário das cadeias.
 
 \begin{figure}
 
@@ -3370,10 +3323,9 @@ para o modelo bayesiano com priori Laplace}
 \end{figure}%
 
 A verificação preditiva posterior (Figura~\ref{fig-pp-check-laplace})
-apresentou resultados análogos aos do modelo com priori Normal: boa
-sobreposição entre a distribuição observada e as replicações
-posteriores, indicando que o modelo reproduz adequadamente a
-distribuição marginal da variável resposta.
+apresentou sobreposição satisfatória entre a distribuição observada e as
+replicações posteriores, sugerindo que o modelo reproduz
+satisfatoriamente a distribuição marginal da variável resposta.
 
 \paragraph{Comparação entre as especificações
 bayesianas}\label{comparauxe7uxe3o-entre-as-especificauxe7uxf5es-bayesianas}
@@ -3402,18 +3354,18 @@ fit\_normal & -0.74 & 0.32 \\
 
 Após a avaliação individual dos modelos bayesianos com priors Normal e
 Laplace, realizou-se uma comparação complementar de seu desempenho
-preditivo por meio do WAIC. Para essa finalidade, utilizou-se a
-diferença de densidade preditiva esperada (ELPD) entre os modelos,
-conforme apresentado na Tabela~\ref{tbl-waic-comparacao}.
+preditivo por meio do WAIC e da diferença na densidade preditiva
+esperada (ELPD), conforme apresentado na
+Tabela~\ref{tbl-waic-comparacao}.
 
-A comparação tomou o modelo com prior Laplace como referência. Esse
-modelo apresentou WAIC de 20.864,79, ligeiramente inferior ao valor de
-20.865,83 obtido pelo modelo com prior Normal. Na comparação baseada na
-ELPD, o modelo Normal apresentou diferença de −0,74, com erro-padrão de
-0,32. Embora os resultados indiquem uma pequena vantagem relativa do
-modelo Laplace, a magnitude reduzida da diferença não sugere uma
-superioridade preditiva expressiva. Além disso, os valores de
-complexidade efetiva \((p_{\text{WAIC}})\) foram próximos entre as
+A comparação tomou o modelo com prior Laplace como referência. Essa
+especificação apresentou WAIC de 20.864,79, ligeiramente inferior ao
+valor de 20.865,83 obtido pelo modelo com prior Normal. Na comparação
+baseada na ELPD, o modelo Normal apresentou diferença de −0,74, com
+erro-padrão de 0,32. Esses resultados indicam uma pequena vantagem
+relativa do modelo Laplace, embora a magnitude da diferença não sugira
+uma superioridade preditiva expressiva. Além disso, os valores de
+complexidade efetiva ((p\_\{\text{WAIC}\})) foram próximos entre as
 especificações, reforçando a semelhança entre os modelos segundo esse
 critério.
 
@@ -3511,40 +3463,29 @@ a priori.
 Cabe destacar que os preditores foram padronizados antes do ajuste dos
 modelos, incluindo as variáveis indicadoras binárias geradas a partir
 das variáveis categóricas. Dessa forma, os coeficientes representam
-variações no logaritmo das chances (\emph{log-odds}) de inadimplência
-associadas ao aumento de um desvio-padrão no respectivo preditor
-transformado, mantendo-se os demais constantes. Consequentemente, a
-interpretação dos coeficientes das variáveis indicadoras, como
-\texttt{sexo\_Feminino}, deve considerar essa transformação, não
-correspondendo diretamente à comparação entre as categorias na escala
-original.
+variações no logaritmo das chances de inadimplência associadas ao
+aumento de um desvio-padrão no respectivo preditor original, mantendo-se
+os demais constantes. No caso das variáveis indicadoras, como
+sexo\_Feminino, essa transformação deve ser considerada na
+interpretação: o coeficiente não representa diretamente a comparação
+entre as categorias na escala original.
 
-Entre os coeficientes estimados, destacam-se aqueles associados às
-variáveis \texttt{atraso\_pagto\_0}, \texttt{atraso\_pagto\_2},
-\texttt{atraso\_pagto\_3}, \texttt{fatura\_valor\_1},
-\texttt{fatura\_valor\_2} e \texttt{idade}, cujos intervalos de
-credibilidade de 95\% não incluem zero em ambas as especificações.
-Também se observam associações negativas para \texttt{limite\_credito},
-\texttt{pagto\_valor\_1}, \texttt{pagto\_valor\_2} e
-\texttt{sexo\_Feminino}, cujos intervalos também permanecem abaixo de
-zero nas duas especificações. A concordância entre os modelos quanto à
-direção desses efeitos reforça a proximidade das estimativas obtidas sob
-as diferentes distribuições a priori.
+Conforme apresentado na Tabela~\ref{tbl-resumo-posterior}, 16 dos 27
+preditores apresentam intervalos de credibilidade de 95\% inteiramente
+fora de zero em ambas as especificações. Entre os efeitos positivos,
+destacam-se atraso\_pagto\_0, atraso\_pagto\_2, atraso\_pagto\_3,
+fatura\_valor\_2 e idade. Entre os negativos, encontram-se
+escolaridade\_Desconhecido1, escolaridade\_EnsinoMedio,
+escolaridade\_Outros, estado\_civil\_Solteiro, fatura\_valor\_1,
+limite\_credito, pagto\_valor\_1, pagto\_valor\_2, pagto\_valor\_4,
+pagto\_valor\_5 e sexo\_Feminino. A concordância entre as especificações
+quanto à direção desses efeitos reforça a semelhança das estimativas
+obtidas sob as duas distribuições a priori.
 
-Por outro lado, variáveis como \texttt{atraso\_pagto\_4},
-\texttt{atraso\_pagto\_5}, \texttt{atraso\_pagto\_6} e
-\texttt{fatura\_valor\_3} apresentam intervalos de credibilidade que
+Por outro lado, os intervalos de credibilidade dos demais preditores
 incluem zero, indicando maior incerteza quanto à direção de seus
-efeitos. Esse resultado evidencia que nem todos os coeficientes
-apresentam o mesmo grau de concentração nas distribuições posteriores.
-
-De modo geral, não se observam diferenças expressivas no comportamento
-dos coeficientes entre os modelos Normal e Laplace. Embora as
-distribuições a priori possuam formatos distintos, suas variâncias foram
-igualadas para tornar a comparação mais controlada, permitindo avaliar
-os efeitos associados às diferenças em suas formas. Para os dados e as
-especificações analisados, essas diferenças não produziram alterações
-substanciais nas estimativas posteriores.
+efeitos. Esse resultado evidencia que os coeficientes apresentam
+diferentes graus de concentração nas distribuições posteriores.
 
 \begin{figure}
 
@@ -3562,11 +3503,11 @@ Laplace.}
 
 A Figura~\ref{fig-atualizacao-bayesiana-pgto} apresenta uma
 representação da atualização bayesiana do coeficiente associado à
-variável \texttt{atraso\_pagto\_0}, considerando as especificações com
-priors Normal e Laplace. Em ambos os painéis, são apresentadas as
-distribuições a priori, as funções de verossimilhança condicionais e as
-distribuições a posteriori, permitindo visualizar a contribuição da
-informação inicial e dos dados para a estimação do parâmetro.
+variável atraso\_pagto\_0, considerando as especificações com prioris
+Normal e Laplace. Em ambos os painéis, são apresentadas as distribuições
+a priori, as funções de verossimilhança condicionais e as distribuições
+a posteriori, permitindo visualizar a contribuição da informação inicial
+e dos dados para a estimação do parâmetro.
 
 Observa-se que as distribuições a priori possuem formatos distintos,
 decorrentes das propriedades das distribuições Normal e Laplace.
@@ -3574,20 +3515,12 @@ Entretanto, a incorporação da informação amostral conduz a distribuições
 a posteriori bastante semelhantes, concentradas em torno de valores
 positivos do coeficiente.
 
-Além disso, nota-se visualmente que a função de verossimilhança possui
-uma dispersão extremamente restrita em comparação às distribuições a
-priori, concentrando seu máximo próximo a \(\beta \approx 0.7\). Essa
-alta precisão amostral faz com que a distribuição a posteriori seja
-quase integralmente moldada pelos dados, sobrepondo-se à verossimilhança
-e atenuando de forma expressiva a influência inicial das especificações
-Normal e Laplace.
-
-A concentração das distribuições a posteriori em uma região
-relativamente estreita indica que, para esse preditor, a informação
-fornecida pelos dados exerce papel importante na estimação do
-coeficiente. Assim, apesar das diferenças entre as distribuições a
-priori, ambas as especificações conduzem a resultados semelhantes após a
-atualização.
+A verossimilhança condicional apresenta concentração elevada em torno de
+seu máximo, próximo a \(\beta \approx 0{,}7\), em comparação às
+distribuições a priori. Esse comportamento sugere que, para esse
+coeficiente, a informação amostral exerce influência importante na
+atualização, contribuindo para a semelhança entre as distribuições a
+posteriori obtidas com as duas especificações.
 
 Ressalta-se que a verossimilhança apresentada corresponde a uma
 avaliação condicional, na qual os demais coeficientes foram mantidos
@@ -3601,77 +3534,65 @@ marginais completas dos parâmetros.
 chances}\label{interpretauxe7uxe3o-dos-coeficientes-e-das-razuxf5es-de-chances}
 
 Na regressão logística, os coeficientes representam a variação no
-logaritmo das chances (\emph{log-odds}) de ocorrência do evento de
-interesse, neste caso, a inadimplência (\$PD30 = 1)), associada ao
-aumento de uma unidade no preditor, mantendo-se os demais constantes.
-Como as variáveis explicativas foram padronizadas antes do ajuste dos
-modelos, inclusive as variáveis indicadoras binárias, essa interpretação
-deve considerar a escala padronizada dos preditores. Assim, para as
-variáveis numéricas, o aumento de uma unidade corresponde a um
-desvio-padrão na escala original.
+logaritmo das chances de ocorrência do evento de interesse, neste caso,
+a inadimplência (\(PD30 = 1\)), associada ao aumento de uma unidade no
+preditor, mantendo-se os demais constantes. Como as variáveis
+explicativas foram padronizadas antes do ajuste dos modelos, inclusive
+as variáveis indicadoras binárias, essa interpretação deve considerar a
+escala padronizada dos preditores. Assim, para as variáveis numéricas, o
+aumento de uma unidade corresponde a um desvio-padrão na escala
+original. Para as variáveis indicadoras, essa variação não representa
+diretamente a passagem de uma categoria para outra.
 
 Coeficientes positivos indicam associação com o aumento das chances de
 inadimplência, enquanto coeficientes negativos indicam associação com
 sua redução. A magnitude dos coeficientes expressa a intensidade dessas
 associações na escala do logaritmo das chances.
 
-Conforme apresentado na Tabela~\ref{tbl-resumo-posterior}, os modelos
-com prioris Normal e Laplace apresentam estimativas bastante próximas,
-sugerindo que a escolha entre essas duas distribuições a priori não
-produziu alterações expressivas nas conclusões sobre os efeitos dos
-preditores.
-
-Entre os coeficientes positivos, destaca-se \texttt{atraso\_pagto\_0},
-com mediana posterior de 0,657 em ambas as especificações. Esse preditor
+Entre os coeficientes positivos, destaca-se atraso\_pagto\_0, com
+mediana posterior de 0,657 em ambas as especificações. Esse preditor
 apresenta a maior estimativa positiva entre as variáveis explicativas,
 com intervalo de credibilidade de 95\% inteiramente acima de zero.
-Também apresentam associações positivas \texttt{atraso\_pagto\_2},
-\texttt{atraso\_pagto\_3}, \texttt{fatura\_valor\_2} e \texttt{idade},
-cujos intervalos de credibilidade também não incluem zero.
+Também apresentam associações positivas atraso\_pagto\_2,
+atraso\_pagto\_3, fatura\_valor\_2 e idade, cujos intervalos de
+credibilidade também não incluem zero.
 
-Por outro lado, \texttt{fatura\_valor\_1} apresenta a maior estimativa
-negativa, com medianas posteriores de -0,503 no modelo Normal e -0,487
-no modelo Laplace. Outros efeitos negativos são observados para
-\texttt{pagto\_valor\_1}, \texttt{pagto\_valor\_2} e
-\texttt{limite\_credito}. Também se destacam
-\texttt{escolaridade\_Desconhecido1},
-\texttt{escolaridade\_EnsinoMedio}, \texttt{escolaridade\_Outros},
-\texttt{estado\_civil\_Solteiro} e \texttt{sexo\_Feminino}, cujos
-intervalos de credibilidade de 95\% permanecem abaixo de zero nas duas
-especificações.
+Por outro lado, fatura\_valor\_1 apresenta a maior estimativa negativa,
+com medianas posteriores de -0,503 no modelo Normal e -0,487 no modelo
+Laplace. Outros efeitos negativos são observados para pagto\_valor\_1,
+pagto\_valor\_2, limite\_credito, entre outros.
 
 Para facilitar a interpretação dos efeitos estimados na regressão
 logística, os coeficientes podem ser exponenciados, obtendo-se as razões
-de chances (\emph{Odds Ratios}, OR). Essa transformação permite
-expressar os efeitos em termos multiplicativos sobre as chances de
-inadimplência:
+de chances. Essa transformação permite expressar os efeitos em termos
+multiplicativos sobre as chances de inadimplência:
 
-\(OR_j = \exp(\beta_j).\)
+\[
+OR_j = \exp(\beta_j).
+\]
 
 Valores de OR superiores a 1 indicam aumento nas chances de
 inadimplência, enquanto valores inferiores a 1 indicam redução. Um OR
 igual a 1 corresponde à ausência de associação na escala das chances.
 
-Considerando as medianas posteriores, o preditor
-\texttt{atraso\_pagto\_0} apresenta OR de aproximadamente 1,929 em ambas
-as especificações. Isso indica que um aumento de uma unidade na escala
-padronizada desse preditor está associado a chances de inadimplência
-aproximadamente 92,9\% maiores, mantendo-se os demais preditores
-constantes. Entre os demais efeitos positivos, destacam-se
-\texttt{atraso\_pagto\_2}, com OR próximo de 1,099 no modelo Normal e
-1,098 no Laplace; \texttt{atraso\_pagto\_3}, com OR próximo de 1,087;
-\texttt{fatura\_valor\_2}, com OR de aproximadamente 1,319 no modelo
-Normal e 1,290 no Laplace; e \texttt{idade}, com OR próximo de 1,054.
+Considerando as medianas posteriores, o preditor atraso\_pagto\_0
+apresenta OR de aproximadamente 1,929 em ambas as especificações. Isso
+indica que um aumento de uma unidade na escala padronizada desse
+preditor está associado a chances de inadimplência aproximadamente
+92,9\% maiores, mantendo-se os demais preditores constantes. Entre os
+demais efeitos positivos, destacam-se atraso\_pagto\_2, com OR próximo
+de 1,099 no modelo Normal e 1,098 no Laplace; atraso\_pagto\_3, com OR
+próximo de 1,087; fatura\_valor\_2, com OR de aproximadamente 1,319 no
+modelo Normal e 1,290 no Laplace; e idade, com OR próximo de 1,054.
 
-Em relação aos efeitos negativos, \texttt{fatura\_valor\_1} apresenta OR
-de aproximadamente 0,605 no modelo Normal e 0,614 no Laplace. Esses
-valores correspondem a reduções de cerca de 39,5\% e 38,6\% nas chances
-de inadimplência, respectivamente, para um aumento de uma unidade na
-escala padronizada do preditor. Também se destacam
-\texttt{pagto\_valor\_1}, com OR próximo de 0,795 no modelo Normal e
-0,798 no Laplace; \texttt{pagto\_valor\_2}, com OR próximo de 0,832 e
-0,833, respectivamente; e \texttt{limite\_credito}, com OR próximo de
-0,913 e 0,914.
+Em relação aos efeitos negativos, fatura\_valor\_1 apresenta OR de
+aproximadamente 0,605 no modelo Normal e 0,614 no Laplace. Esses valores
+correspondem a reduções de cerca de 39,5\% e 38,6\% nas chances de
+inadimplência, respectivamente, para um aumento de uma unidade na escala
+padronizada do preditor. Também se destacam pagto\_valor\_1, com OR
+próximo de 0,795 no modelo Normal e 0,798 no Laplace; pagto\_valor\_2,
+com OR próximo de 0,832 e 0,833, respectivamente; e limite\_credito, com
+OR próximo de 0,913 e 0,914.
 
 A comparação entre os modelos evidencia que os ORs obtidos são bastante
 semelhantes. As pequenas diferenças observadas nas estimativas não
@@ -3692,25 +3613,18 @@ uma unidade na escala transformada da variável.
 estimativas}\label{intervalos-de-credibilidade-e-incerteza-das-estimativas}
 
 Os intervalos de credibilidade de 95\% permitem avaliar a incerteza
-associada às estimativas dos coeficientes, indicando uma faixa de
-valores que contém 95\% da probabilidade posterior do parâmetro,
-condicionada aos dados observados e à distribuição a priori adotada.
-Diferentemente dos intervalos de confiança frequentistas, sua
-interpretação está diretamente relacionada à distribuição posterior do
-parâmetro.
+associada às estimativas dos coeficientes, delimitando uma região que
+contém 95\% da probabilidade posterior do parâmetro, condicionada aos
+dados observados e à distribuição a priori adotada. Diferentemente dos
+intervalos de confiança frequentistas, sua interpretação está
+diretamente relacionada à distribuição posterior do parâmetro.
 
-A análise dos intervalos de credibilidade
-(Tabela~\ref{tbl-resumo-posterior}) mostra que 16 dos 27 preditores
-apresentam intervalos inteiramente fora de zero em ambas as
-especificações, confirmando as direções de efeito identificadas na
-subseção anterior. Os coeficientes mais bem determinados, como
-\texttt{atraso\_pagto\_0}, apresentam intervalos relativamente
-estreitos; variáveis como \texttt{fatura\_valor\_2} a
-\texttt{fatura\_valor\_5} exibem maior dispersão posterior, indicando
-maior incerteza sobre a magnitude de seus efeitos. A proximidade entre
-os limites dos intervalos dos modelos Normal e Laplace indica que a
-incerteza das estimativas foi semelhante sob as duas especificações de
-prioris.
+A amplitude dos intervalos fornece uma indicação da incerteza das
+estimativas: intervalos mais estreitos indicam maior concentração da
+distribuição posterior, enquanto intervalos mais amplos refletem maior
+dispersão e incerteza quanto à magnitude dos coeficientes. A proximidade
+entre os limites dos intervalos dos modelos Normal e Laplace indica que
+a incerteza das estimativas foi semelhante sob as duas especificações.
 
 \paragraph{Avaliação do desempenho
 preditivo}\label{avaliauxe7uxe3o-do-desempenho-preditivo}
@@ -3760,9 +3674,9 @@ modelos avaliados. A acurácia variou entre 0,8069 e 0,8117, indicando
 que aproximadamente 81\% das observações foram classificadas
 corretamente. Entre as especificações, o modelo frequentista sem
 multicolinearidade apresentou o maior valor (0,8117), enquanto o modelo
-Ridge apresentou o menor (0,8069). Os modelos bayesianos, por sua vez,
-alcançaram acurácia de 0,8105 em ambas as especificações, demonstrando
-desempenho bastante semelhante ao das alternativas frequentistas.
+Ridge apresentou o menor (0,8069). Os modelos bayesianos alcançaram
+acurácia de 0,8105 em ambas as especificações, demonstrando desempenho
+semelhante ao das alternativas frequentistas.
 
 Entretanto, a interpretação da acurácia deve considerar o
 desbalanceamento da variável resposta. Aproximadamente 78\% das
@@ -3770,21 +3684,20 @@ observações pertencem à classe 0, enquanto cerca de 22\% correspondem à
 classe 1. Nesse cenário, a acurácia convencional pode superestimar a
 qualidade da classificação, uma vez que o desempenho sobre a classe
 majoritária exerce maior influência sobre seu valor. Essa limitação
-também pode ser observada nos resultados da acurácia balanceada, que
-variaram entre 0,5990 e 0,6135. A diferença entre as duas medidas indica
-que, apesar da proporção relativamente elevada de classificações
-corretas, os modelos apresentam desempenho desigual na identificação das
-duas classes.
+também é evidenciada pela acurácia balanceada, que variou entre 0,5990 e
+0,6135. A diferença entre as duas medidas indica um desempenho desigual
+na identificação das duas classes.
 
 A análise da sensibilidade e da especificidade reforça essa constatação.
-Os valores de sensibilidade, entre 0,2260 e 0,2586, revelam uma
-capacidade limitada de identificar corretamente os clientes
-inadimplentes. Em contrapartida, a especificidade variou entre 0,9673 e
-0,9719, indicando que os modelos identificaram corretamente a grande
-maioria dos clientes não inadimplentes. Esse comportamento evidencia uma
-tendência dos classificadores a favorecer a atribuição da classe
-negativa, resultando em um número expressivo de falsos negativos e em
-uma proporção reduzida de inadimplentes corretamente identificados.
+Os valores de sensibilidade, entre 0,2260 e 0,2586, revelam capacidade
+limitada de identificar corretamente os clientes inadimplentes. Em
+contrapartida, a especificidade variou entre 0,9673 e 0,9719, indicando
+que os modelos identificaram corretamente a grande maioria dos clientes
+não inadimplentes. Assim, considerando o ponto de corte adotado,
+aproximadamente 74\% a 77\% dos clientes inadimplentes não foram
+identificados como pertencentes à classe positiva. Esse comportamento
+evidencia uma limitação importante dos classificadores na identificação
+da classe de interesse.
 
 A precisão apresentou valores entre 0,6919 e 0,7028, indicando que
 aproximadamente 69\% a 70\% das observações classificadas como
@@ -3798,56 +3711,36 @@ O MCC apresentou valores entre 0,3181 e 0,3449. Por considerar
 simultaneamente os verdadeiros e falsos positivos e negativos, essa
 métrica oferece uma perspectiva mais abrangente do desempenho
 classificatório, especialmente diante do desbalanceamento observado. Os
-valores obtidos indicam uma associação positiva, porém relativamente
+valores obtidos indicam uma associação positiva, mas relativamente
 limitada, entre as classificações realizadas pelos modelos e as classes
 efetivamente observadas.
+
+A capacidade discriminatória foi analisada adicionalmente por meio da
+área sob a curva ROC (ROC AUC), que avalia a capacidade de distinguir
+observações pertencentes às diferentes classes ao longo de diversos
+pontos de corte. Diferentemente das métricas baseadas em classificações
+binárias, essa medida não depende da adoção de um limiar específico para
+transformar as probabilidades estimadas em classes. Os valores de ROC
+AUC variaram entre 0,7141 e 0,7165, sendo o maior resultado obtido pelo
+modelo bayesiano com priori Normal (0,7165), seguido pelo modelo com
+priori Laplace (0,7164). Essa proximidade indica capacidades
+discriminatórias semelhantes entre as especificações, sem diferenças
+expressivas entre as abordagens frequentista e bayesiana.
 
 Em relação à qualidade das probabilidades estimadas, o log-loss
 apresentou resultados praticamente idênticos entre as seis
 especificações, variando de 0,4695 a 0,4702. Essa proximidade sugere que
 as diferentes estratégias de estimação e regularização produziram
-probabilidades preditas com qualidade semelhante, sem diferenças
-expressivas nessa dimensão do desempenho.
+probabilidades preditas com desempenho semelhante segundo essa métrica.
 
 De forma geral, os resultados apontam para uma elevada semelhança entre
 as especificações frequentistas e bayesianas quanto ao desempenho
-preditivo. As diferenças observadas nas métricas são pequenas, sugerindo
-que a incorporação de distribuições a priori, nas configurações
-avaliadas, não proporcionou ganhos expressivos em relação às
-alternativas frequentistas. Ainda assim, a avaliação evidencia uma
-limitação comum aos modelos: a baixa sensibilidade na identificação dos
-clientes inadimplentes, apesar da elevada especificidade para a classe
-de não inadimplência.
-
-A capacidade discriminatória dos modelos foi analisada adicionalmente
-por meio da área sob a curva ROC (ROC AUC), métrica que avalia a
-capacidade de distinguir observações pertencentes às diferentes classes
-ao longo de diversos pontos de corte. Diferentemente das métricas
-baseadas em classificações binárias, essa medida não depende da adoção
-de um limiar específico para transformar as probabilidades estimadas em
-classes.
-
-Os resultados apresentaram valores próximos entre as especificações
-frequentistas e bayesianas. Enquanto os modelos frequentistas
-registraram valores de ROC AUC entre 0,7141 e 0,7163, os modelos
-bayesianos alcançaram 0,7164 e 0,7165, respectivamente para as prioris
-Laplace e Normal. Essa proximidade indica que as diferentes abordagens
-produziram capacidades discriminatórias semelhantes, sem evidências de
-vantagem expressiva de uma delas.
-
-Embora os modelos bayesianos tenham apresentado valores ligeiramente
-superiores, a magnitude dessa diferença é pequena e não permite concluir
-que a abordagem bayesiana proporcione uma melhoria relevante na
-discriminação entre clientes inadimplentes e não inadimplentes. De
-maneira semelhante, as diferenças entre as especificações frequentistas
-também foram reduzidas, indicando que as estratégias de regularização e
-tratamento da multicolinearidade tiveram efeitos limitados sobre essa
-dimensão do desempenho.
-
-Assim, os resultados sugerem que, para o conjunto de dados e as
-especificações consideradas, a escolha entre inferência frequentista e
-bayesiana não alterou substancialmente a capacidade de ordenação dos
-clientes segundo seu risco de inadimplência.
+preditivo. Embora algumas métricas apresentem pequenas diferenças entre
+os modelos, não se observa uma vantagem expressiva de uma abordagem
+sobre a outra. Ainda assim, a avaliação evidencia uma limitação comum às
+seis especificações: a baixa sensibilidade na identificação dos clientes
+inadimplentes, apesar da elevada especificidade para a classe de não
+inadimplência.
 
 \paragraph{Análise dos erros de
 classificação}\label{sec-erros-classificacao}
@@ -3952,7 +3845,7 @@ A (\textbf{roc-comparacao?}) apresenta as curvas ROC dos modelos
 frequentista e bayesiano com prior Normal, construídas a partir das
 probabilidades estimadas no conjunto de teste. A curva ROC permite
 avaliar a capacidade discriminatória dos modelos para diferentes pontos
-de corte, relacionando a sensibilidade à taxa de falsos positivos (1 −
+de corte, relacionando a sensibilidade à taxa de falsos positivos (1 -
 especificidade).
 
 Observa-se que as duas curvas apresentam trajetórias bastante próximas e
@@ -4021,63 +3914,66 @@ valores de ROC AUC variaram entre 0,714 e 0,717, enquanto o log-loss
 permaneceu próximo de 0,470 em todos os modelos. Essa proximidade sugere
 que, em cenários com amostras de grande dimensão e alta informatividade
 dos dados, a escolha entre as duas abordagens é pouco determinante para
-o desempenho classificatório, resultado consistente com a teoria
-assintótica, que prevê convergência das inferências bayesianas e
-frequentistas à medida que o tamanho da amostra cresce.
+o desempenho classificatório.
 
-\subsection{Sensibilidade às distribuições a priori e o papel do tamanho
-amostral}\label{sensibilidade-uxe0s-distribuiuxe7uxf5es-a-priori-e-o-papel-do-tamanho-amostral}
+\subsection{\texorpdfstring{Sensibilidade às distribuições \emph{a
+priori} e o papel do tamanho
+amostral}{Sensibilidade às distribuições a priori e o papel do tamanho amostral}}\label{sensibilidade-uxe0s-distribuiuxe7uxf5es-a-priori-e-o-papel-do-tamanho-amostral}
 
 A comparação entre as especificações bayesianas com prioris Normal e
 Laplace revelou estimativas posteriores bastante próximas. As medianas
-dos coeficientes apresentaram diferenças em geral inferiores a 0,02
-unidades, e a comparação pelo WAIC produziu uma diferença de ELPD de
-−0,52 com erro-padrão de 0,28, magnitude inferior a dois erros-padrão,
-indicando que as especificações são essencialmente equivalentes do ponto
-de vista da capacidade preditiva.
+dos coeficientes apresentaram diferenças geralmente inferiores a 0,02
+unidades. Além disso, a comparação pelo WAIC produziu uma diferença de
+ELPD de -0,52, com erro-padrão de 0,28. Como essa diferença é inferior a
+dois erros-padrão, não há evidência clara de uma diferença expressiva na
+capacidade preditiva das especificações.
 
 Embora as duas distribuições apresentem formatos distintos, a Normal com
 caudas mais leves e a Laplace com maior concentração de probabilidade em
-torno de zero e caudas mais pesadas, a equivalência das variâncias
-adotadas (σ² = 1 em ambas) restringiu o contraste à forma das
-distribuições, sem explorar diferenças no grau de informativeness. Mais
-do que isso, o volume de dados disponível exerceu papel determinante
-sobre esse resultado. Com n = 30.000 observações, a função de
-verossimilhança apresenta dispersão extremamente restrita, e sua
-concentração em torno dos valores estimados pelo modelo supera em
-magnitude a influência de ambas as prioris. A figura de atualização
-bayesiana do coeficiente \texttt{atraso\_pagto\_0} documenta esse
-comportamento diretamente: independentemente da especificação adotada, a
-posteriori foi praticamente moldada pela verossimilhança, convergindo
-para valores semelhantes em ambos os modelos. Esse fenômeno é
-fundamentado pelo teorema de Bernstein--von Mises, segundo o qual, sob
-condições de regularidade, a distribuição posterior aproxima-se
-assintoticamente de uma distribuição Normal centrada no estimador de
-máxima verossimilhança, tornando-se, em primeira ordem, independente da
-distribuição a priori Vaart (1998).
+torno de zero e caudas mais pesadas, a igualdade das variâncias adotadas
+\((\sigma^2=1)\) em ambas permitiu comparar seus efeitos mantendo
+constante essa medida de dispersão. O volume de dados disponível também
+pode ter contribuído para a proximidade dos resultados. Com \(n=30.000\)
+observações, a informação fornecida pela amostra tende a exercer
+influência expressiva sobre as estimativas posteriores. A
+Figura~\ref{fig-atualizacao-bayesiana-pgto} ilustra esse comportamento:
+independentemente da especificação adotada, a verossimilhança
+condicional apresenta formato e concentração bastante próximos aos da
+distribuição \emph{a posteriori}, que também converge para valores
+semelhantes nos dois modelos. Essa sobreposição sugere que, para esse
+coeficiente, a informação amostral exerce influência predominante na
+atualização, enquanto as diferenças entre as distribuições \emph{a
+priori} têm efeito limitado sobre o resultado posterior. Esse
+comportamento é compatível com o teorema de Bernstein--von Mises,
+segundo o qual, sob determinadas condições de regularidade, a
+distribuição posterior aproxima-se assintoticamente de uma distribuição
+Normal centrada no estimador de máxima verossimilhança, tornando-se, em
+primeira ordem, independente da distribuição \emph{a priori} Vaart
+(1998).
 
-Essa equivalência observada entre as prioris, e entre as abordagens
-frequentista e bayesiana em geral, não implica que a escolha da
-distribuição a priori seja irrelevante em outros contextos. Em situações
-com amostras de menor dimensão, comuns no início da operação de um
-produto de crédito, em segmentos de nicho ou em carteiras com baixíssima
-taxa de inadimplência, a verossimilhança fornece menos informação, e a
-distribuição a priori passa a exercer influência mais pronunciada sobre
-as estimativas. Nesse cenário, as diferenças de forma entre as prioris
-Normal e Laplace poderiam se manifestar de forma mais expressiva: a
-priori Laplace, por seu comportamento análogo à penalização L1, tenderia
-a promover contração mais intensa sobre coeficientes de menor magnitude,
-podendo conduzir estimativas próximas de zero, efeito que a priori
-Normal, mais suave em sua regularização, não produz com a mesma
-intensidade. Assim, a abordagem bayesiana com prioris bem especificadas
-pode oferecer vantagens práticas precisamente nos cenários em que os
-dados são escassos, seja por incorporar conhecimento prévio sobre os
-parâmetros de forma explícita e controlada, seja por produzir
-estimativas mais estáveis do que as obtidas por máxima verossimilhança
-em amostras pequenas. Essa é, portanto, uma limitação importante deste
-estudo: os resultados obtidos são específicos ao contexto de grande
-dimensão amostral e não devem ser generalizados como evidência de
-equivalência universal entre as abordagens.
+A semelhança observada entre as prioris, assim como entre os resultados
+preditivos das abordagens frequentista e bayesiana, não implica que a
+escolha da distribuição \emph{a priori} seja irrelevante em outros
+contextos. Em situações com amostras de menor dimensão, comuns no início
+da operação de um produto de crédito, em segmentos de nicho ou em
+carteiras com baixíssima taxa de inadimplência, a verossimilhança tende
+a fornecer menos informação, e a distribuição \emph{a priori} pode
+exercer influência mais pronunciada sobre as estimativas. Nesse cenário,
+as diferenças de forma entre as prioris Normal e Laplace poderiam se
+manifestar de maneira mais expressiva: a priori Laplace, por seu
+comportamento análogo à penalização L1, tende a promover maior contração
+dos coeficientes em direção a zero, podendo produzir estimativas de
+menor magnitude. A priori Normal, por sua vez, apresenta um
+comportamento de regularização mais suave. Assim, uma abordagem
+bayesiana com prioris adequadamente especificadas pode oferecer
+vantagens práticas em cenários com dados escassos, tanto pela
+possibilidade de incorporar conhecimento prévio sobre os parâmetros de
+forma explícita quanto pela possibilidade de obter estimativas mais
+estáveis do que aquelas produzidas pela máxima verossimilhança. Essa é,
+portanto, uma limitação importante deste estudo: os resultados obtidos
+são específicos ao contexto de grande dimensão amostral e não devem ser
+generalizados como evidência de equivalência universal entre as
+abordagens.
 
 \subsection{Multicolinearidade: tratamento e
 implicações}\label{multicolinearidade-tratamento-e-implicauxe7uxf5es}
@@ -4099,57 +3995,60 @@ dos efeitos individuais dos preditores.
 Na abordagem bayesiana, as distribuições a priori centradas em zero
 introduzem um mecanismo de regularização que pode contribuir para
 estabilizar as estimativas em situações de multicolinearidade.
-Entretanto, conforme a Tabela~\ref{tbl-vif-bayes}, os valores de VIF
-observados nas especificações bayesianas evidenciam que a estrutura de
-dependência linear entre os preditores permanece presente. Isso ocorre
-porque a regularização atua sobre as estimativas dos parâmetros, mas não
-modifica a matriz de preditores nem elimina sua dependência linear.
-Assim, embora a informação a priori possa influenciar a magnitude e a
-variabilidade das estimativas posteriores, não resolve, por si só, o
-problema de identificação individual dos efeitos associado à
-multicolinearidade.
+Entretanto, conforme apresentado na Tabela~\ref{tbl-vif-bayes}, os
+valores de VIF observados nas especificações bayesianas evidenciam que a
+estrutura de dependência linear entre os preditores permanece presente.
+Isso ocorre porque a regularização atua sobre as estimativas dos
+parâmetros, mas não modifica a matriz de preditores nem elimina sua
+dependência linear. Assim, embora a informação a priori possa
+influenciar a magnitude e a variabilidade das estimativas posteriores,
+não resolve, por si só, as dificuldades de identificação individual dos
+efeitos associadas à multicolinearidade.
 
-Em conjunto, os resultados sugerem que o tratamento explícito da
-multicolinearidade, seja por remoção de preditores correlacionados, seja
-por regularização, permanece uma etapa relevante quando o objetivo é a
+Em conjunto, os resultados indicam que o diagnóstico e o tratamento da
+multicolinearidade permanecem relevantes quando o objetivo é a
 interpretação inferencial dos coeficientes, independentemente da
-abordagem de estimação adotada. A vantagem da regularização bayesiana
-reside menos na eliminação da estrutura de dependência entre os
-preditores do que na possibilidade de quantificar explicitamente a
-incerteza remanescente sobre os coeficientes mesmo em presença de alta
-correlação, o que pode ser particularmente útil quando a remoção de
-variáveis não é viável por razões substantivas ou quando se deseja
-preservar a estrutura original do modelo.
+abordagem de estimação adotada. Enquanto a remoção de preditores
+correlacionados reduz diretamente a dependência linear entre as
+variáveis explicativas, a regularização bayesiana oferece uma estratégia
+alternativa para lidar com seus possíveis efeitos sobre as estimativas,
+sem alterar a estrutura original dos preditores. Essa característica
+pode ser particularmente útil quando a remoção de variáveis não é viável
+por razões substantivas ou quando se deseja preservar a estrutura
+original do modelo, embora a incerteza associada à identificação
+individual dos coeficientes permaneça.
 
 \subsection{Diferenças inferenciais entre as
 abordagens}\label{diferenuxe7as-inferenciais-entre-as-abordagens}
 
 Além do desempenho preditivo, as abordagens frequentista e bayesiana
-diferem de forma substantiva no que se refere à interpretação e à
-quantificação da incerteza dos parâmetros. Na abordagem frequentista, a
-incerteza é expressa por intervalos de confiança, cuja interpretação
-está ligada ao procedimento de amostragem repetida: um intervalo de 95\%
-indica que, em 95\% das amostras hipotéticas extraídas do mesmo processo
-gerador, o intervalo construído dessa maneira conteria o verdadeiro
-valor do parâmetro. Na abordagem bayesiana, os intervalos de
-credibilidade de 95\% permitem uma interpretação diretamente
-probabilística: dado o modelo e os dados observados, existe uma
-probabilidade de 95\% de que o parâmetro pertença ao intervalo obtido.
-Essa distinção é relevante em aplicações práticas, nas quais afirmações
-probabilísticas sobre os parâmetros são frequentemente mais naturais e
-informativas do que declarações sobre procedimentos amostrais.
+diferem de forma substantiva quanto à interpretação e à quantificação da
+incerteza dos parâmetros. Na abordagem frequentista, a incerteza é
+expressa por intervalos de confiança, cuja interpretação está ligada ao
+procedimento de amostragem repetida: um intervalo de confiança de 95\%
+indica que, em sucessivas amostras hipotéticas extraídas do mesmo
+processo gerador, 95\% dos intervalos construídos pelo mesmo
+procedimento conteriam o verdadeiro valor do parâmetro. Na abordagem
+bayesiana, os intervalos de credibilidade de 95\% permitem uma
+interpretação diretamente probabilística: dados o modelo, as observações
+e a distribuição \emph{a priori} adotada, o parâmetro possui
+probabilidade posterior de 95\% de pertencer ao intervalo obtido. Essa
+distinção é relevante em aplicações práticas, nas quais a interpretação
+probabilística direta sobre os parâmetros pode ser particularmente útil.
 
 Do ponto de vista da interpretação dos coeficientes, ambas as abordagens
-produziram conclusões consistentes sobre a direção e a relevância dos
-preditores. A variável \texttt{atraso\_pagto\_0} destacou-se em todos os
-modelos como o preditor de maior impacto sobre o risco de inadimplência,
-corroborando estudos prévios na área de credit scoring. As variáveis
-\texttt{fatura\_valor\_1}, \texttt{pagto\_valor\_1},
-\texttt{pagto\_valor\_2} e \texttt{limite\_credito} apresentaram
-associações negativas com a inadimplência, enquanto variáveis
-demográficas como \texttt{sexo\_Feminino} e
-\texttt{estado\_civil\_Solteiro} também mostraram associações
-estatisticamente significativas em ambas as abordagens.
+produziram resultados consistentes quanto à direção das associações
+observadas. A variável \texttt{atraso\_pagto\_0} destacou-se por
+apresentar associação positiva com a inadimplência nas especificações
+avaliadas. As variáveis \texttt{fatura\_valor\_1},
+\texttt{pagto\_valor\_1}, \texttt{pagto\_valor\_2} e
+\texttt{limite\_credito} apresentaram associações negativas, enquanto
+variáveis demográficas, como \texttt{sexo\_Feminino} e
+\texttt{estado\_civil\_Solteiro}, também apresentaram evidências de
+associação com a ocorrência de inadimplência. Esses resultados devem ser
+interpretados considerando as diferenças de escala dos preditores entre
+as especificações frequentistas e bayesianas, especialmente porque as
+variáveis explicativas foram padronizadas nos modelos bayesianos.
 
 \subsection{Desbalanceamento de classes e limitações
 práticas}\label{desbalanceamento-de-classes-e-limitauxe7uxf5es-pruxe1ticas}
@@ -4158,125 +4057,84 @@ Um aspecto comum às duas abordagens foi a baixa sensibilidade na
 identificação de clientes inadimplentes quando utilizado o ponto de
 corte convencional de 0,5. A especificidade elevada (aproximadamente
 97\%), associada à sensibilidade reduzida (cerca de 25\%), indica que os
-modelos tendem a classificar incorretamente uma parcela expressiva dos
-inadimplentes como não inadimplentes, o que pode comprometer sua
-utilidade prática para fins de prevenção de perdas. Esse comportamento
-está relacionado ao desbalanceamento da variável resposta, na qual
-aproximadamente 22\% das observações correspondem a clientes
-inadimplentes, embora também seja influenciado pela capacidade
-discriminatória dos modelos e pelo limiar de classificação adotado.
+modelos deixam de identificar uma parcela expressiva dos inadimplentes,
+o que pode comprometer sua utilidade prática para fins de prevenção de
+perdas. Esse comportamento está relacionado ao desbalanceamento da
+variável resposta, na qual aproximadamente 22\% das observações
+correspondem à classe de inadimplência, mas também à capacidade
+discriminatória dos modelos e ao limiar de classificação adotado.
 
-A análise baseada no índice de Youden demonstrou que a utilização de
-pontos de corte mais baixos (aproximadamente 0,26) poderia elevar a
-sensibilidade para cerca de 55\%, em contrapartida à redução da
-especificidade para aproximadamente 82\% a 84\%. A proximidade dos
-resultados entre os modelos frequentista e bayesiano nessa análise
-reforça a semelhança de comportamento das duas abordagens diante de
-alterações no critério de classificação. Ressalta-se, entretanto, que o
-ponto de corte identificado pelo índice de Youden maximiza o equilíbrio
-entre sensibilidade e especificidade, não necessariamente o resultado
-econômico da decisão de concessão de crédito.
+A análise baseada no índice de Youden demonstrou que pontos de corte
+mais baixos (aproximadamente 0,26) poderiam elevar a sensibilidade para
+cerca de 55\%, em contrapartida à redução da especificidade para
+aproximadamente 82\% a 84\%. Essa alteração evidencia o compromisso
+entre os dois tipos de erro de classificação: a redução do limiar
+permite identificar mais inadimplentes, mas aumenta a ocorrência de
+falsos positivos, associados à recusa indevida de crédito a bons
+pagadores. Por outro lado, limiares mais elevados reduzem os falsos
+positivos, mas ampliam a quantidade de inadimplentes não identificados.
+Ressalta-se que o índice de Youden busca equilibrar sensibilidade e
+especificidade, não necessariamente maximizar o resultado econômico da
+decisão de concessão de crédito, que depende dos custos relativos desses
+erros e dos objetivos da instituição financeira.
 
-Como discutido na análise dos erros de classificação
-(Seção~\ref{sec-erros-classificacao}), falsos positivos e falsos
-negativos têm consequências econômicas assimétricas: o primeiro tipo
-está associado à recusa indevida de crédito a bons pagadores, enquanto o
-segundo representa a concessão de crédito a clientes que virão a
-inadimplir. A escolha do ponto de corte estabelece um compromisso entre
-esses dois tipos de erro: reduzir o limiar eleva a sensibilidade mas
-amplia os falsos positivos; aumentá-lo reduz os falsos positivos mas
-aumenta os inadimplentes não identificados. A definição do limiar
-adequado depende, portanto, dos objetivos institucionais e da
-importância relativa atribuída ao custo de cada tipo de erro.
-
-No presente estudo, essa discussão permite comparar o comportamento
-classificatório das abordagens frequentista e bayesiana diante de
-diferentes critérios de decisão. Os resultados indicam que ambas
-apresentam respostas semelhantes às alterações no ponto de corte, sem
-evidenciar uma superioridade sistemática de uma abordagem sobre a outra
-nesse aspecto.
-
-Cabe destacar que o ponto de corte identificado pelo índice de Youden
-representa o limiar que maximiza a soma da sensibilidade e da
-especificidade, não necessariamente aquele que proporciona o melhor
-resultado econômico para a instituição financeira. A escolha do limiar
-deve considerar os custos relativos dos falsos positivos e falsos
-negativos, bem como os objetivos da política de concessão de crédito.
-
-Além disso, caso a seleção do ponto de corte seja realizada com base nos
-resultados do conjunto de teste, há uma limitação metodológica, uma vez
-que esse conjunto deve ser reservado à avaliação final do desempenho do
-modelo. Em um cenário de aplicação prática, o limiar seria definido
-previamente, utilizando dados de treinamento, e posteriormente aplicado
-às novas observações. Dessa forma, os resultados apresentados para o
-ponto de corte baseado no índice de Youden devem ser interpretados como
-uma análise complementar do comportamento classificatório dos modelos, e
-não como uma definição definitiva do limiar a ser adotado em produção.
+Os resultados indicam que as abordagens frequentista e bayesiana
+apresentam comportamentos semelhantes diante das alterações no ponto de
+corte, sem evidenciar superioridade sistemática de uma sobre a outra.
+Entretanto, caso a seleção do limiar tenha sido realizada com base no
+conjunto de teste, há uma limitação metodológica, pois esse conjunto
+deve ser reservado à avaliação final do desempenho dos modelos. Em uma
+aplicação prática, o ponto de corte deveria ser definido com dados de
+treinamento e posteriormente aplicado a novas observações. Assim, os
+resultados baseados no índice de Youden devem ser interpretados como uma
+análise complementar, e não como uma definição definitiva do limiar a
+ser adotado em produção.
 
 \section{Conclusão}\label{conclusuxe3o}
 
 Este trabalho investigou a aplicação de modelos de regressão logística à
 previsão de inadimplência em cartões de crédito, comparando as
-abordagens de inferência frequentista e bayesiana em termos de
-desempenho preditivo, interpretação dos parâmetros e quantificação da
+abordagens de inferência frequentista e bayesiana quanto ao desempenho
+preditivo, à interpretação dos parâmetros e à quantificação da
 incerteza.
 
-Do ponto de vista preditivo, as seis especificações avaliadas, quatro
-frequentistas e duas bayesianas, produziram resultados notavelmente
-próximos. Os valores de ROC AUC variaram entre 0,714 e 0,717, e o
-log-loss entre 0,469 e 0,470, indicando que a incorporação de
-distribuições a priori, nas configurações avaliadas, não proporcionou
-ganhos expressivos em relação às alternativas frequentistas. Esse
-resultado é coerente com a teoria, que prevê convergência das
-inferências à medida que o tamanho da amostra cresce, condição atendida
-neste estudo com 30.000 observações.
+Os resultados evidenciaram desempenho preditivo bastante semelhante
+entre as seis especificações avaliadas, com valores de ROC AUC entre
+0,714 e 0,717 e log-loss entre 0,469 e 0,470. Da mesma forma, as prioris
+Normal e Laplace produziram estimativas posteriores próximas, sugerindo
+sensibilidade limitada à escolha entre essas distribuições no contexto
+analisado. A elevada dimensão amostral pode ter contribuído para esse
+comportamento, embora tais resultados não permitam estabelecer
+equivalência geral entre as abordagens.
 
-No que tange à inferência, as abordagens se distinguem de forma
-relevante. A abordagem bayesiana permitiu quantificar a incerteza dos
-parâmetros por meio de distribuições a posteriori e intervalos de
-credibilidade, cuja interpretação é mais intuitiva em contextos
-aplicados do que a dos intervalos de confiança frequentistas. A
-comparação entre as prioris Normal e Laplace revelou estimativas
-posteriores praticamente equivalentes, sugerindo que, diante de uma
-amostra altamente informativa, a forma da distribuição a priori tem
-impacto limitado sobre as conclusões, embora suas diferenças possam ser
-mais pronunciadas em contextos com amostras menores ou maior incerteza
-paramétrica.
+Quanto à inferência, a abordagem bayesiana permitiu representar a
+incerteza dos parâmetros por meio de distribuições posteriores e
+intervalos de credibilidade, além de incorporar informações prévias de
+maneira explícita. Em relação à multicolinearidade, a remoção de
+preditores correlacionados reduziu substancialmente os valores de VIF
+sem comprometer o desempenho preditivo. As estratégias de regularização
+também ofereceram alternativas para lidar com a complexidade dos
+modelos, embora não eliminem a dependência linear entre os preditores.
+Observou-se, ainda, uma limitação comum às duas abordagens na
+identificação de clientes inadimplentes, evidenciada pelos baixos
+valores de sensibilidade.
 
-Quanto ao tratamento da multicolinearidade, a remoção de preditores
-altamente correlacionados se mostrou uma estratégia eficaz para reduzir
-a instabilidade das estimativas sem comprometer o desempenho preditivo.
-As abordagens de regularização, Lasso (L1), Ridge (L2) e as prioris
-bayesianas, apresentaram comportamentos análogos do ponto de vista da
-penalização, sem diferenças expressivas nos resultados obtidos.
+Este estudo apresenta limitações, entre elas a utilização de um único
+conjunto de dados, referente a clientes de cartão de crédito em Taiwan
+no período de 2005, e a ausência de conhecimento especializado na
+especificação das prioris. Trabalhos futuros podem investigar outros
+conjuntos de dados, prioris informativas fundamentadas em estudos
+anteriores ou julgamentos de especialistas e estratégias de tratamento
+do desbalanceamento de classes, incluindo critérios de classificação que
+considerem os custos assimétricos dos erros.
 
-\textbf{Limitações e trabalhos futuros.} Este estudo apresenta algumas
-limitações que devem ser consideradas na interpretação dos resultados. A
-análise foi restrita a um único conjunto de dados, referente a clientes
-de cartão de crédito em Taiwan no período de 2005, o que limita a
-generalização das conclusões para outros mercados, populações e
-períodos. Além disso, as prioris bayesianas foram especificadas de forma
-relativamente não informativa, sem incorporação de conhecimento
-especializado do domínio de crédito. A utilização de prioris
-informativas baseadas em estudos anteriores ou em julgamentos de
-especialistas poderia modificar as estimativas e revelar diferenças mais
-expressivas entre as abordagens. Por fim, estratégias para lidar com o
-desbalanceamento de classes, como reamostragem, ajuste de pesos ou
-limiares de classificação baseados em custos assimétricos, poderiam ser
-exploradas em trabalhos futuros para melhorar a identificação da classe
-de inadimplentes.
-
-Em síntese, os resultados obtidos sugerem que, para problemas de
-classificação binária com amostras de grande dimensão, as abordagens
-frequentista e bayesiana tendem a produzir resultados preditivos
-equivalentes. A principal vantagem da abordagem bayesiana reside na
-riqueza inferencial: a capacidade de expressar diretamente a incerteza
-sobre os parâmetros e de incorporar informação prévia de forma explícita
-e controlada. Assim, a escolha entre as duas abordagens deve considerar
-não apenas o desempenho preditivo esperado, mas também os objetivos da
-análise, se voltados primariamente à discriminação e previsão, ou à
-compreensão dos mecanismos associados ao risco de inadimplência e à
-quantificação da incerteza das estimativas.
+Em síntese, a escolha entre as abordagens frequentista e bayesiana deve
+considerar os objetivos da análise. Enquanto ambas apresentaram
+desempenho preditivo semelhante nas especificações avaliadas, a
+abordagem bayesiana oferece recursos adicionais para representar a
+incerteza dos parâmetros e incorporar informações prévias, aspectos
+relevantes quando o interesse ultrapassa a previsão e envolve a
+interpretação dos efeitos associados ao risco de inadimplência.
 
 \section*{Referências}\label{referuxeancias}
 \addcontentsline{toc}{section}{Referências}
